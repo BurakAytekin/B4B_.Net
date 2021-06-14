@@ -1,0 +1,403 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@Styles.Render("~/Content/coupon.css")
+<style>
+    #map-container {
+        height: 400px;
+    }
+
+    .avatarContainer {
+        position: relative;
+        margin: 0 auto;
+        width: 100% !important;
+        /*min-height: 200px;*/
+    }
+
+        .avatarContainer img {
+            height: 120px !important;
+        }
+
+    .chooiseAvatar {
+        display: block;
+        padding: 8px;
+        text-align: center;
+        background-color: #013d83;
+    }
+
+    .item {
+        background-color: #eeeeee !important
+    }
+
+    .input-group {
+        margin-bottom: 5px !important;
+    }
+</style>
+
+
+<section ng-controller="CustomerAccountController">
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Hesap Ayarları</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="col-md-12 box">
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="tab-container left clearfix" style="border:none !important">
+                        <ul class="nav-tabs clearfix shadowedV2">
+                            <li class="active"><a href="#generalInformation" data-toggle="tab">Genel Bilgiler</a></li>
+                            <li class=""><a href="#updatePassword" data-toggle="tab">Şifre Güncelle</a></li>
+                            <li class=""><a href="#rate" data-toggle="tab">Bindirim Oranı</a></li>
+                            <li class=""><a href="#searchLog" data-toggle="tab">Arama Logları</a></li>
+                            <li class=""><a href="#location" data-toggle="tab" ng-click="myMap(false)">Lokasyon Bildir</a></li>
+                            <li class=""><a href="#coupon" data-toggle="tab" ng-click="getCouponList()">Kuponlarım</a></li>
+                            <li class=""><a href="#avatar" data-toggle="tab" ng-click="checkMyAvatar()">Avatar Belirle</a></li>
+                        </ul>
+
+                        <div class="tab-content clearfix">
+                            <div class="tab-pane active" id="generalInformation">
+                                <div class="col-md-12 col-sm-12 col-xs-12 lg-margin shadowedV2">
+                                    <div class="row" style="padding:10px;">
+                                        <span class="account-btn hidden"><input type="button" class="btn btn-info btn-block" value="Bilgileriniz için Düzenleme Talebi Gönderin" /></span>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-user "></i></span><span class="input-text">Adres</span></span>
+                                            <input type="text" class="form-control" placeholder="Adres" readonly value="@ViewBag.CurrentCustomer.Address">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-user"></i></span><span class="input-text">İlçe</span></span>
+                                            <input type="text" class="form-control" placeholder="İlçe" readonly value="@ViewBag.CurrentCustomer.Town">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-user"></i></span><span class="input-text">Şehir</span></span>
+                                            <input type="text" class="form-control" placeholder="Şehir" readonly value="@ViewBag.CurrentCustomer.City">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-globe"></i></span><span class="input-text">Ülke</span></span>
+                                            <input type="text" class="form-control" placeholder="Ülke" readonly value="@ViewBag.CurrentCustomer.Country">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-money"></i></span><span class="input-text">Vergi Dairesi</span></span>
+                                            <input type="text" class="form-control" placeholder="Vergi Dairesi" readonly value="@ViewBag.CurrentCustomer.TaxOffice">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-money"></i></span><span class="input-text">Vergi No</span></span>
+                                            <input type="text" class="form-control" placeholder="Vergi No" readonly value="@ViewBag.CurrentCustomer.TaxNumber">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-phone"></i></span><span class="input-text">Telefon</span></span>
+                                            <input type="text" class="form-control" placeholder="Telefon" readonly value="@ViewBag.CurrentCustomer.Tel1">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-fax"></i></span><span class="input-text">Fax</span></span>
+                                            <input type="text" class="form-control" placeholder="Fax" readonly value="@ViewBag.CurrentCustomer.Fax1">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-envelope"></i></span><span class="input-text">E-Posta</span></span>
+                                            <input type="text" class="form-control" placeholder="E-Posta" readonly value="@ViewBag.CurrentCustomer.Mail">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- End .tab-pane -->
+
+                            <div class="tab-pane shadowedV2" id="updatePassword">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <span class="input-icon input-icon-user">
+                                                        <i class="fa fa-key"></i>
+                                                    </span>
+                                                    <span class="input-text">Eski Şifre</span>
+                                                </span>
+                                                <input type="password" class="form-control" id="oldPassword">
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-key"></i></span><span class="input-text">Yeni Şifre</span></span>
+                                                <input type="password" class="form-control" id="newPassword">
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-key"></i></span><span class="input-text">Yeni Şifre Tekrar</span></span>
+                                                <input type="password" class="form-control" id="newPasswordRepead">
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="button" class="btn btn-info" value="Güncelle" ng-click="askForPasswordUpdate()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- End .tab-pane -->
+                            </div>
+                            <div class="tab-pane shadowedV2" id="rate">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><span class="input-icon input-icon-user"><i class="fa fa-user"></i></span><span class="input-text">Bindirim Oranı</span></span>
+                                                <input type="text" style="text-align:center" class="form-control" ng-keypress="keyPressedRate($event)" id="txtRate" value="@ViewBag.CurrentCustomer.Users.Rate">
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="button" class="btn btn-info" value="Güncelle" ng-click="updateCustomerRate()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- End .tab-pane -->
+                            </div><!-- End .tab-pane -->
+                            <div class="tab-pane shadowedV2" id="searchLog" style="padding:20px;">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class='input-group input-criteria date'>
+                                                    <span class="input-group-addon no-minwidth-zero">
+                                                        <span class="fa fa-calendar"></span> Başlangıç Tarihi
+                                                    </span>
+                                                    <input type='text' class="form-control detepicker shadowedV2" id="iSearchLogStartDate" ng-model="dateStart" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class='input-group input-criteria date'>
+                                                    <span class="input-group-addon no-minwidth-zero">
+                                                        <span class="fa fa-calendar"></span> Bitiş Tarihi
+                                                    </span>
+                                                    <input type='text' class="form-control detepicker shadowedV2" id="iSearchLogEndDate" ng-model="dateEnd" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-custom" ng-click="searchLogList()"><i class="fa fa-search" aria-hidden="true"></i><span class="hidden-xs"> Listele</span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-md-12">
+                                        <table id="pDataTable" class="table table-striped table-hover table-custom shadowed">
+                                            <thead>
+                                                <tr>
+
+                                                    <th>Tarih</th>
+                                                    <th>Hızlı Arama</th>
+                                                    @*<th>Araç Marka</th>
+                                                    <th>Araç Model</th>*@
+                                                    <th>Kampanya</th>
+                                                    <th>Yeni Ürün</th>
+                                                    <th>Resmi Olan</th>
+                                                    <th>Detay</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item in reportList">
+
+                                                    <td>{{item.Date | dateFilter  |  date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                                                    <td>{{item.Parameters.T9Text}}</td>
+
+                                                    @*<td>{{item.Parameters.VehicleBrand}}</td>
+                                                    <td>{{item.Parameters.VehicleBrandModel}}</td>*@
+                                                    <td><input type="checkbox" ng-checked="{{item.Parameters.Campaign}}" disabled /></td>
+                                                    <td><input type="checkbox" ng-checked="{{item.Parameters.NewProduct}}" disabled /></td>
+                                                    <td><input type="checkbox" ng-checked="{{item.Parameters.Picture}}" disabled /></td>
+                                                    <td><input type="button" ng-if="item.Result==0" class="btn btn-success btn-block m-0" ng-click="searchLogDetail(item.Id)" value="Detay" /></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                            </div><!-- End .tab-pane -->
+                            <div class="tab-pane shadowedV2" id="location" style="padding:20px;">
+                                <div id="map-container" class="col-md-12 shadowed" style="background-color:#eeeeee;margin-bottom:10px;">
+                                </div>
+                                <input type="button" value="Lokasyonumu Güncelle" class="btn btn-custom btn-block m-10" ng-click="myMap(true)" />
+                            </div><!-- End .tab-pane -->
+                            <div class="tab-pane shadowedV2" id="coupon">
+                                <div class="row">
+
+                                    <div class="col-md-4" ng-repeat="row in couponList">
+                                        <div class="panel coupon" ng-class="'panel-'+row.CssClassAdmin">
+                                            <div class="panel-heading" id="head">
+                                                <div class="panel-title cupon-title" id="title">
+                                                    <i class="fa fa-tags fa-2x"></i>
+                                                    <span class="hidden-xs">{{row.Header}}</span>
+                                                    <span class="visible-xs">{{row.Header}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="panel-body">
+                                                <img src="" class="coupon-img img-rounded">
+                                                <div class="col-md-12 well well-sm" ng-if="row.IsAutoUse == true">
+                                                    <div id="business-info">
+                                                        Bu kupon otomatik uygulanmaktadır
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="offer text-center" ng-class="'text-'+row.CssClassAdmin">
+                                                        <span class="usd" ng-if="row.Type == 0"><sup>%</sup></span>
+                                                        <span class="usd" ng-if="row.Type == 1"><sup>₺</sup></span>
+                                                        <span class="number" ng-if="row.Type == 0">{{row.Discount}}</span>
+                                                        <span class="number" ng-if="row.Type == 1">{{row.PriceLeft}}</span>
+                                                        <span class="cents" ng-if="row.Type == 1"><sup>{{row.PriceRight}}</sup></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading" role="tab" id="headingOne">
+                                                                    <h4 class="panel-title text-center">
+                                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{row.Id}}" aria-expanded="true" aria-controls="collapseOne{{row.Id}}" class="">
+                                                                            Detay
+                                                                        </a>
+                                                                    </h4>
+                                                                </div>
+                                                                <div id="collapseOne{{row.Id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+
+                                                                            <div class="col-md-12">
+                                                                                <p>
+                                                                                    {{row.Explanation1}}
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <p class="disclosure">
+                                                                                    {{row.Explanation2}}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-footer">
+                                                <div class="coupon-code">
+                                                    Kupon Kodu: {{row.Code}}
+                                                    <div class="print btn-group">
+
+                                                    </div>
+                                                </div>
+                                                <div class="exp">Tarih Aralığı: {{row.StartDate  | dateFilter  | date:'dd.MM.yyyy'}}-{{row.EndDate  | dateFilter  | date:'dd.MM.yyyy'}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div><!-- End .tab-pane -->
+
+
+                            <div class="tab-pane shadowedV2" id="avatar" style="padding:20px;">
+                                <div class="row">
+
+                                    @foreach (var item in @ViewBag.AvatarList)
+                                    {
+                                        <div class="col-md-3 col-sm-4 col-xs-12">
+                                            <div class="item item-hover shadowed">
+                                                <div class="item-image-wrapper">
+                                                    <div class="row">
+                                                        <figure class="avatarContainer">
+                                                            <a href="javascript:;">
+                                                                <img src="~/Content/images/avatar/@item" class="item-image">
+                                                                <img src="~/Content/images/avatar/@item" class="item-image-hover hidden">
+                                                            </a>
+                                                        </figure>
+                                                    </div>
+                                                    <div class="row">
+                                                        <span class="chooiseAvatar"><input id="@item" type="radio" name="avatar" ng-click="setCustomeravatar('@item')" /></span>
+                                                    </div>
+
+                                                </div><!-- End .item-image-wrapper -->
+                                            </div><!-- End .item -->
+                                        </div><!-- End .col-md-4 -->
+                                    }
+                                </div><!-- End .tab-pane -->
+                            </div>
+
+
+                        </div><!-- End .tab-content -->
+                    </div><!-- End .tab-container -->
+                </div><!-- End .col-md-12 -->
+
+                <div class="modal fade" id="modal-logdetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+
+                                        <div class="sm-margin"></div>
+                                        <table id="pDataTable" class="table table-striped table-hover table-custom">
+                                            <!---table-condensed table-striped table-hover-->
+                                            <thead>
+                                                <tr>
+
+                                                    <th>Ürün Kodu</th>
+                                                    <th>Ürün Adı</th>
+
+                                                    <th>Üretici</th>
+                                                    <th>Fiyat</th>
+                                                    <th>Döviz Tipi</th>
+
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item in reportDetailList">
+                                                    <td>{{item.Product.Code}}</td>
+                                                    <td>{{item.Product.Name}}</td>
+                                                    <td>{{item.Product.Manufacturer}}</td>
+                                                    <td>{{item.Product.Price}}</td>
+                                                    <td>{{item.Product.CustomerCurrency}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                </div>
+                            </div><!-- End .modal-body -->
+
+                        </div><!-- End .modal-content -->
+                    </div><!-- End .modal-dialog -->
+                </div><!-- End .modal -->
+            </div>
+        </div>
+
+    </div>
+    <div class="lg-margin"></div>
+
+
+</section>
+
+<script type="text/javascript">
+    var currentCustomer;
+
+    $(document).ready(function ()
+    {
+        currentCustomer =@Html.Raw(@ViewBag.CurrentCustomerJquery);
+    });
+
+</script>
+<script src="~/Scripts/Js/moment.min.js"></script>
+<script src="~/Scripts/Js/moment-tr.js"></script>
+<script src="~/Scripts/Js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyChBkURRtUUIilTiefBydeAsRP8L6Lercw"></script>
+<script src="@Url.ContentVersioned("/Scripts/Pages/customerAccount.js", HttpContext.Current.Request)"></script>
+

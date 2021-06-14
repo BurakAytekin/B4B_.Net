@@ -1,0 +1,221 @@
+﻿@{
+    ViewBag.Title = "OrderDetail";
+}
+
+<style>
+    .table {
+        background-color: white;
+    }
+</style>
+
+<section>
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Sipariş Detay</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table total-table shadowed">
+                    <tbody>
+                        <tr>
+                            <td class="total-table-title">@ViewBag.CurrentCustomer.Users.Code</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">@ViewBag.CurrentCustomer.Users.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">@ViewBag.CurrentCustomer.AddressFull</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4 col-md-offset-0">
+                <table class="table total-table shadowed">
+                    <tbody>
+                        <tr>
+                            <td class="total-table-title">Tarih</td>
+                            <td class="text-right">@ViewBag.OrderHeader.CreateDate</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">Durum</td>
+                            <td class="text-right">@ViewBag.OrderHeader.StatusStr</td>
+                        </tr>
+
+                        <tr>
+                            <td class="total-table-title">Sevk Durumu</td>
+                            <td class="text-right">@ViewBag.OrderHeader.ShippingStatuStr</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">Gönderen</td>
+                            <td class="text-right">@ViewBag.OrderHeader.SenderName</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table id="pDataTable" class="table table-bordered shadowed">
+                    <thead>
+                        <tr>
+                            <th>Ürün Kodu</th>
+                            <th>Ürün Adı</th>
+                            @*<th>Üretici</th>*@
+                            <th>Miktar</th>
+                            <th>Birim</th>
+                            <th>İsk.</th>
+                            <th class="text-right">Fiyat</th>
+                            <th class="text-right">Net Fiyat</th>
+                            <th class="text-right">Tutar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbResult" class="context">
+                        @foreach (var item in ViewBag.OrderDetaillist)
+                        {
+                            <tr>
+                                <td>@item.ProductCode</td>
+                                <td title="@item.ProductName">@item.ProductShortName</td>
+                                @*<td>@item.Manufacturer</td>*@
+                                <td>@item.Quantity</td>
+                                <td>@item.Unit</td>
+                                <td>% @item.DiscSpecial </td>
+                                <td class="text-right">@Html.Raw(item.PriceStr)</td>
+                                <td class="text-right">@Html.Raw(item.NetPriceStr)</td>
+                                <td class="text-right">@Html.Raw(item.NetAmountStr)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <table id="pDataTable" class="table table-bordered shadowed">
+                    <thead>
+                        <tr>
+                            <th class="table-title">Ödeme Türü</th>
+                            <th class="table-title">Tutar</th>
+                            <th class="table-title">Ödeme Tarihi</th>
+                            <th class="table-title">Evrak No</th>
+                            <th class="table-title">Banka Adı</th>
+                            <th class="table-title">Görsel</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbResult" class="context">
+                        @foreach (var item in ViewBag.OrderPaymentDetaillist)
+                        {
+                            <tr>
+
+                                <td class="item-price-col">@item.TypeStr</td>
+                                <td class="item-price-col">@item.Total</td>
+                                <td class="item-price-col">@item.PaymentDate</td>
+                                <td class="item-price-col">@item.ReceiptNo</td>
+                                <td class="item-price-col">@item.BankName</td>
+                                <td class="item-price-col">
+                                    @if (item.Image != null)
+                                    {
+                                        <a onclick='openImage("@item.Image")'><i class="fa fa-image"></i></a>
+
+
+                                    }
+                                </td>
+
+                            </tr>
+}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="row">
+            <div class="sm-margin"></div>
+            <div class="col-md-8">
+                <div class="tab-container left clearfix">
+
+                    <ul class="nav-tabs">
+                        <li class="active"><a href="#shipping" data-toggle="tab">SİPARİŞ NOTU</a></li>
+                        <li><a href="#shipping2" data-toggle="tab">GÖNDERİM ŞEKLİ</a></li>
+                        <li><a href="#shipping3" data-toggle="tab">@(((DateTime)ViewBag.OrderHeader.CreateDate).ToString("dd-MM-yyyy")) TARIHLI KUR BİLGİSİ</a></li>
+
+                    </ul>
+
+                    <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="shipping">
+                            @ViewBag.OrderHeader.Notes
+                        </div>
+                        <div class="tab-pane" id="shipping2">
+                            @ViewBag.OrderHeader.ShipmentName
+                        </div>
+                        <div class="tab-pane" id="shipping3">
+                            @Html.Raw(ViewBag.OrderHeader.CurrencyAll)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <table class="table total-table shadowed">
+                    <tbody>
+                        <tr>
+                            <td class="total-table-title">TUTAR:</td>
+                            <td class="text-right">@Html.Raw(ViewBag.OrderHeader.GeneralTotalStr)</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">İSKONTO:</td>
+                            <td class="text-right">@Html.Raw(ViewBag.OrderHeader.DiscountStr)</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">ARA TOPLAM:</td>
+                            <td class="text-right">@Html.Raw(ViewBag.OrderHeader.NetTotalStr)</td>
+                        </tr>
+                        <tr>
+                            <td class="total-table-title">KDV:</td>
+                            <td class="text-right">@Html.Raw(ViewBag.OrderHeader.VatStr)</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>GENEL TOPLAM:</td>
+                            <td class="text-right">@Html.Raw(ViewBag.OrderHeader.TotalStr)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="ImageModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="imgPayment" src="" class="img-responsive">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function openImage(image) {
+        console.log(image);
+        $("#imgPayment").attr("src", '../../Content/images/payments/' + image);
+        $('#ImageModal').modal('show');
+
+    }
+
+</script>

@@ -1,0 +1,161 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-contact">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Contact">Footer Bilgileri</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Footer </strong>Bilgileri</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row form-horizontal">
+                            <div class="col-sm-12">
+                                <div ng-controller="footerController">
+
+                                    <hr class="line-dashed line-full" />
+
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-facebook-square fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Facebook" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-twitter-square fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Twitter" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-google-plus-square fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Google" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-skype fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Skype" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-envelope-square fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Email" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Linkedin" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input01" class="col-sm-2 control-label"><i class="fa fa-instagram fa-lg" aria-hidden="true"></i></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="footerItem.Instagram" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                        </div>
+                                    </div>
+
+                                    <hr class="line-dashed line-full" />
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <!-- #region Nav Tabs -->
+                                            <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                                <li role="presentation" class="active"><a href="#tConditionsForReturn" aria-controls="tConditionsForReturn" role="tab" data-toggle="tab"><span class="hidden-sm">İade ve Teslimat </span> <i class="fa fa-book visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tPrivacyPolicy" aria-controls="tPrivacyPolicy" role="tab" data-toggle="tab"><span class="hidden-sm">Gizlilik Politikamız</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tTermOfUse" aria-controls="tTermOfUse" role="tab" data-toggle="tab"><span class="hidden-sm">Kullanım Koşulları</span> <i class="fa fa-users visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tDistanceSalesContract" aria-controls="tDistanceSalesContract" role="tab" data-toggle="tab"><span class="hidden-sm">Satış Sözleşmesi</span> <i class="fa fa-users visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tKvkkContract" aria-controls="tKvkkContract" role="tab" data-toggle="tab"><span class="hidden-sm">KVKK Sözleşmesi</span> <i class="fa fa-users visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tPaymentContract" aria-controls="tPaymentContract" role="tab" data-toggle="tab"><span class="hidden-sm">Sanalpos Sözleşmesi</span> <i class="fa fa-users visible-sm"></i></a></li>
+
+                                            </ul>
+
+                                            <div class="tab-content">
+                                                <div id="tConditionsForReturn" role="tabpanel" class="tab-pane active">
+                                                    <div id="txtConditionsForReturn" placeholder="Metin Giriniz.." ng-model="footerItem.Email"></div>
+                                                </div>
+                                                <div id="tPrivacyPolicy" role="tabpanel" class="tab-pane">
+                                                    <div id="txtPrivacyPolicy" placeholder="Metin Giriniz.." ng-model="footerItem.Email"></div>
+                                                </div>
+                                                <div id="tTermOfUse" role="tabpanel" class="tab-pane">
+                                                    <div id="txtermOfUse" placeholder="Metin Giriniz.." ng-model="footerItem.Email"></div>
+                                                </div>
+                                                <div id="tDistanceSalesContract" role="tabpanel" class="tab-pane">
+                                                    <div id="txtDistanceSalesContract" placeholder="Metin Giriniz.." ng-model="footerItem.Email"></div>
+                                                </div>
+                                                <div id="tKvkkContract" role="tabpanel" class="tab-pane">
+                                                    <div id="txtKvkkContract" placeholder="Metin Giriniz.." ng-model="footerItem.Email"></div>
+                                                </div>
+
+                                                <div id="tPaymentContract" role="tabpanel" class="tab-pane">
+                                                    <div id="txtPaymentContract" placeholder="Metin Giriniz.." ng-model="footerItem.Email"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group text-right">
+                                        <div class="col-xs-12">
+                                            <button type="button" class="btn btn-success" ng-click="saveFooter()"><i class="fa fa-check"></i> Kaydet</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/summernote/summernote.min.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/filestyle/bootstrap-filestyle.min.js")
+}
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/footer.js", HttpContext.Current.Request)"></script>
+
+}

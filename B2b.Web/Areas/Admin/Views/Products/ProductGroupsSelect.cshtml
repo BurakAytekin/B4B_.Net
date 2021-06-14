@@ -1,0 +1,46 @@
+﻿<style type="text/css">
+    .ul-scroll ul.list-group {
+        height: 300px;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .ul-scroll ul.list-group li.list-group-item {
+            line-height: 20px;
+        }
+</style>
+
+<div id="mProductGroupSelect" tabindex="-1" role="dialog" aria-labelledby="mProductGroupsSelectLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ürün Grupları</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row ul-scroll">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <ul class="list-group">
+                                    <li class="list-group-item" ng-dblclick="getListProductGroup2(productgroup.Name);" ng-repeat="productgroup in ProductGroups1">&nbsp; {{productgroup.Name}} <span class="badge">{{productgroup.RecordCount}}</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <ul class="list-group">
+                                    <li class="list-group-item" ng-dblclick="getListProductGroup3(productgroup2.Name);" ng-repeat="productgroup2 in ProductGroups2">&nbsp; {{productgroup2.Name}} <span class="badge">{{productgroup2.RecordCount}}</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <ul class="list-group">
+                                    <li class="list-group-item" ng-dblclick="productGroupSelectAll(productgroup3.Name);" ng-repeat="productgroup3 in ProductGroups3">&nbsp; {{productgroup3.Name}} <span class="badge">{{productgroup3.RecordCount}}</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

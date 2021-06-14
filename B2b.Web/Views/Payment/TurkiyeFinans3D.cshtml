@@ -1,0 +1,83 @@
+﻿
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <title></title>
+    <script type="text/javascript">
+        function hideformfunc() {
+            var frm = document.getElementById("payform");
+            frm.submit();
+        }
+        window.onload = hideformfunc;
+    </script>
+</head>
+<body>
+    @Styles.Render("~/bundles/css")
+    @using System    @using System.Net    @using System.Security.Cryptography
+    @using System.Text
+@using System.Web
+    @using B2b.Web.v4.Models.EntityLayer
+    @{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+    @{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+    @{ System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        String merchantID = string.Empty;
+        String merchantKey = string.Empty;
+        string version = "2.0";
+        merchantID = PosBankDetails.StoreNumber;//"206000000009626604";
+        merchantKey = PosBankDetails._3dSecureKey;//"awNv56fY";
+        string pan = PosPaymentValue.CardNumber;
+        String cv2 = PosPaymentValue.Cvc;
+        string enddate = PosPaymentValue.ExpYear.Replace(" ", "") + PosPaymentValue.ExpMounth.Replace(" ", "");
+        String cardType = PosPaymentValue.CardType.ToString();
+        String amount = PosPaymentValue.TotalPrice.ToString().Replace(",", "").Replace(".", "");
+        string xid = "3U9H1r+rcFqBo7ALgZSp5qSXseU="; // base64 olarak maksimum 28 karakter olabilir.
+        string MD = "Merchant data";
+        String oid = "";
+
+        String failUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Error?paymentId=" + PosPaymentValue.PaymentId;
+        String okUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/TurkiyeFinans3DP";
+
+        string deviceCategory = "0";
+        switch (cardType)
+        {
+            case "Visa":
+                cardType = "1";
+                break;
+            case "Master":
+                cardType = "2";
+                break;
+
+        }
+        String hashstr = version + cardType + pan + enddate + deviceCategory + amount + "2" + "-" + "949" + merchantID + xid + okUrl + failUrl + MD + merchantKey;
+
+        SHA1 sha = new SHA1CryptoServiceProvider();
+        byte[] byt = Encoding.GetEncoding(0).GetBytes(hashstr);
+        byte[] hash = sha.ComputeHash(byt);
+        string digest = Convert.ToBase64String(sha.ComputeHash(byt));
+    }
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <div class="loader" style="margin: 5px;"></div>
+        <h2>İşleminiz Yapılıyor Lütfen Bekleyiniz.</h2>
+
+    </div>
+
+    <form action="@PosBankDetails.PosBank.XmlUrl" method="POST" name="payform" id="payform">
+        <input type="hidden" id="version" name="version" value="@version" />
+        <input type="hidden" id="Pan" name="Pan" value="@pan" />
+        <input type="hidden" id="expiry" name="expiry" value="@enddate" /><!--yymm-->
+        <input type="hidden" id="purchAmount" name="purchAmount" value="@amount" />
+        <input type="hidden" id="exponent" name="exponent" value="2" />
+        <input type="hidden" id="description" name="description" value="-" />
+        <input type="hidden" id="currency" name="currency" value="949" />
+        <input type="hidden" id="merchantID" name="merchantID" value="@merchantID" />
+        <input type="hidden" id="xid" name="xid" value="@xid" />
+        <input type="hidden" id="okUrl" name="okUrl" value="@okUrl" />
+        <input type="hidden" id="failUrl" name="failUrl" value="@failUrl" />
+        <input type="hidden" id="MD" name="MD" value="@MD" />
+        <input type="hidden" id="digest" name="digest" value="@digest" />
+        <input type="hidden" id="cardType" name="cardType" value="@cardType" />
+        <input type="hidden" id="deviceCategory" name="deviceCategory" value="@deviceCategory" />
+    </form>
+
+</body>
+
+</html>

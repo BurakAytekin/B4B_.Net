@@ -1,0 +1,88 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Seri Takip";
+}
+
+
+<div class="page page-blog">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a>Raporlar</a>
+                </li>
+                <li>
+                    <a>Mars Enterasyon Seri Listesi</a>
+                </li>
+            </ul>
+            <div class="page-toolbar">
+                <a href="/Admin/Report/ExportExcelMarsSeriList" role="button" tabindex="0" class="btn btn-success no-border" ng-disabled="report.length === 0">
+                    <i class="fa  fa-download"></i>&nbsp;&nbsp;<span><strong>Excel'e Kaydet</strong></span>&nbsp;&nbsp;
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagecontent" ng-controller="reportSeritakipController">
+        <div class="row">
+            <div class="col-sm-12">
+                <section class="tile">
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Liste</strong></h1>
+                    </div>
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="tab-content">
+                                    <div id="tList" role="tabpanel" class="tab-pane active">
+                                        <div loading-container="tableParams.settings().$loading" id="divTable">
+                                            <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                    <td title="'Stok Kodu'" filter="{StokKodu: 'text'}" sortable="'StokKodu'" class="text-left">
+                                                        {{row.StokKodu}}
+                                                    </td>
+                                                    <td title="'Seri No'" filter="{SeriNo: 'text'}" sortable="'SeriNo'" class="text-left">
+                                                        {{row.SeriNo}}
+                                                    </td>
+                                                    <td title="'Tarih'" filter="{Tarih: 'date'}" sortable="'Tarih'" class="text-left">
+                                                        {{row.Tarih | date:'dd/MM/yyyy'}}
+                                                    </td>
+                                                    <td title="'İrsaliye No'" filter="{EvrakNo: 'text'}" sortable="'EvrakNo'" class="text-left">
+                                                        {{row.EvrakNo}}
+                                                    </td>
+                                                    <td title="'Müşteri'" filter="{HesapKodu: 'text'}" sortable="'HesapKodu'" class="text-left">
+                                                        {{row.HesapKodu}}
+                                                    </td>
+                                                    <td title="'İşlendi mi?'" filter="{IsProcessed: 'text'}" sortable="'IsProcessed'" class="text-left">
+                                                        <input type="checkbox" ng-model="row.IsProcessed" disabled/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/report_seritakip.js", HttpContext.Current.Request)"></script>
+
+}

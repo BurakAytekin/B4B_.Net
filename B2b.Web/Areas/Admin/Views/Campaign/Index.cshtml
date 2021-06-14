@@ -1,0 +1,677 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Kampanyalar";
+}
+
+@* Senin hayal gücüne kalmış duyurulara benzeyebilir. *@
+
+@section cStyleLibrary{
+    @Styles.Render("~/Scripts/Admin/vendor/summernote/summernote.css")
+}
+
+@section cStyleCode{
+    <style type="text/css">
+        .list-group-wrapper,
+        .list-group-wrapper * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .list-group-wrapper {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+            list-style: none;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .list-group {
+            display: table;
+            position: relative;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            clear: both;
+        }
+
+            .list-group .list-group-item {
+                border-bottom: none;
+            }
+
+                .list-group .list-group-item:last-child {
+                    border-bottom: 1px solid #ddd;
+                }
+
+            .list-group .dd-placeholder:first-child {
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder:last-child {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder + .list-group-item {
+                border-top: none;
+            }
+
+        .list-group-item,
+        .dd-empty,
+        .dd-placeholder {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .dd-placeholder,
+        .dd-empty {
+            padding: 0;
+            min-height: 30px;
+            background: #f2fbff;
+            border: 1px dashed #b6bcbf;
+        }
+
+        .dd-empty {
+            min-height: 100px;
+            background-color: #e5e5e5;
+            background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 1px dashed #bbbbbb;
+        }
+
+        .dd-dragel {
+            position: absolute;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .list-group.dd-dragel {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+            .list-group.dd-dragel .list-group-item {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+        .dd-dragel > .list-group-item {
+            margin: 0;
+            padding: 0 !important;
+        }
+
+            .dd-dragel > .list-group-item .checkbox.checkbox-custom {
+                margin: 0;
+            }
+    </style>
+}
+
+<div class="page page-campaign" ng-controller="campaignController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">Kampanyalar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Kampanya </strong>Listesi</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a href="#" ng-click="exportToExcel()" aria-expanded="true"><i class="fa fa-file-excel-o"></i> <strong>Excel'e Kaydet</strong></a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="iProductCampaignType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kampanya Tipi</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="iCampaignType" class="form-control mb-0" ng-model="campaignSearchCriteria.Type" convert-to-number>
+                                                <option value="-1">Seçiniz</option>
+                                                <option value="1">Net Fiyat Kampanyası</option>
+                                                <option value="2">Brüt Fiyat Kampanyası</option>
+                                                <option value="3">İskonto Kampanyası</option>
+                                                <option value="4">Kademeli Net Fiyat Kampanyası</option>
+                                                <option value="5">Kademeli İskonto Kampanyası</option>
+                                                <option value="6">Promosyon Ürün Kampanyası</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="iProductCampaignGeneralSearch" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Genel Arama</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <input id="iProductCampaignGeneralSearch" type="text" ng-model="campaignSearchCriteria.T9Text" ng-keypress="keypressEventOrderSearch($event,campaignSearchCriteria)" placeholder="Lütfen, Sipariş Bilgisi Giriniz..." class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-warning btn-rounded" ng-click="clearValues()">
+                                                <span class="hidden-sm">Temizle</span> <i class="fa fa-trash-o visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-primary btn-rounded" ng-click="getCampaignList();">
+                                                <span class="hidden-sm">Listele</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-success btn-rounded" ng-click="newRecord()">
+                                                <span class="hidden-sm">Yeni</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-danger btn-rounded" ng-click="showDeleteModal()">
+                                                <span class="hidden-sm">
+                                                    <i class="fa fa-trash"></i>
+                                                    <label ng-show="deleteIds !== ''"> Seçilenleri </label> Sil
+                                                </span>
+                                            </button>
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-5">
+                                        <div class="panel panel-blue panel-filled1 scrolling">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Arama Sonuçları</h3>
+                                            </div>
+
+
+                                            <div class="panel-body p-5">
+
+                                                <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                    @*<input id="ichkacitveAll" type="checkbox" ng-click="checkAllActiveManufacturerList(chkAllActive);" ng-model="chkAllActive"/><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="editable-text">Hepsini Seç</span>*@
+                                                    <input id="checkAllActive" type="checkbox" ng-click="checkAllCampaignList(chkAllActive);" ng-model="chkAllActive" /><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="editable-text">Hepsini Seç</span>
+                                                </label>
+
+                                                <div id="pnlCampaignsSearchResult" class="table-responsive">
+                                                    <table class="table table-condensed table-bordered table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">Seç</th>
+                                                                <th class="text-center">Ürün Kodu</th>
+                                                                <th ng-if="campaignSearchCriteria.Type!= 3 && campaignSearchCriteria.Type != 5" class="text-center">Fiyat &amp; Döviz</th>
+                                                                <th ng-if="campaignSearchCriteria.Type== 3 || campaignSearchCriteria.Type== 5" class="text-center">İskonto</th>
+                                                                <th class="text-center">Min. Adet</th>
+                                                                <th class="text-center">Statü</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="row in campaignHeaderList" ng-click="setSelectedCampaign(row)">
+                                                                <td class="text-center">
+                                                                    <label class="checkbox checkbox-custom-alt m-0 p-5 pl-0 pr-0 pb-0">
+                                                                        <input id="iAnnouncement-check" ng-click="setDeleteIds(row)" ng-model="row.Checked" type="checkbox" /><i class="ml-5"></i>
+                                                                    </label>
+                                                                </td>
+                                                                <td class="text-left">{{row.ProductCode}}</td>
+                                                                <td ng-if="campaignSearchCriteria.Type != 3 && campaignSearchCriteria.Type != 5" class="text-right">{{row.PriceStr}}</td>
+                                                                <td ng-if="campaignSearchCriteria.Type== 3 || campaignSearchCriteria.Type== 5" class="text-right">{{row.Discount}} %</td>
+                                                                <td class="text-center">{{row.MinOrder}}</td>
+                                                                <td class="text-center">
+                                                                    <label class="checkbox checkbox-custom-alt m-0 p-5 pl-0 pr-0 pb-0">
+                                                                        <input id="iAnnouncement-check1" ng-model="row.IsActive" type="checkbox" /><i class="ml-5"></i>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-7">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">{{}} Kampanya Detayları</h3>
+                                            </div>
+
+                                            <div class="panel-body p-10">
+                                                <div id="pnlCampaignCriteriaSelection" class="form-group mb-5">
+                                                    <label for="iCampaignCriteriaSelectionName" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Baz Kriter</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="btn-group btn-group-justified btn-group-sm" data-toggle="buttons">
+                                                            <label class="btn btn-default" ng-click="rblRestriction=1">
+                                                                <input type="radio" name="iCampaignCriteriaSelectionName" id="iCampaignCriteriaSelectionProductCode" autocomplete="off"> Ürün Kodu
+                                                            </label>
+
+                                                            <label class="btn btn-default" ng-click="rblRestriction=2">
+                                                                <input type="radio" name="iCampaignCriteriaSelectionName" id="iCampaignCriteriaSelectionManufacturer" autocomplete="off"> Üretici
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignProductCode" class="form-group mb-5">
+                                                    <label for="iCampaignProductCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Kodu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group input-group-sm">
+                                                            <input id="iCampaignProductCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.ProductCode" placeholder="Lütfen, Ürün Kodu Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" />
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-block btn-primary btn-rounded" ng-disabled="lockUpdate" ng-click="ProductItemSelectOpen(null,'ItemProduct')">
+                                                                    <i class="fa fa-search"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignProductName" class="form-group mb-5">
+                                                    <label for="iCampaignProductName" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Adı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group input-group-sm">
+                                                            <input id="iCampaignProductName" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.ProductName" placeholder="Lütfen, Ürün Adı Giriniz..." class="form-control" />
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-block btn-primary btn-rounded" ng-disabled="lockUpdate" ng-click="ProductItemSelectOpen(null,'ItemProduct')">
+                                                                    <i class="fa fa-search"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignProductManufacturer" class="form-group mb-5">
+                                                    <label for="iCampaignProductManufacturer" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Üretici</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group input-group-sm">
+                                                            <input id="iCampaignProductManufacturer" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.ProductManufacturer" placeholder="Lütfen, Üretici Giriniz..." class="form-control" />
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-block btn-primary btn-rounded" ng-disabled="lockUpdate" ng-click="ProductItemSelectOpen(null,'ItemProduct')">
+                                                                    <i class="fa fa-search"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="pnlCampaignCode" class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kod</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.Code" placeholder="Lütfen, Kampanya Kodu Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignCode2" class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kod 2</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.Code2" placeholder="Lütfen, 2. Kampanya Kodunu Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="form-group mb-5" id="pnlCampaignProductCashSalesPrice">
+                                                    <label for="iCampaignProductCashSalesPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Peşin Satış Fiyatı</label>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                                            <div class="row">
+                                                                <div>
+                                                                    <input id="iCampaignProductCashSalesPriceP" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.PriceP" placeholder="Lütfen, Peşin Satış Fiyatı Giriniz..." class="form-control eryaz-numeric-input" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md- col-sm-4 col-xs-4">
+                                                            <div class="row">
+                                                                <select id="bankName-select{{item.CurrencyP}}" ng-disabled="lockUpdate" ng-model="selectedCampaign.CurrencyP" style="width: 100%;" class="form-control" ng-options="item.Type as item.Type for item in currencyList"></select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignProductMaturitySalesPrice" class="form-group mb-5">
+                                                    <label for="iCampaignProductMaturitySalesPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Vadeli Satış Fiyatı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                                            <div class="row">
+                                                                <div>
+                                                                    <input id="iCampaignProductMaturitySalesPriceV" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.PriceV" placeholder="Lütfen, Vadeli Satış Fiyatı Giriniz..." class="form-control eryaz-numeric-input" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md- col-sm-4 col-xs-4">
+                                                            <div class="row">
+                                                                <select id="bankName-select{{row.Currency}}" ng-disabled="lockUpdate" ng-model="selectedCampaign.CurrencyV" style="width: 100%;" class="form-control" ng-options="item.Type as item.Type for item in currencyList"></select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignDiscount" class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">İskonto (%)</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignDiscount" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.Discount" placeholder="Lütfen, Kampanya İskonto Yüzdesi Giriniz..." class="form-control eryaz-numeric-input" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignMinimumQuantity" class="form-group mb-5">
+                                                    <label for="iCampaignMinimumQuantity" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Minimum Adet</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignMinimumQuantity" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.MinOrder" placeholder="Lütfen, Kampanya Minimum (Başlangıç) Adet Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignPlacedProductQuantity" class="form-group mb-5">
+                                                    <label for="iCampaignPlacedProductQuantity" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kampanyalı Ürün Miktarı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignPlacedProductQuantity" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.TotalQuantity" placeholder="Lütfen, Kampanyalı Ürün Miktarı Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignEndQuantity" class="form-group mb-5">
+                                                    <label for="iCampaignPlacedProductQuantity" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kampanya Bitiş Miktarı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignPlacedProductQuantity" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.EndQuantity" placeholder="Lütfen, Kampanya Bitiş Miktarı Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignSoldProductQuantity" class="form-group mb-5">
+                                                    <label for="iCampaignSoldProductQuantity" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satılan Ürün Miktarı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignSoldProductQuantity" disabled="disabled" type="text" ng-model="selectedCampaign.SaledQuantity" placeholder="Lütfen, Kampanya Boyunca Satılan Ürün Miktarı Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignStartDate" class="form-group mb-5">
+                                                    <label for="iCampaignStartDate" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Baş. Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignStartDate" ng-disabled="lockUpdate" ng-model="selectedCampaign.StartDate" type="text" placeholder="Lütfen, Kampanya Başlangıç Tarihi Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignEndDate" class="form-group mb-5">
+                                                    <label for="iCampaignEndDate" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bitiş Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iCampaignEndDate" type="text" ng-disabled="lockUpdate" ng-model="selectedCampaign.FinishDate" placeholder="Lütfen, Kampanya Bitiş Tarihi Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlCampaignDescription" class="form-group mb-5">
+                                                    <label for="iCampaignDescription" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Açıklama</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <textarea id="iCampaignDescription" ng-disabled="lockUpdate" ng-model="selectedCampaign.Notes" rows="5" cols="0" placeholder="Lütfen, Kampanya Açıklaması Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255"></textarea>
+                                                        @*trustDangerousSnippet(selectedAnnouncement.Content)*@
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5" id="pnlPackageResult">
+                                                    <div class="col-xs-12">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-condensed table-bordered table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-center" ng-click="selectItemProductDetail()" ng-disabled="lockUpdate">
+                                                                            <i class="fa fa-plus" style="color: lightgreen;"></i>
+                                                                        </th>
+                                                                        <th class="text-center">Ürün Kodu</th>
+                                                                        <th class="text-center">Ürün Adı</th>
+                                                                        <th class="text-center">Üretici</th>
+                                                                        <th class="text-center">Ürün Adet</th>
+                                                                        <th class="text-center">Min Adet</th>
+                                                                        <th class="text-center"></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr ng-repeat="row in campaignPromotionList">
+                                                                        <td></td>
+                                                                        <td class="text-center">{{row.Code}}</td>
+                                                                        <td class="text-left">{{row.Name}}</td>
+                                                                        <td class="text-center">{{row.Manufacturer}}</td>
+                                                                        <td class="text-center">
+                                                                            <input type="number" ng-disabled="lockUpdate" ng-model="row.TotalQuantity">
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <input type="number" ng-disabled="lockUpdate" ng-model="row.TotalQuantityOnWay">
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <a role="button" tabindex="0" class="tile-close" ng-click="removePromotionItem(row)" ng-disabled="lockUpdate">
+                                                                                <i class="fa fa-times"></i>
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div id="pnlPromotionAllProduct" class="form-group mb-5">
+                                                    <label class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Tüm Promosyonları Ver</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="iCampaignDiscount-check" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedCampaign.PromotionAllProduct"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div id="pnlDiscountPassive" class="form-group mb-5">
+                                                    <label for="iCampaignDiscount-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ana İskontolar Devre Dışı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="iCampaignDiscount-check" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedCampaign.DiscountPassive"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div id="pnlCampaignStatu" class="form-group mb-5">
+                                                    <label for="iCampaign-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Aktif</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="iCampaign-check" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedCampaign.IsActive"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div id="pnlCampaignHomeVisible" class="form-group mb-5">
+                                                    <label for="iCampaignHomeCheck" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ana Ekranda Göster</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="iCampaignHomeCheck" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedCampaign.BannerStatu"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5" id="pnlGradualResult">
+
+                                                    <div class="col-xs-12">
+
+                                                        <div class="table-responsive">
+                                                            <table class="table table-condensed table-bordered table-striped">
+                                                                <thead>
+
+                                                                    <tr>
+                                                                        <th class="text-center">
+
+                                                                        </th>
+                                                                        <th class="text-center">Kod</th>
+                                                                        <th class="text-center">Peşin Satış Fiyatı</th>
+                                                                        <th class="text-center">Vadeli Satış Fiyatı</th>
+                                                                        <th class="text-center">İskonto</th>
+                                                                        <th class="text-center">Min Adet</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th class="text-center">
+                                                                            <button type="button" class="btn btn-success" ng-click="addgradualItem(gradualItem)">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button>
+                                                                        </th>
+                                                                        <th class="text-center">
+                                                                            <div class="input-group">
+
+                                                                                <input type="text" ng-model="gradualItem.Code" placeholder="Lütfen, Kampanya Kodu Giriniz..." class="form-control text-center" />
+
+                                                                            </div>
+
+                                                                        </th>
+                                                                        <th class="text-center">
+                                                                            <div class="input-group" ng-show="campaignSearchCriteria.Type== 4">
+
+                                                                                <input type="text" ng-model="gradualItem.PriceP" placeholder="Lütfen, Vadeli Satış Fiyatı Giriniz..." class="form-control text-center" />
+                                                                                <span class="input-group-btn">
+                                                                                    <select ng-model="gradualItem.CurrencyP" style="width: 100%;" class="form-control" ng-options="item.Type as item.Type for item in currencyList"></select>
+                                                                                </span>
+                                                                            </div>
+                                                                        </th>
+                                                                        <th class="text-center">
+                                                                            <div class="input-group " ng-show="campaignSearchCriteria.Type== 4">
+
+                                                                                <input type="text" ng-model="gradualItem.PriceV" placeholder="Lütfen, Vadeli Satış Fiyatı Giriniz..." class="form-control text-center" />
+                                                                                <span class="input-group-btn">
+                                                                                    <select ng-model="gradualItem.CurrencyV" style="width: 100%;" class="form-control" ng-options="item.Type as item.Type for item in currencyList"></select>
+                                                                                </span>
+                                                                            </div>
+                                                                        </th>
+                                                                        <th class="text-center">
+                                                                            <div class="input-group">
+
+                                                                                <input type="text" ng-show="campaignSearchCriteria.Type== 5" ng-model="gradualItem.Discount" placeholder="Lütfen, Min. Sip. Adeti Giriniz..." class="form-control text-center" />
+
+                                                                            </div>
+
+                                                                        </th>
+                                                                        <th class="text-center">
+                                                                            <div class="input-group ">
+
+                                                                                <input type="text" ng-model="gradualItem.MinOrder" placeholder="Lütfen, Min. Sip. Adeti Giriniz..." class="form-control text-center" />
+
+                                                                            </div>
+                                                                        </th>
+                                                                        <th class="text-center">
+
+                                                                        </th>
+                                                                    </tr>
+
+
+                                                                </tbody>
+                                                                <tbody>
+                                                                    <tr ng-repeat="row in gradualItemList">
+                                                                        <td></td>
+                                                                        <td class="text-center">{{row.Code}}</td>
+                                                                        <td class="text-right">{{row.PriceP}} {{row.CurrencyP}}</td>
+                                                                        <td class="text-right">{{row.PriceV}} {{row.CurrencyV}}</td>
+                                                                        <td class="text-center">{{row.Discount}}%</td>
+                                                                        <td class="text-center">{{row.MinOrder}}</td>
+                                                                        <td class="text-center">
+                                                                            <a role="button" tabindex="0" class="tile-close" ng-click="removegradualItem(row)">
+                                                                                <i class="fa fa-times"></i>
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="panel-footer text-right">
+                                                <div class="btn-group btn-group-rounded">
+                                                    <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-show="lockUpdate" ng-click="lockUpdate = false"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                                    <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-show="!lockUpdate" ng-click="lockUpdate = true"><i class="fa fa-close"></i> <span>İptal</span></button>
+
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-disabled="lockUpdate" ng-click="saveCampaign()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+
+    @Html.Partial("~/Areas/Admin/Views/Partial/DeleteModal.cshtml")
+
+    <custom-item-product-select></custom-item-product-select>
+
+
+</div>
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/summernote/summernote.min.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/nestable/jquery.nestable.js")
+}
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/campaign.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productItemSelect.js", HttpContext.Current.Request)"></script>
+
+}
+
+<script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/FileSaver.js" type="text/javascript"></script>

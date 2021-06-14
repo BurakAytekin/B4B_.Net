@@ -1,0 +1,84 @@
+﻿@using System.Collections.Generic
+@using B2b.Web.v4.Models.EntityLayer
+
+@model List<BankAccount>
+
+<style type="text/css">
+    .pnl-bank-detail-information {
+        border-color: #7bae23;
+        margin-bottom: 30px;
+    }
+
+        .pnl-bank-detail-information .panel-heading {
+            background: #7bae23;
+            color: #ffffff;
+        }
+
+        .pnl-bank-detail-information .sm-accordion {
+            margin-bottom: 0;
+        }
+
+            .pnl-bank-detail-information .sm-accordion .accordion-header {
+                padding: 8px;
+            }
+
+                .pnl-bank-detail-information .sm-accordion .accordion-header .accordion-title {
+                    font-size: 15px;
+                    font-weight: normal;
+                }
+
+
+            .pnl-bank-detail-information .sm-accordion .panel-body {
+                padding: 0 !important;
+            }
+
+                .pnl-bank-detail-information .sm-accordion .panel-body .table {
+                    margin: 0 !important;
+                }
+</style>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="pnl-bank-detail-information">
+            <!-- Default panel contents -->
+            @*<div class="panel-heading">Banka Hesap Bilgileri</div>*@
+
+            <header class="content-title">
+                <div class="title-bg">
+                    <h2 class="title font-size-25">Banka Hesap Bilgileri</h2>
+                </div>
+            </header>
+            <div class="panel-group custom-accordion sm-accordion" id="bank-accordion">
+                @foreach (var item in Model)
+                {
+                    <div class="panel">
+                        <div class="accordion-header">
+                            <div class="accordion-title">@item.BankName</div>
+                            <a class="accordion-btn" data-toggle="collapse" data-target='#bank-accordion-@item.Id' data-parent="#bank-accordion"></a>
+                        </div>
+
+                        <div id='bank-accordion-@item.Id' class="collapse">
+                            <div class="panel-body">
+                                <table class="table table-bordered table-striped table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left-important">Şube Kodu</th>
+                                            <th class="text-left-important">Hesap No</th>
+                                            <th class="text-left-important">IBAN Numarası</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>@item.Branch</td>
+                                            <td>@item.AccountNumber</td>
+                                            <td>@item.Iban</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

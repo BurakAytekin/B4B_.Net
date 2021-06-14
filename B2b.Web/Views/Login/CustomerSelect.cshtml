@@ -1,0 +1,266 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@using B2b.Web.v4.Models.EntityLayer
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; } @CompanyInformationItem.Title</title>
+
+
+    <link href='@Url.Content("//fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic%7CPT+Gudea:400,700,400italic%7CPT+Oswald:400,700,300")' rel='stylesheet' id="googlefont">
+
+    @Styles.Render("~/bundles/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+
+
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/bootstrap-table/bootstrap-table.min.css")" />
+    <link rel="stylesheet/less" type="text/css" href="~/Content/css/colors.less" />
+    <style type="text/css">
+        #wrapper {
+            min-height: 100%;
+        }
+
+        .logo {
+            margin: auto;
+            text-align: center;
+            padding-top: 20px;
+            padding-bottom: 10px;
+        }
+
+            .logo img {
+                height: 70px;
+            }
+
+        .customer-select-top-border {
+            height: 5px;
+            margin-top: 10px;
+        }
+
+        .customer-select-container {
+            background: #ffffff;
+            border-top: none;
+            border-bottom: 1px solid #dfdfdf;
+            border-left: 1px solid #dfdfdf;
+            border-right: 1px solid #dfdfdf;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+        }
+
+            .customer-select-container .content-title .title {
+                font-size: 24px;
+            }
+
+        .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+    <link href="~/Content/Pages/customStylesB2B.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div id="itemDetail"></div>
+    <div id="wrapper" ng-app="customerSelectApp" ng-cloak>
+        <div class="container" ng-controller="MainController">
+            <div class="row customer-select-top-border">
+                <div class="col-sm-12">
+                    <div class="row customer-select-container">
+
+                        <div class="col-sm-12">
+                            <div class="logo">
+                                <a href="@Url.Action("CustomerSelect", "Login")"><img src="/Content/images/logo.png" alt="Logo"></a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="row">
+                                <header class="content-title">
+                                    <div class="title-bg">
+                                        <h2 class="title"><i class="fa fa-list"></i> Müşteri Seçimi</h2>
+                                    </div><!-- End .title-bg -->
+                                </header>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon no-minwidth"><span class="input-text">İl</span></span>
+                                                <div class="normal-selectbox clearfix">
+                                                    <select id="selectCity" name="city" ng-change="SelectCityChanged()" ng-model="city" class="selectbox-city">
+                                                        <option ng-repeat="city in cityList" on-finish-render="ngRepeatCityFinished" value="{{city.City}}">{{city.City}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div id="divCityGroup" class="input-group input-criteria">
+                                                <span class="input-group-addon no-minwidth"><span class="input-text">İlçe</span></span>
+                                                <div class="normal-selectbox clearfix">
+                                                    <select id="selectTown" name="town" disabled="disabled" ng-model="town" class="selectbox-town">
+                                                        <option ng-repeat="town in townList" on-finish-render="ngRepeatTownFinished" value="{{town.Town}}">{{town.Town}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <input type="checkbox" name="checkboxes[249]" ng-model="basketType" id="frm-test-elm-110" autocomplete="off" checked />
+                                                @*<input type="checkbox" name="checkboxes[249]" id="frm-test-elm-110" autocomplete="off" checked />*@
+                                                <div class="btn-group btn-group-full-width btn-checkbox">
+                                                    <label for="frm-test-elm-110" class="btn btn-block btn-default btn-custom">
+                                                        <span class="fa fa-check-square-o fa-lg"></span>
+                                                        <span class="fa fa-square-o fa-lg"></span>
+                                                        <span class="content">Sepetinde ürün olanlar</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <a href="@Url.Action("Logout", "Login")" class="btn btn-md btn-block btn-danger"><i class="fa fa-sign-out"></i> Çıkış</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <div class="input-group input-criteria">
+                                        <span class="input-group-addon no-minwidth"><span class="input-text">Kod / Ünvan</span></span>
+                                        <input class="form-control" ng-model="codeOrName" ng-keypress="keypressEvent($event,codeOrName,city,town,basketType)" placeholder="Kod / Ünvan" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <a href="javascript:;" class="btn btn-md btn-block btn-custom" ng-click="createCustomerSelect(codeOrName,city,town,basketType,1)"><i class="fa fa-sign-out hidden"></i> Listele</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <hr />
+                        </div>
+
+                        @*<div class="col-sm-12">
+                                <table id="table" class="table table-bordered table-condensed table-hover"></table>
+                            </div>*@
+
+                        <div class="col-sm-12">
+                            <div id="pnlTable">
+                                <table id="pDataTable" class="table table-bordered table-striped table-hover table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th data-field="Id" data-sortable="false"></th>
+                                            <th data-field="Id" data-sortable="false"></th>
+                                            <th class="mobile320Hidden text" data-field="Code" data-sortable="true">Kodu</th>
+                                            <th data-field="Name" data-sortable="true">Ünvanı</th>
+                                            <th class="mobileHidden" data-field="City" data-sortable="true">İl</th>
+                                            <th class="mobileHidden" data-field="Town" data-sortable="true">İlçe</th>
+                                            <th class="mobileHidden" data-field="Tel1" data-sortable="false">Tel</th>
+                                            <th data-field="Detail" data-sortable="false"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbResult">
+                                        <tr id="tr{{customer.Id}}" ng-repeat="customer in customers" on-finish-render="ngRepeatCustomerFinished">
+                                            <td ng-click="detailFormatter($index,customer.Id,customer.Code)" class="text-center-important"><a class="detail-icon"><i id="ic{{customer.Id}}" class="fa fa-plus"></i></a> </td>
+                                            <td class="customer-select-user-icon text-center"><i class="fa fa-user fa-lg"></i></td>
+                                            <td class="mobile320Hidden">{{customer.Code}}</td>
+                                            <td>{{customer.Name}}</td>
+                                            <td class="mobileHidden">{{customer.City}}</td>
+                                            <td class="mobileHidden">{{customer.Town}}</td>
+                                            <td class="mobileHidden">{{customer.Tel1}}</td>
+                                            <td class="text-center">
+                                                <a href="javascript:;" ng-click="fireSelectUsers($event,customer.Id)" class="btn btn-xs btn-block btn-custom">Seçiniz</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Users Modal Start -->
+                        <div class="modal fade" id="modal-text" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                                        <h4 class="modal-title" id="myModalLabel3">Kullanıcı Seçimi</h4>
+                                    </div><!-- End .modal-header -->
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div id="pnlUsersTable">
+                                                    <table id="pUsersDataTable" class="table table-condensed table-striped table-hover table-custom">
+                                                        <thead>
+                                                            <tr>
+                                                                <th data-field="Id" data-sortable="false"></th>
+                                                                <th data-field="Code" data-sortable="true">Kodu</th>
+                                                                <th data-field="Name" data-sortable="true">Ünvanı</th>
+                                                                <th data-field="City" data-sortable="true">İl</th>
+                                                                <th data-field="Tel" data-sortable="true">Tel</th>
+                                                                <th data-field="Detail" data-sortable="false"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbUsersResult">
+                                                            <tr id="tbUsersTrresult" ng-repeat="user in users" on-finish-render="ngRepeatUserFinished">
+                                                                <td class="customer-select-user-icon text-center-important"><i class="fa fa-user fa-lg"></i></td>
+                                                                <td>{{user.Code}}</td>
+                                                                <td>{{user.Name}}</td>
+                                                                <td>{{user.City}}</td>
+                                                                <td>{{user.Tel}}</td>
+                                                                <td class="text-center">
+                                                                    <a href="javascript:;" ng-click="fireUsersSelected(user.CustomerId,user.Id)" class="btn btn-xs btn-block btn-custom">Seçiniz</a>
+                                                                </td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div><!-- End .modal-body -->
+                                    <div class="modal-footer">
+                                        @*<button id="buttonmodalClose" type="button" class="btn btn-custom" data-dismiss="modal">Kapat</button>*@
+                                    </div><!-- End .modal-footer -->
+                                </div><!-- End .modal-content -->
+                            </div><!-- End .modal-dialog -->
+                        </div><!-- End .modal -->
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="custom-loading-wrapper">
+        <div class="custom-loading">
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+    <a href="#" id="scroll-top" title="Scroll to Top"><i class="fa fa-angle-up"></i></a><!-- End #scroll-top -->
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/angular")
+    <script src="@Url.Content("~/Scripts/jquery.infinite-scroll-helper.js")"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Pages/login_customerselect.js", HttpContext.Current.Request)"></script>
+
+    @*<script src="@Url.Content("~/Content/bootstrap-table/bootstrap-table-locale-all.min.js")"></script>*@
+
+    <script src="@Url.Content("~/Content/bootstrap-table/bootstrap-table.min.js")"></script>
+    <script src="@Url.Content("~/Content/bootstrap-table/locale/bootstrap-table-tr-TR.min.js")"></script>
+</body>
+</html>

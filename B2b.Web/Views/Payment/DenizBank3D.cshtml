@@ -1,0 +1,80 @@
+﻿@Styles.Render("~/bundles/css")
+@using B2b.Web.v4.Models.EntityLayer
+@{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+@{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+@{
+    String shopCode = PosBankDetails.StoreNumber;   //Banka tarafından verilen üye işyeri mağaza numarası
+    String purchaseAmount = PosPaymentValue.TotalPrice.ToString(); //İşlem tutarı
+    String currency = "949"; // Kur Bilgisi - 949 TL
+    String orderId = "";  //Sipariş Numarası
+    String failUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Error?paymentId=" + PosPaymentValue.PaymentId;
+    String okUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/DenizBank3DP";
+
+
+    String rnd = DateTime.Now.ToString();  //Her işlemde değişen bir değer olmalıdır
+    string pan = PosPaymentValue.CardNumber;
+    String cv2 = PosPaymentValue.Cvc;
+    String Ecom_Payment_Card_ExpDate_Year = PosPaymentValue.ExpYear.Replace(" ", "");
+    String Ecom_Payment_Card_ExpDate_Month = PosPaymentValue.ExpMounth.Replace(" ", "");
+    string Expiry = Ecom_Payment_Card_ExpDate_Month + Ecom_Payment_Card_ExpDate_Year;
+    String cardType = PosPaymentValue.CardType.ToString();
+    String amount = PosPaymentValue.TotalPrice.ToString().Replace(",", ".");
+    String installmentCount = PosPaymentValue.Installment.ToString();
+    // String installmentCount = "";      //Taksit sayısı
+    String txnType = "Auth"; // İşlem tipi
+    String merchantPass = PosBankDetails._3dSecureKey;  //İş yeri anahtarı
+    String str = shopCode + orderId + purchaseAmount + okUrl + failUrl + txnType + installmentCount + rnd + merchantPass;
+
+    System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+    byte[] bytes = System.Text.Encoding.GetEncoding("ISO-8859-9").GetBytes(str);
+    byte[] hashingbytes = sha.ComputeHash(bytes);
+
+    String hash = Convert.ToBase64String(hashingbytes);  // merchantpass açık şekilde gönderilmez. Hash değerine eklenerek sunucunun hash i kontrol etmesi sağlanır
+    switch (cardType)
+    {
+        case "Visa": cardType = "1"; break;
+        case "Master": cardType = "2"; break;
+    }
+}
+<div style="display: flex;justify-content: center;align-items: center;">
+    <div class="loader" style="margin: 5px;"></div>
+    <h2>İşleminiz Yapılıyor Lütfen Bekleyiniz.</h2>
+
+</div>
+<form id="sanalposform" method="post" action="@PosBankDetails.PosBank.PostUrl">
+    <table>
+        <tr>
+            <td align="center" colspan="2">
+                <input id="btnSubmit" type="submit" value="Gönder" style="display: none;" />
+            </td>
+        </tr>
+    </table>
+
+    <input type="hidden" name="Pan" value="@pan" />
+    <input type="hidden" name="Cvv2" value="@cv2" />
+    <input type="hidden" name="Expiry" value="@Expiry" />
+    <input type="hidden" name="CardType" value="@cardType" />
+    <input type="hidden" name="ShopCode" value="@shopCode" />
+    <input type="hidden" name="PurchAmount" value="@purchaseAmount" />
+    <input type="hidden" name="Currency" value="@currency" />
+    <input type="hidden" name="OrderId" value="@orderId" />
+    <input type="hidden" name="OkUrl" value="@okUrl" />
+    <input type="hidden" name="FailUrl" value="@failUrl" />
+    <input type="hidden" name="Rnd" value="@rnd" />
+    <input type="hidden" name="Hash" value="@hash" />
+    <input type="hidden" name="TxnType" value="@txnType" />
+    <input type="hidden" name="InstallmentCount" value="@installmentCount" />
+    <input type="hidden" name="SecureType" value="3DModel" />
+    <input type="hidden" name="Lang" value="tr" />
+</form>
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    document.getElementById("btnSubmit").click();
+    //});
+
+    function hideformfunc() {
+        var frm = document.getElementById("sanalposform");
+        frm.submit();
+    }
+    window.onload = hideformfunc;
+</script>

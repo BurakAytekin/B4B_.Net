@@ -1,0 +1,121 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="page page-announcements">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Announcements">Tanımlamalar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="pagecontent" ng-controller="integrationController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Data Paylaşım </strong>Ayarları</h1>
+                        <ul role="tablist" class="controls">
+                            <li role="presentation" class="active"><a href="#tList" aria-controls="tList" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-list mr-5"></i> List</a></li>
+                            <li role="presentation"><a href="#tDetail" aria-controls="tDetail" role="tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-plus mr-5"></i> Yeni Kayıt</a></li>
+                        </ul>
+                    </div>
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="tab-content">
+
+                                        <div id="tList" role="tabpanel" class="tab-pane active">
+                                            <div loading-container="tableParams.settings().$loading" id="divTable">
+                                                <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                        <td title="'Kategori'" filter="{Category: 'text'}" sortable="'Category'" class="text-left">
+                                                            {{row.Category}}
+                                                        </td>
+                                                        <td title="'Başlık'" filter="{Header: 'text'}" sortable="'Header'" class="text-left">
+                                                            {{row.Header}}
+                                                        </td>
+                                                        <td title="'Temsilci'" filter="{SalesmanName: 'text'}" sortable="'SalesmanName'" class="text-left">
+                                                            {{row.SalesmanName}}
+                                                        </td>
+                                                        <td title="'Tip'" filter="{TypeStr: 'text'}" sortable="'TypeStr'" class="text-center">
+                                                            {{row.TypeStr}}
+                                                        </td>
+                                                        <td title="'Yorumlar'" class="text-center">
+                                                            <button class="btn btn-default btn-xs" ng-click="openModal(row.Id)"><span class="glyphicon glyphicon-comment"></span></button>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-default btn-xs" ng-click="editBlogItem(row)"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                            <button class="btn btn-danger btn-xs" ng-click="askForDelete(row)"><span class="glyphicon glyphicon-trash"></span></button>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div id="tDetail" role="tabpanel" class="tab-pane">
+                                            <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                                <li role="presentation" class="active"><a href="#tGeneral" aria-controls="tGeneral" role="tab" data-toggle="tab"><span class="hidden-sm">Genel</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tIpAddress" aria-controls="tIpAddress" role="tab" data-toggle="tab"><span class="hidden-sm">İp Tanımları</span> <i class="fa fa-info-circle visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tRules"  aria-controls="tRules" role="tab" data-toggle="tab"><span class="hidden-sm">Kısıtlar</span> <i class="fa fa-calendar visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tColmns" aria-controls="tColmns" role="tab" data-toggle="tab"><span class="hidden-sm">Kolon Tanımları</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tTest" aria-controls="tTest" role="tab" data-toggle="tab"><span class="hidden-sm">Test</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                                <li role="presentation"><a href="#tDocument" aria-controls="tDocument" role="tab" data-toggle="tab"><span class="hidden-sm">Döküman</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                             </ul>
+                                            <div class="tab-content">
+                                                <div id="tGeneral" role="tabpanel" class="tab-pane active">
+                                                    tGeneral
+                                                </div>
+                                                <div id="tIpAddress" role="tabpanel" class="tab-pane">
+                                                    tIpAddress
+                                                </div>
+                                                <div id="tRules" role="tabpanel" class="tab-pane">
+                                                    tRules
+                                                </div>
+                                                <div id="tColmns" role="tabpanel" class="tab-pane">
+                                                    tColmns
+                                                </div>
+                                                <div id="tTest" role="tabpanel" class="tab-pane">
+                                                    tColmns
+                                                </div>
+                                                <div id="tDocument" role="tabpanel" class="tab-pane">
+                                                    tDocument
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+
+    </div>
+
+</div>
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/integration.js", HttpContext.Current.Request)"></script>
+}

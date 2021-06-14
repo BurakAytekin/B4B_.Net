@@ -1,0 +1,211 @@
+﻿@model B2b.Web.v4.Models.EntityLayer.EPayment
+
+<style type="text/css">
+    .panel .panel-heading span {
+        display: table;
+        margin: 0 auto;
+    }
+
+        .panel .panel-heading span span {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+            .panel .panel-heading span span:first-child {
+                text-align: right;
+                padding-right: 5px;
+            }
+
+            .panel .panel-heading span span:last-child {
+                text-align: left;
+                padding-left: 5px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+    .panel .table tbody tr td {
+        vertical-align: middle;
+    }
+
+        .panel .table tbody tr td:first-child {
+            font-weight: bold;
+        }
+
+    .panel .panel-footer span {
+        width: 100%;
+        display: table;
+    }
+
+        .panel .panel-footer span span {
+            display: table-cell;
+            width: auto;
+            vertical-align: middle;
+        }
+
+            .panel .panel-footer span span:first-child {
+                padding-right: 5px;
+                font-weight: bold;
+            }
+
+            .panel .panel-footer span span:last-child {
+                padding-left: 5px;
+            }
+
+    .panel .panel-footer hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+</style>
+<div class="container" ng-controller="resultController">
+    <div class="sm-margin"></div>
+    <div class="col-md-8 col-md-offset-2">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string panel_Class = Model.ProcReturnCode == "00" ? "panel-success" : "panel-danger";
+                }
+                <div class="panel @panel_Class">
+                    <!-- panel-danger -->
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">
+                        @if (Model.ProcReturnCode == "00")
+                        {
+                            <span>
+                                <span>
+                                    <i class="fa fa-check-circle-o fa-4x" aria-hidden="true"></i>
+                                </span>
+                                <span>İşlem Başarılı</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                <span>
+                                    <i class="fa fa-times-circle-o fa-4x" aria-hidden="true"></i>
+                                </span>
+                                <span>İşlem Başarısız</span>
+                            </span>
+                        }
+
+                    </div>
+                    @*<div class="panel-body">
+                            <p>...</p>
+                        </div>*@
+
+                    <!-- Table -->
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody>
+                            @if (Model.ProcReturnCode == "00")
+                            {
+                                <tr>
+                                    <td>Tarih</td>
+                                    <td>@Model.ProcessingDate.Value.ToShortDateString()</td>
+                                </tr>
+                                <tr>
+                                    <td>Provizyon No</td>
+                                    <td>@Model.AuthCode</td>
+                                </tr>
+                                <tr>
+                                    <td>Sonuç</td>
+                                    <td>@Model.Result</td>
+                                </tr>
+                                <tr>
+                                    <td>Cari Kod</td>
+                                    <td>@Model.Customer.Code</td>
+                                </tr>
+                                <tr>
+                                    <td>Cari</td>
+                                    <td>@Model.Customer.Name</td>
+                                </tr>
+                                <tr>
+                                    <td>K.Kart Sahibi</td>
+                                    <td>@Model.NameSurname</td>
+                                </tr>
+                                <tr>
+                                    <td>K.Kart No</td>
+                                    <td>@Model.CardNumber</td>
+                                </tr>
+                                <tr>
+                                    <td>Tutar</td>
+                                    <td>@Model.Amount</td>
+                                </tr>
+                                <tr>
+                                    <td>Taksit</td>
+                                    <td>@Model.Installment</td>
+                                </tr>
+                                <tr>
+                                    <td>Kullanılan Bonus</td>
+                                    <td>@Model.ExpendableBonus</td>
+                                </tr>
+                                <tr>
+                                    <td>Kullanılan Sanalpos</td>
+                                    <td>@Model.UseEPaymentType</td>
+                                </tr>
+                                if (!string.IsNullOrEmpty(Model.CampaignUrl))
+                                {
+                                    <tr>
+                                        <td colspan="2" class="text-center">
+                                            <a href="@Model.CampaignUrl" class="btn btn-success" target="_blank">
+                                                <span class="hidden-xs">Taksit Seçeneklerinizi Seçmek İçin Tıklayınız</span><span class="hide visible-xs">Taksit Seçeneklerinizi Seçin</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+
+                                <tr>
+                                    <td class="text-center">Yazdır</td>
+                                    <td class="text-center">
+                                        <a href="javascript:;" class="button text-danger" ng-click="showPdf(@Model.Id)">
+                                            <i class="fa fa-print fa-2x" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <span class="text-danger">
+                                            @Model.Result
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (@Model.ProcReturnCode == "00")
+                    {
+                        <div class="panel-footer">
+                            <span>
+                                <span>Açıklama: </span>
+                                <span>
+                                    Bu işlem ile @Model.Amount'lik tutar @Model.Installment taksit ile ilgi cari tarafından ödenmiştir.
+
+                                </span>
+                            </span>
+                            <hr />
+                            <span class="text-center text-success">
+                                (* Ek taksit ve ertelemeleriniz kredi kartı ekstrenize yansıyacaktır.)
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mPdfShow" tabindex="-1" role="dialog" aria-labelledby="mPdfShowLabel" aria-hidden="true" class="modal fade" style="min-height:800px;width:100%">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <iframe style="min-height:600px;width:100%" src="{{frameUrl}}"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    @Scripts.Render("~/Scripts/Pages/paymentResult.js")
+}

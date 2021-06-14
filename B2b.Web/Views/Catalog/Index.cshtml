@@ -1,0 +1,82 @@
+﻿@model List<B2b.Web.v4.Models.EntityLayer.CatalogLink>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<style type="text/css">
+    .catalog-full {
+        margin-bottom: 20px;
+    }
+
+    .catalog-main {
+        display: table;
+        width: 100%;
+        border: 1px solid #cfcfcf;
+    }
+
+        .catalog-main .catalog-image {
+            display: table;
+            padding: 10px;
+            width: 100%;
+            border-bottom: 1px solid #cfcfcf;
+        }
+
+            .catalog-main .catalog-image img {
+                width: 100%;
+                margin: 0 auto;
+                -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+                filter: grayscale(100%);
+            }
+
+        .catalog-main .catalog-brand {
+            display: table;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+
+            .catalog-main .catalog-brand span {
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+        .catalog-main:hover,
+        .catalog-main:hover .catalog-image {
+            border-color: #0f3488;
+        }
+
+            .catalog-main:hover .catalog-image img {
+                -webkit-filter: grayscale(0%); /* Safari 6.0 - 9.0 */
+                filter: grayscale(0%);
+            }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="md-margin"></div><!-- space -->
+            <header class="content-title">
+                <h1 class="title">Katalog</h1>
+            </header>
+        </div>
+    </div>
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 catalog-full">
+                <div class="catalog-main">
+                    <a href="@item.Link" target="_blank">
+                    @*   <div class="catalog-image"><img src="" /></div>*@
+                        <div class="catalog-brand"><span>@item.Header</span></div>
+                    </a>
+                </div>
+            </div>
+        }
+      
+
+
+    </div>
+
+</div>

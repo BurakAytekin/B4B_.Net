@@ -1,0 +1,374 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section cStyleCode{
+    <style type="text/css">
+        .list-group-wrapper,
+        .list-group-wrapper * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .list-group-wrapper {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+            list-style: none;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .list-group {
+            display: table;
+            position: relative;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            clear: both;
+        }
+
+            .list-group .list-group-item {
+                border-bottom: none;
+            }
+
+                .list-group .list-group-item:last-child {
+                    border-bottom: 1px solid #ddd;
+                }
+
+            .list-group .dd-placeholder:first-child {
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder:last-child {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder + .list-group-item {
+                border-top: none;
+            }
+
+        .list-group-item,
+        .dd-empty,
+        .dd-placeholder {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .dd-placeholder,
+        .dd-empty {
+            padding: 0;
+            min-height: 30px;
+            background: #f2fbff;
+            border: 1px dashed #b6bcbf;
+        }
+
+        .dd-empty {
+            min-height: 100px;
+            background-color: #e5e5e5;
+            background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 1px dashed #bbbbbb;
+        }
+
+        .dd-dragel {
+            position: absolute;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .list-group.dd-dragel {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+            .list-group.dd-dragel .list-group-item {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+        .dd-dragel > .list-group-item {
+            margin: 0;
+            padding: 0 !important;
+        }
+
+            .dd-dragel > .list-group-item .checkbox.checkbox-custom {
+                margin: 0;
+            }
+    </style>
+}
+
+<div class="page page-campaign" id="div1">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">Sync Ayarları</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="syncSettingsController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Transfer </strong>Tipi</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="iProductCampaignType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Transfer Tipi</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="comboTransferType" style="width: 100%;" class="form-control"  ng-model="selectedType" ng-change="loadSettingsItem(-1,selectedType)">
+                                                <option value disabled >Seçiniz</option>
+                                                <option value="{{row.Id}}" ng-repeat="row in trasnferTypeList">{{row.Name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-right">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <button type="button" class="btn btn-success" ng-click="addTransferType()">Yeni Tip Tanımla</button>
+                                            <button type="button" class="btn btn-lightred" ng-click="deleteTransferType(false)">Transfer Tipi Sil</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-6">
+                                  
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">{{}} Transfer Detayları</h3>
+                                            </div>
+
+                                            <div class="panel-body p-10">
+
+
+                                                <div  class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Firma</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <select ng-model="selectedItem.SettingsId" style="width: 100%;" class="form-control" ng-options="item.Id as item.CompanyName for item in companySettingsList"></select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Dakika</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.Minute" placeholder="10" class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Baş. Zamanı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                                        Saat:
+                                                    </div>
+                                                     <div class="col-xs-12 col-sm-12 col-md-2">
+                                                        <input  type="text" ng-model="selectedItem.StartHour" placeholder="7" class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                                        Dakika:
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                                        <input type="text" ng-model="selectedItem.StartMinute" placeholder="30" class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bitiş Zamanı</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                                        Saat:
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                                        <input type="text" ng-model="selectedItem.EndHour" placeholder="21" class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                                        Dakika:
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                                        <input type="text" ng-model="selectedItem.EndMinute" placeholder="30" class="form-control eryaz-numeric-input-onlynumber" />
+                                                    </div>
+                                                </div>
+                                                <div  class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Export View</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group">
+                                                            <input type="text" ng-model="selectedItem.ExportView" placeholder="Export View Giriniz..." class="form-control">
+                                                            <span class="input-group-btn">
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.ExportViewType == 0}" ng-click="selectedItem.ExportViewType = 0" data-toggle="active" data-type="radio" >View</label>
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.ExportViewType == 1}" data-toggle="active" ng-click="selectedItem.ExportViewType = 1" data-type="radio">Query</label>
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.ExportViewType == 2}" data-toggle="active" ng-click="selectedItem.ExportViewType = 2" data-type="radio">Servis</label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Insert Tablo</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.InsertTable" placeholder="Insert Tablo Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Sync Sp</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.SyncProcedureName" placeholder="Sync Sp Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Sp ERP Tr. Öncesi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group">
+                                                            <input type="text" ng-model="selectedItem.BeforeErpProcedure" placeholder="Sp ERP Tr. Öncesi Giriniz..." class="form-control">
+                                                            <span class="input-group-btn">
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.BeforeErpProcedureType == 0}" ng-click="selectedItem.BeforeErpProcedureType = 0" data-toggle="active" data-type="radio">Procedure</label>
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.BeforeErpProcedureType == 1}" data-toggle="active" ng-click="selectedItem.BeforeErpProcedureType = 1" data-type="radio">Query</label>
+                                                            </span>
+                                                        </div>
+                                                    
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Sp ERP Tr. Sonu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group">
+                                                            <input type="text"  ng-model="selectedItem.AfterErpProcedure" placeholder="Sp ERP Tr. Sonu Giriniz..."  class="form-control">
+                                                            <span class="input-group-btn">
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.AfterErpProcedureType == 0}" ng-click="selectedItem.AfterErpProcedureType = 0" data-toggle="active" data-type="radio">Procedure</label>
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.AfterErpProcedureType == 1}" data-toggle="active" ng-click="selectedItem.AfterErpProcedureType = 1" data-type="radio">Query</label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Arama Motoru Index</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.Solr" placeholder="Arama Motoru Index Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaign-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Günde Bir Defa</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="iOneToday-check" type="checkbox"  ng-model="selectedItem.IsOneToday"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                         
+                                                </div>
+                                                <div  class="form-group mb-5">
+                                                    <label for="iCampaign-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Aktif</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="isActive-check" type="checkbox"  ng-model="selectedItem.IsActive"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div id="pnlCampaignDescription" class="form-group mb-5">
+                                                    <label for="iCampaignDescription" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Açıklama</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <textarea id="iCampaignDescription" ng-model="selectedItem.Notes" rows="5" cols="0" placeholder="Lütfen, Transfer Hakkında Notunuzu Varsa Giriniz..." class="form-control"></textarea>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Oluşturan</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.CreateSalesman.Name" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Oluşturma Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.CreateDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Güncelleyen</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.EditSalesman.Name" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Güncelleme Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.EditDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="panel-footer text-right">
+                                                <div class="btn-group btn-group-rounded">
+                                                    <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a"  ><i class="fa fa-close"></i> <span>İptal</span></button>
+
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="SaveSettings()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+@section cScriptCode{
+<script src="@Url.ContentVersioned("/Scripts/Admin/syncSettings.js", HttpContext.Current.Request)"></script>
+}
+

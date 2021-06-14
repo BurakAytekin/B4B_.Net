@@ -1,0 +1,227 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+        <div class="page page-currency" ng-controller="suggestionRequestController">
+            <div class="pageheader">
+                <h2><span></span></h2>
+
+                <div class="page-bar hide">
+                    <ul class="page-breadcrumb">
+                        <li>
+                            <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                        </li>
+                        <li>
+                            <a href="/Admin/Customers/DealerRequest">İstek Öneri Şikayet</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- page content -->
+            <div class="pagecontent">
+                <div class="row">
+                    <!-- col -->
+                    <div class="col-sm-12">
+                        <!-- tile -->
+                        <section class="tile">
+                            <!-- tile header -->
+                            <div class="tile-header bg-blue dvd dvd-btm">
+                                <h1 class="custom-font"><strong>İstek / Öneri / Şikayet</strong>Listesi</h1>
+                                <ul class="controls">
+                                    <li class="dropdown">
+                                        <a role="button" tabindex="0" class="dropdown-toggle settings" data-toggle="dropdown">
+                                            <i class="fa fa-cog"></i>
+                                            <i class="fa fa-spinner fa-spin"></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                            <li>
+                                                <a role="button" tabindex="0" class="tile-toggle">
+                                                    <span class="minimize"><i class="fa fa-angle-down"></i>&nbsp;&nbsp;&nbsp;Küçült</span>
+                                                    <span class="expand"><i class="fa fa-angle-up"></i>&nbsp;&nbsp;&nbsp;Büyült</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a role="button" tabindex="0" class="tile-refresh">
+                                                    <i class="fa fa-refresh"></i> Yenile
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a role="button" tabindex="0" class="tile-fullscreen">
+                                                    <i class="fa fa-expand"></i> Tam Ekran
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="remove"><a role="button" tabindex="0" class="tile-close"><i class="fa fa-times"></i></a></li>
+                                </ul>
+                            </div>
+
+
+                            <!-- tile body -->
+                            <div class="tile-body p-10">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div>
+                                            <div class="tile-body p-10">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div>
+                                                            <div loading-container="tableParams.settings().$loading">
+                                                                <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                                    <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+
+                                                                        <td title="'Talep Türü'" filter="{SubjectTypeTitle: 'text'}" sortable="'Type'" ng-form="SubjectTypeTitle" demo-tracked-table-cell>
+                                                                            <span>{{row.SubjectTypeTitle}}</span>
+                                                                        </td>
+
+                                                                        <td title="'Per. Kodu'" filter="{CustomerCode: 'text'}" sortable="'CustomerCode'" ng-form="CustomerCode" demo-tracked-table-cell>
+                                                                            <span>{{row.CustomerCode}}</span>
+                                                                        </td>
+
+                                                                        <td title="'Per. Ünvanı'" filter="{CustomerName: 'text'}" sortable="'CustomerName'" ng-form="CustomerName" demo-tracked-table-cell>
+                                                                            <span>{{row.CustomerName}}</span>
+                                                                        </td>
+
+                                                                        <td title="'Başlık'" filter="{Header: 'text'}" sortable="'Header'" ng-form="Header" demo-tracked-table-cell>
+                                                                            <span>{{row.Header}}</span>
+                                                                        </td>
+
+
+                                                                        <td title="'Cevaplandı'" demo-tracked-table-cell>
+                                                                            <label class="checkbox checkbox-custom-alt checkbox-tables">
+                                                                                <input type="checkbox" ng-checked="row.EditDateStr !== '' && row.EditDateStr !== undefined"  disabled /><i></i>
+                                                                            </label>
+                                                                        </td>
+
+                                                                        <td title="'Oluşturulma Tarihi'" sortable="'CreateDateStr'" ng-form="CreateDateStr" demo-tracked-table-cell>
+                                                                            <span>{{row.CreateDateStr}}</span>
+                                                                        </td>
+
+                                                                        <td title="''" class="actions" style="min-width:75px;text-align:left !important" data-title-text="">
+
+
+                                                                            <button type="submit" class="btn btn-rounded btn-success btn-sm" ng-click="openDetailModal(row)" style="width:75px;">
+                                                                                <i class="fa fa-edit"></i>
+                                                                                İncele
+                                                                            </button>
+                                                                              
+
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- /tile -->
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+            </div>
+
+
+            <!--ÖNERİ ŞİKAYET CEVAPLA MODAL-->
+            <div id="modal-contact-request" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        @*<div class="modal-header">
+                <h4 class="modal-title" id="classModalLabel">
+                    Başlık
+                </h4>
+            </div>*@
+                        <div class="modal-body" style="background-color:#f5f5f5">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered" style="background-color:white">
+                                        <tbody>
+
+                                            <tr>
+                                                <td style="font-weight:bold; width:175px">Oluşturulma Tarihi</td>
+                                                <td>{{selectedSuggestionRequest.CreateDateStr}}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold; width:175px">Cevaplanma Tarihi</td>
+                                                <td>{{selectedSuggestionRequest.EditDateStr}}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold; width:175px">Talep Türü</td>
+                                                <td>{{selectedSuggestionRequest.SubjectTypeTitle}}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold; width:175px">Perakendeci Unvan</td>
+                                                <td>{{selectedSuggestionRequest.CustomerName}}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold; width:175px">Perakendeci Email</td>
+                                                <td>{{selectedSuggestionRequest.Email}}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold">Perakendeci Kodu</td>
+                                                <td>{{selectedSuggestionRequest.CustomerCode}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold">Mesaj Başlık</td>
+                                                <td>{{selectedSuggestionRequest.Header}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold">Mesaj</td>
+                                                <td>{{selectedSuggestionRequest.Message}}</td>
+
+                                            </tr>
+                                            <tr ng-show="selectedSuggestionRequest.SubjectTypeId == 2">
+                                                <td style="font-weight:bold">Ürün Kodu</td>
+                                                <td>{{selectedSuggestionRequest.ProductCode}}</td>
+                                            </tr>
+                                                
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered" style="background-color:white">
+                                        <tbody>
+
+                                            <tr>
+                                                <td style="font-weight:bold; width:175px;color:#5cb85c;">Cevap</td>
+                                                <td >
+                                                    <textarea class="form-control" ng-model="selectedSuggestionRequest.Answer" ng-disabled="selectedSuggestionRequest.EditDateStr !== '' && selectedSuggestionRequest.EditDateStr !== undefined" placeholder="Cevabı yazınız..." cols="20" rows="5"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="1000"></textarea>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" ng-click="sendAnswer()" data-dismiss="modal" ng-if="selectedSuggestionRequest.EditDateStr == '' || selectedSuggestionRequest.EditDateStr == undefined">
+                                <i class="fa fa-reply"></i> Cevapla
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/suggestionRequest.js", HttpContext.Current.Request)"></script>

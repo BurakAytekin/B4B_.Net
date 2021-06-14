@@ -1,0 +1,1352 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@using B2b.Web.v4.Models.EntityLayer
+
+@{ List<AuthorityGroup> AuthoritySalesman = (List<AuthorityGroup>)HttpContext.Current.Session["AuthoritySalesman"]; }
+
+@{
+    ViewBag.Title = "Ürünler";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section cStyleLibrary{
+    @Styles.Render("~/Scripts/Admin/vendor/summernote/summernote.css")
+    @Styles.Render("~/Scripts/Admin/vendor/animsition/css/animsition.css")
+    @Styles.Render("~/Scripts/Admin/vendor/magnific-popup/magnific-popup.css")
+    @Styles.Render("~/Content/fine-uploader/fine-uploader-new.css")
+}
+
+@section cStyleCode{
+    @*<style type="text/css">
+            .form-modal {
+                position: relative;
+                clear: both;
+            }
+
+                .form-modal .row.row-fixed {
+                    position: relative;
+                    /*position: absolute;*/
+                    top: 0;
+                }
+
+            .modal-body {
+                height: auto !important;
+                max-height: calc(100vh - 340px) !important;
+                overflow-y: auto;
+            }
+
+            .form-modal .row.row-overflow tbody {
+                height: auto !important;
+                max-height: calc(100vh - 340px) !important;
+                overflow-y: auto;
+            }
+        </style>*@
+
+    <style type="text/css">
+        .ws-nowrap {
+            max-width: 100px;
+            white-space: nowrap;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .ellipsis {
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+        }
+
+        .alternativeProdcut {
+            background-color: #C9302C !important;
+            color: white !important;
+        }
+
+        #trigger-upload {
+            color: white;
+            background-color: #00ABC7;
+            font-size: 14px;
+            padding: 7px 20px;
+            background-image: none;
+        }
+
+        #fine-uploader-manual-trigger .qq-upload-button {
+            margin-right: 15px;
+        }
+
+        #fine-uploader-manual-trigger .buttons {
+            width: 36%;
+        }
+
+        #fine-uploader-manual-trigger .qq-uploader .qq-total-progress-bar-container {
+            width: 60%;
+        }
+    </style>
+}
+
+<div ng-controller="IndexController">
+    <div class="page page-products">
+        <div class="pageheader">
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Products">Ürünler</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- page content -->
+        <div class="pagecontent">
+            <div class="row">
+                <!-- col -->
+                <div class="col-sm-12">
+                    <!-- tile -->
+                    <section class="tile">
+                        <!-- tile header -->
+                        <div class="tile-header bg-blue dvd dvd-btm">
+                            <h1 class="custom-font"><strong>Ürün </strong>Ara</h1>
+                        </div>
+                        <!-- /tile header -->
+                        <!-- tile widget -->
+                        <div class="tile-widget">
+                            <div class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="iProductCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kod</label>
+                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                <div class="input-group">
+                                                    <input id="iProductCode" type="text" ng-keypress="keypressEventSearch($event,searchCriteria,1)" ng-model="searchCriteria.Code" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" placeholder="Lütfen, Ürün Kodu Giriniz..." class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button ng-click="ProductSelectOpen(searchCriteria);" class="btn btn-block btn-primary btn-rounded">
+                                                            <i class="fa fa-search"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="iProductName" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Adı</label>
+                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                <div class="input-group">
+                                                    <input id="iProductName" type="text" ng-model="searchCriteria.Name" ng-keypress="keypressEventSearch($event,searchCriteria,2)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" placeholder="Lütfen, Ürün Adı Giriniz..." class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button ng-click="ProductSelectOpen(searchCriteria);" class="btn btn-block btn-primary btn-rounded">
+                                                            <i class="fa fa-search"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <button ng-click="clear();" class="btn btn-block btn-danger btn-rounded">
+                                                    <span class="hidden-sm">Temizle</span> <i class="fa fa-trash-o visible-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <button ng-click="ProductSelectOpen(searchCriteria);" class="btn btn-block btn-primary btn-rounded">
+                                                    <span class="hidden-sm">Gelişmiş Arama</span> <i class="fa fa-search visible-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="text-orange">Ürün No:</dt>
+                                            <dd> {{selectedProduct.Id}}</dd>
+                                            <dt class="text-orange">Entegre No:</dt>
+                                            <dd>{{selectedProduct.EntegreId}}</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile widget -->
+
+                        <hr class="m-0" />
+
+                        <!-- tile body -->
+                        <div class="tile-body p-10">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <!-- #region Nav Tabs -->
+                                    <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                        @if (AuthoritySalesman.Where(x => x.Id == 46).Count() == 0)
+                                        {
+                                            <li role="presentation" class="active"><a href="#tProductGeneralInformation" aria-controls="tProductGeneralInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Genel</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 47).Count() == 0)
+                                        {
+
+                                            <li role="presentation"><a href="#tProductPriceInformation" ng-click="getProductPrices();" aria-controls="tProductPriceInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Fiyat Bilgileri</span> <i class="fa fa-money visible-sm"></i></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 48).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductAdditionalInformation" aria-controls="tProductAdditionalInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Ek Bilgiler</span> <i class="fa fa-info-circle visible-sm"></i></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 49).Count() == 0)
+                                        {
+
+                                            <li role="presentation"><a href="#tProductStockMovements" aria-controls="tProductStockMovements" role="tab" data-toggle="tab"><span class="hidden-sm">Stok Har.</span> <i class="fa fa-calendar visible-sm"></i></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 50).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductEquivalentProducts" ng-click="getAlternativeProducts();" aria-controls="tProductEquivalentProducts" role="tab" data-toggle="tab"><span class="hidden-sm">Eşdeğer Ürünler</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 51).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductRelatedProducts" ng-click="getLinkedProducts();" aria-controls="tProductRelatedProducts" role="tab" data-toggle="tab"><span class="hidden-sm">İlgili Ürünler</span> <i class="fa fa-files-o visible-sm"></i></a></li>
+                                        }
+                                        @*@if (AuthoritySalesman.Where(x => x.Id == 52).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductReferenceNumbers" aria-controls="tProductReferenceNumbers" role="tab" data-toggle="tab"><span class="hidden-sm">Referans Numaraları</span> <i class="fa fa-copyright visible-sm"></i></a></li>
+                                        }*@
+                                        @*@if (AuthoritySalesman.Where(x => x.Id == 53).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductVehicleInformation" ng-click="getVehicleBrandModel();" aria-controls="tProductVehicleInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Araç Bilgileri</span> <i class="fa fa-truck visible-sm"></i></a></li>
+                                        }*@
+                                        @if (AuthoritySalesman.Where(x => x.Id == 54).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductImages" ng-click="getPictureActive();" aria-controls="tProductImages" role="tab" data-toggle="tab"><span class="hidden-sm">Görseller</span> <i class="fa fa-image visible-sm"></i></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 55).Count() == 0)
+                                        {
+                                            <li role="presentation"><a href="#tProductDescription" aria-controls="tProductDescription" role="tab" data-toggle="tab"><span class="hidden-sm">Açıklama</span> <i class="fa fa-file-text-o visible-sm"></i></a></li>
+                                        }
+                                    </ul>
+                                    <!-- #endregion -->
+                                    <!-- #region Tab Panes -->
+                                    <div class="tab-content">
+                                        <div id="tProductGeneralInformation" role="tabpanel" class="tab-pane active">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Üretici Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductManufacturer" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Üretici</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductManufacturer" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.Manufacturer" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" placeholder="Lütfen, Üretici Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="productManufacturerOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductManufacturerCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Üretici Kodu</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductManufacturerCode" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.ManufacturerCode" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" placeholder="Lütfen, Üretici Kodu Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductUnit" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Birim</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductUnit" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.Unit" placeholder="Lütfen, Birim Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="10" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Grup Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductGroup1" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Grup 1</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductGroup1" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.ProductGroup1" placeholder="Lütfen, Grup 1 Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="productGroupsOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductGroup2" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Grup 2</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductGroup2" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.ProductGroup2" placeholder="Lütfen, Grup 2 Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="productGroupsOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductGroup3" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Grup 3</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductGroup3" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.ProductGroup3" placeholder="Lütfen, Grup 3 Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="productGroupsOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Raf Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductShelfAddress" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Raf Adresi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductShelfAddress" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.ShelfAddress" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" placeholder="Lütfen, Raf Adresi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Diğer Bilgiler</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Koşul Kodu</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" ng-model="selectedProduct.RuleCode" placeholder="Lütfen, Koşul Kodu Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="productRuleOpen(0);" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductManufacturer" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Min. Sip. Adedi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductMinOrderNumber" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.MinOrder" placeholder="Lütfen, Min. Sip. Adeti Giriniz..." class="form-control text-center" />
+                                                                        <label class="input-group-addon checkbox checkbox-custom-alt checkbox-custom-sm" title="Katlanarak Gitsin">
+                                                                            <input id="iProductMinOrderNumberFold" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedProduct.IsPackIncrease">&nbsp;&nbsp;&nbsp;&nbsp; <i></i> Kat. Git.
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductVat" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kdv</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductVat" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.VatRate" placeholder="Lütfen, Kdv Giriniz..." class="form-control eryaz-numeric-input" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductCriticalLevel" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kritik Seviye</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductCriticalLevel" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.CriticalLevel" placeholder="Lütfen, Kritik Seviye Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Ürün Özellikleri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <div class="col-sm-6">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductNewProduct" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedProduct.NewProduct"><i></i> Yeni Ürün
+                                                                    </label>
+                                                                </div>
+
+                                                                <div class="col-sm-6">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductActive" type="checkbox" ng-disabled="lockUpdate" ng-model="selectedProduct.IsActive"><i></i> Aktif
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Bakiye Bilgileri</h3>
+                                                        </div>
+
+                                                        <ul class="list-group" ng-disabled="lockUpdate">
+                                                            <li class="list-group-item" ng-dblclick="updateUiWarehouse(warehouse);" ng-repeat="warehouse in warehousesList">
+                                                                <span class="badge">{{warehouse.QuantityOnWay}}</span>
+                                                                <span class="badge">{{warehouse.Quantity}}</span>
+                                                                {{warehouse.Warehouse.Name}}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled hide">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Fiyat Bilgileri</h3>
+                                                            <p>Çoklu fiyat girmek isteyen müşterilerde bu alan aktif edilebilir. Not: bu paragrafı siliniz.</p>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductSalesPrice1" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı 1</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductSalesPrice1" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.SalesPrice1" placeholder="Lütfen, Satış Fiyatı 1 Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductSalesPrice2" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı 2</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductSalesPrice2" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.SalesPrice2" placeholder="Lütfen, Satış Fiyatı 2 Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductSalesPrice3" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı 3</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductSalesPrice3" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.SalesPrice3" placeholder="Lütfen, Satış Fiyatı 3 Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductSalesPrice4" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı 4</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductSalesPrice4" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.SalesPrice4" placeholder="Lütfen, Satış Fiyatı 4 Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductSalesPrice5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı 5</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductSalesPrice5" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.SalesPrice5" placeholder="Lütfen, Satış Fiyatı 5 Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductPurchasePrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Alış Fiyatı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductPurchasePrice" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.PurchasePrice" placeholder="Lütfen, Alış Fiyatı Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductCost" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Maliyet</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductCost" type="text" ng-disabled="lockUpdate" ng-model="searchCriteria.Cost" placeholder="Lütfen, Maliyet Giriniz..." class="form-control text-right" />
+                                                                        <div class="input-group-btn">
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money"></i> <span class="caret"></span></button>
+                                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                                <li><a href="javascript:;"><i class="fa fa-try"></i> <span>Türk Lirası</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-eur"></i> <span>Euro</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-usd"></i> <span>Dolar</span></a></li>
+                                                                                <li class="divider m-0"></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-gbp"></i> <span>Sterlin</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-rub"></i> <span>Ruble</span></a></li>
+                                                                                <li><a href="javascript:;"><i class="fa fa-jpy"></i> <span>Japon Yeni</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductPriceInformation" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-12">
+                                                    @*<table id="tProductPriceInformationTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>*@
+
+                                                    <div class="brn-group pull-right">
+                                                        <button class="btn btn-default" ng-if="isEditingPrice" ng-click="cancelChangesPrice()">
+                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                        </button>
+
+                                                        <button class="btn btn-default" ng-click="addPrice()">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div loading-container="tableParamsPrice.settings().$loading">
+                                                        <table ng-table="tableParamsPrice" class="table table-condensed table-bordered table-striped" ng-form="tableFormPrice" disable-filter="isAddingPrice" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="rowFormPrice" demo-tracked-table-row="row">
+                                                                <td title="'Fiyat No'" ng-switch="row.isEditingPrice" ng-class="PriceNumber.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="PriceNumber" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.PriceNumber}}</span>
+                                                                    <div class="controls" ng-class="PriceNumber.$invalid && PriceNumber.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <input type="text" name="PriceNumber" ng-model="row.PriceNumber" class="editable-input form-control input-sm" required ng-keypress="keypressPriceEvent($event,row,rowFormPrice)" />
+                                                                    </div>
+                                                                </td>
+                                                                <td title="'Fiyat Tipi'" ng-switch="row.isEditingPrice" ng-class="TypeStr.$dirty ? 'bg-warning text-center' : ' text-center'" ng-form="TypeStr" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.TypeStr}}</span>
+                                                                    <div class="controls" ng-class="TypeStr.$invalid && TypeStr.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <select ng-model="row.Type" style="width: 100%;" class="form-control" ng-options="item.Type as item.TypeStr for item in priceType"></select>
+                                                                    </div>
+                                                                </td>
+                                                                <td title="'Fiyat'" ng-switch="row.isEditingPrice" ng-class="Price.$dirty ? 'bg-warning text-right' : 'text-right'" ng-form="Price" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Price}}</span>
+                                                                    <div class="controls" ng-class="Price.$invalid && Price.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <input type="number" name="PaymentType" ng-model="row.Price" class="editable-input form-control input-sm" required ng-keypress="keypressPriceEvent($event,row,rowFormPrice)" />
+                                                                    </div>
+                                                                </td>
+                                                                <td title="'Döviz'" ng-switch="row.isEditingPrice" ng-class="Currency.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Currency" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Currency}}</span>
+                                                                    <div class="controls" ng-class="Currency.$invalid && Currency.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <select id="bankName-select{{row.Currency}}" ng-model="row.Currency" style="width: 100%;" class="form-control" ng-options="item.Type as item.Type for item in currencyList"></select>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-primary btn-xs" ng-click="savePrice(row, rowFormPrice)" ng-if="row.isEditingPrice" ng-disabled="rowFormPrice.$pristine || rowFormPrice.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                                    <button class="btn btn-default btn-xs" ng-click="cancelPrice(row, rowFormPrice)" ng-if="row.isEditingPrice"><span class="glyphicon glyphicon-remove"></span></button>
+                                                                    <button class="btn btn-default btn-xs" ng-click="row.isEditingPrice = true" ng-if="!row.isEditingPrice"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                                    <button class="btn btn-danger btn-xs" ng-click="askForDeletePrice(row)" ng-if="!row.isEditingPrice"><span class="glyphicon glyphicon-trash"></span></button>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductAdditionalInformation" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-8">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Ek Bilgiler</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductName2" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">İsim 2</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductName2" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.Name2" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" placeholder="Lütfen, İsim 2 Bilgisini Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductInPackageQuantity" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Paket İçi Miktar</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductInPackageQuantity" ng-disabled="lockUpdate" ng-model="selectedProduct.QuantityInPackage" type="text" placeholder="Lütfen, Paket İçi Miktar Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation1" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">1. Ek Bilgi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductOtherInformation1" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" ng-model="selectedProduct.Notes1" placeholder="Lütfen, 1. Ek Bilgiyi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation2" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">2. Ek Bilgi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductOtherInformation2" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" ng-model="selectedProduct.Notes2" placeholder="Lütfen, 2. Ek Bilgiyi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation3" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">3. Ek Bilgi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductOtherInformation3" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" ng-model="selectedProduct.Notes3" placeholder="Lütfen, 3. Ek Bilgiyi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation4" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">4. Ek Bilgi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductOtherInformation4" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" ng-model="selectedProduct.Notes4" placeholder="Lütfen, 4. Ek Bilgiyi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductOtherInformation5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">5. Ek Bilgi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductOtherInformation5" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" ng-model="selectedProduct.Notes5" placeholder="Lütfen, 5. Ek Bilgiyi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Hacim Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductWidth" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Genişlik</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductWidth" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.Width" placeholder="Lütfen, Genişlik Bilgisi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductHeight" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Yükseklik</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductHeight" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.Height" placeholder="Lütfen, Yükseklik Bilgisi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductLength" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Uzunluk</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductLength" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.Lenght" placeholder="Lütfen, Uzunluk Bilgisi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductGrossWeight" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Brüt Ağırlık</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductGrossWeight" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.GrossWeight" placeholder="Lütfen, Brüt Ağırlık Bilgisi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductNetWeight" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Net Ağırlık</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductNetWeight" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.NetWeight" placeholder="Lütfen, Net Ağırlık Bilgisi Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Cep İskonto</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">İskonto %</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductSpecialDiscount" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.SpecialDiscount" placeholder="Lütfen, İskonto O. Giriniz... Örn: 100,00" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Karlılık Oranı</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductProfitability" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Karlılık %</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductProfitability" type="text" ng-disabled="lockUpdate" ng-model="selectedProduct.ProfitRate" placeholder="Lütfen, Karlılık O. Giriniz... Örn: 0,00" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Bakiye Pozisyonları</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu1" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedProduct.QuantityType" ng-change="selectedProduct.QuantityType=0" ng-checked="selectedProduct.QuantityType==0" value="0" type="radio"><i></i> Bakiye Durumuna Göre
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu2" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedProduct.QuantityType" ng-change="selectedProduct.QuantityType=1" ng-checked="selectedProduct.QuantityType==1" value="1" type="radio"><i></i> Sürekli Mevcut Göster
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu3" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedProduct.QuantityType" ng-change="selectedProduct.QuantityType=2" ng-checked="selectedProduct.QuantityType==2" value="2" type="radio"><i></i> Sürekli Mevcut Değil Göster
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu4" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedProduct.QuantityType" ng-change="selectedProduct.QuantityType=3" ng-checked="selectedProduct.QuantityType==3" value="3" type="radio"><i></i> Yolda
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu5" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedProduct.QuantityType" ng-change="selectedProduct.QuantityType=4" ng-checked="selectedProduct.QuantityType==4" value="4" type="radio"><i></i> Sipariş Üzerine
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductStockMovements" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-12">
+                                                    <table id="tProductStockMovementsTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductEquivalentProducts" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-12">
+                                                    <div class="brn-group pull-right">
+                                                        <button class="btn btn-default" ng-if="tableAlternativeisEditing" ng-click="tableAlternativecancelChanges()">
+                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                        </button>
+
+                                                        <button class="btn btn-default" ng-click="tableAlternativeadd()">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div loading-container="tableAlternativeParams.settings().$loading">
+                                                        <table ng-table="tableAlternativeParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row" ng-class="{'alternativeProdcut':row.Id==row.GroupId}">
+                                                                <td title="'Üretici'" filter="{Manufacturer: 'text'}" sortable="'Manufacturer'" ng-switch="row.isEditing" ng-class="Manufacturer.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Manufacturer" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Manufacturer}}</span>
+                                                                </td>
+                                                                <td title="'Üretici Kodu'" filter="{ManufacturerCode: 'text'}" sortable="'ManufacturerCode'" ng-switch="row.isEditing" ng-class="ManufacturerCode.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ManufacturerCode" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.ManufacturerCode}}</span>
+                                                                </td>
+                                                                <td title="'Ürün Adı'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Name" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                                </td>
+                                                                <td title="'Birim'" filter="{Unit: 'text'}" sortable="'Unit'" ng-switch="row.isEditing" ng-class="Unit.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Unit" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Unit}}</span>
+                                                                </td>
+                                                                <td title="'Satış Fiyatı 1'" filter="{SalesPrice1: 'text'}" sortable="'SalesPrice1'" ng-switch="row.isEditing" ng-class="SalesPrice1.$dirty ? 'bg-warning text-right' : 'text-right'" ng-form="SalesPrice1" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.SalesPrice1}}</span>
+                                                                </td>
+                                                                <td title="'No'" filter="{Id: 'number'}" sortable="'Id'" ng-switch="row.isEditing" ng-class="Id.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Id" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Id}}</span>
+                                                                </td>
+                                                                <td title="'Eş Değer No'" filter="{GroupId: 'number'}" sortable="'GroupId'" ng-switch="row.isEditing" ng-class="GroupId.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="GroupId" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.GroupId}}</span>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div class="btn-group btn-group-xs mb-0" ng-if="!row.isEditing &&(row.GroupId!=row.Id)">
+                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                            <i class="fa fa-gears"></i> <span class="caret"></span>
+                                                                        </button>
+
+                                                                        <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                            <li ng-click="updateAlternativeProducts(row.GroupId,row.Id)"><a href="javascript:;"><i class="fa fa-cube" ng-if="!row.isEditing &&(row.GroupId!=row.Id)"></i> Ana Ürün</a></li>
+                                                                            <li ng-click="tableAlternativeaskForDelete(row)" ng-if="!row.isEditing &&(row.GroupId!=row.Id)"><a href="javascript:;"><i class="fa fa-trash-o"></i> Sil</a></li>
+                                                                            <li ng-click="changeSelectedProduct(row.Id)"><a href="javascript:;"><i class="fa fa-arrow-right" ng-if="!row.isEditing &&(row.GroupId!=row.Id)"></i> Ürüne Git</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductRelatedProducts" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                @*<table id="tProductRelatedProductsTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>*@
+
+                                                <div class="col-sm-12">
+                                                    <div class="brn-group pull-right">
+                                                        <button class="btn btn-default" ng-click="tableLinkedProdcutadd()">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div loading-container="tableLinkedProductParams.settings().$loading">
+                                                        <table ng-table="tableLinkedProductParams" class="table table-condensed table-bordered table-striped" ng-form="tableLinkedForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="rowLinkedForm" demo-tracked-table-row="row">
+                                                                <td title="'Üretici'" filter="{Manufacturer: 'text'}" sortable="'Manufacturer'" ng-switch="row.isEditing" ng-class="Manufacturer.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Manufacturer" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Manufacturer}}</span>
+                                                                </td>
+                                                                <td title="'Kod'" filter="{code: 'text'}" sortable="'ManufacturerCode'" ng-switch="row.isEditing" ng-class="Code.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Code" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Code}}</span>
+                                                                </td>
+                                                                <td title="'Ürün Adı'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Name" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                                </td>
+                                                                <td title="'Birim'" filter="{Unit: 'text'}" sortable="'Unit'" ng-switch="row.isEditing" ng-class="Unit.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Unit" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Unit}}</span>
+                                                                </td>
+                                                                <td title="'Satış Fiyatı 1'" filter="{SalesPrice1: 'text'}" sortable="'SalesPrice1'" ng-switch="row.isEditing" ng-class="SalesPrice1.$dirty ? 'bg-warning' : ''" ng-form="SalesPrice1" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text" ng-bind-html="row.SalesPrice1"></span>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div class="btn-group btn-group-xs mb-0">
+                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                            <i class="fa fa-gears"></i> <span class="caret"></span>
+                                                                        </button>
+
+                                                                        <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                            <li ng-click="tableLinkedaskForDelete(row)"><a href="javascript:;"><i class="fa fa-trash-o"></i> Sil</a></li>
+                                                                            <li ng-click="changeSelectedProduct(row.Id)"><a href="javascript:;"><i class="fa fa-arrow-right"></i> Ürüne Git</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductReferenceNumbers" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-12 pr-0 pl-0">
+                                                    <!-- #region Nav Tabs -->
+                                                    <ul role="tablist" class="nav nav-tabs nav-justified tabs-dark">
+                                                        <li role="presentation"><a href="#tProductOemNumbers" ng-disabled="lockUpdate" ng-click="getOemNoList();" aria-controls="tProductOemNumbers" role="tab" data-toggle="tab"><span class="hidden-sm">Oem Numaraları</span> <i class="fa fa-copyright visible-sm"></i></a></li>
+                                                        <li role="presentation"><a href="#tProductRivalCodes" ng-disabled="lockUpdate" ng-click="getRivalCodeList();" aria-controls="tProductRivalCodes" role="tab" data-toggle="tab"><span class="hidden-sm">Rakip Kodları</span> <i class="fa fa-exchange visible-sm"></i></a></li>
+                                                    </ul>
+                                                    <!-- #endregion -->
+                                                    <!-- #region Tab Panes -->
+                                                    <div class="tab-content p-0">
+                                                        <div id="tProductOemNumbers" role="tabpanel" class="tab-pane p-0">
+                                                            <div class="row form-horizontal form-group-sm">
+                                                                <div class="col-sm-12">
+                                                                    <div class="brn-group pull-right">
+                                                                        <button class="btn btn-default" ng-if="isEditingOem" ng-click="cancelChangesOem()">
+                                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                                        </button>
+
+                                                                        <button class="btn btn-default" ng-click="addOem()">
+                                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                                        </button>
+                                                                    </div>
+
+                                                                    @*<table id="tProductOemNumbersTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>*@
+
+                                                                    <div loading-container="tableOemParams.settings().$loading">
+                                                                        <table ng-table="tableOemParams" class="table table-condensed table-bordered table-striped" ng-form="tableOemForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                                                <td title="'Araç Marka'" filter="{Brand: 'text'}" sortable="'Brand'" ng-switch="row.isEditingOem" ng-class="Brand.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Brand" demo-tracked-table-cell>
+                                                                                    <span ng-switch-default class="editable-text">{{row.Brand}}</span>
+                                                                                    <div class="controls" ng-class="Brand.$invalid && Brand.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                                        <input type="text" name="Brand" ng-model="row.Brand" class="typeaheadOemOrRival typeahead editable-input form-control input-sm" required ng-keypress="keypressOemEvent($event,row)" />
+                                                                                        @*<select id="bankName-select{{row.Id}}" name="bankName-select" ng-model="row.Brand" style="width: 100%;" class="form-control" ng-options="item.Brand as item.Brand for item in bransList"></select>*@
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td title="'OemNo '" filter="{OemNo: 'text'}" sortable="'OemNo'" ng-switch="row.isEditingOem" ng-class="OemNo.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="OemNo" demo-tracked-table-cell>
+                                                                                    <span ng-switch-default class="editable-text">{{row.OemNo}}</span>
+                                                                                    <div class="controls" ng-class="OemNo.$invalid && OemNo.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                                        <input type="text" name="OemNo" ng-model="row.OemNo" class="editable-input form-control input-sm" required ng-keypress="keypressOemEvent($event,row)" />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    <button class="btn btn-primary btn-xs" ng-click="saveOem(row, rowForm)" ng-if="row.isEditingOem" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                                                    <button class="btn btn-default btn-xs" ng-click="cancelOem(row, rowForm)" ng-if="row.isEditingOem"><span class="glyphicon glyphicon-remove"></span></button>
+                                                                                    <button class="btn btn-default btn-xs" ng-click="editingChangeOem(row)" ng-if="!row.isEditingOem"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                                                    <button class="btn btn-danger btn-xs" ng-click="askForDeleteOem(row)" ng-if="!row.isEditingOem"><span class="glyphicon glyphicon-trash"></span></button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="tProductRivalCodes" role="tabpanel" class="tab-pane p-0">
+                                                            <div class="row form-horizontal form-group-sm">
+                                                                <div class="col-sm-12">
+                                                                    @*<table id="tProductRivalCodesTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>*@
+                                                                    <div class="brn-group pull-right">
+                                                                        <button class="btn btn-default" ng-if="isEditingRival" ng-click="cancelChangesRival()">
+                                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                                        </button>
+
+                                                                        <button class="btn btn-default" ng-click="addRival()">
+                                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                                        </button>
+                                                                    </div>
+
+                                                                    @*<table id="tProductOemNumbersTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>*@
+
+                                                                    <div loading-container="tableRivalParams.settings().$loading">
+                                                                        <table ng-table="tableRivalParams" class="table table-condensed table-bordered table-striped" ng-form="tableRivalForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                                            <tr ng-repeat="row in $data" ng-form="rowFormRival" demo-tracked-table-row="row">
+                                                                                <td title="'Araç Marka'" filter="{Brand: 'text'}" sortable="'Brand'" ng-switch="row.isEditingRival" ng-class="Brand.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="BrandRival" demo-tracked-table-cell>
+                                                                                    <span ng-switch-default class="editable-text">{{row.Brand}}</span>
+                                                                                    <div class="controls" ng-class="BrandRival.$invalid && BrandRival.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                                        <input type="text" name="Brand" ng-model="row.Brand" class="typeaheadOemOrRival typeahead editable-input form-control input-sm" required ng-keypress="keypressRivalEvent($event,row)" />
+                                                                                        @*<select id="bankName-select{{row.Id}}" name="bankName-select" ng-model="row.Brand" style="width: 100%;" class="form-control" ng-options="item.Brand as item.Brand for item in bransList"></select>*@
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td title="'OemNo '" filter="{OemNo: 'text'}" sortable="'OemNo'" ng-switch="row.isEditingRival" ng-class="OemNo.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="OemNoRival" demo-tracked-table-cell>
+                                                                                    <span ng-switch-default class="editable-text">{{row.OemNo}}</span>
+                                                                                    <div class="controls" ng-class="OemNoRival.$invalid && OemNoRival.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                                        <input type="text" name="OemNo" ng-model="row.OemNo" class="editable-input form-control input-sm" required ng-keypress="keypressRivalEvent($event,row)" />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    <button class="btn btn-primary btn-xs" ng-click="saveRival(row, rowForm)" ng-if="row.isEditingRival" ng-disabled="rowFormRival.$pristine || rowFormRival.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                                                    <button class="btn btn-default btn-xs" ng-click="cancelRival(row, rowForm)" ng-if="row.isEditingRival"><span class="glyphicon glyphicon-remove"></span></button>
+                                                                                    <button class="btn btn-default btn-xs" ng-click="editingChangeRival(row)" ng-if="!row.isEditingRival"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                                                    <button class="btn btn-danger btn-xs" ng-click="askForDeleteRival(row)" ng-if="!row.isEditingRival"><span class="glyphicon glyphicon-trash"></span></button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- #endregion -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductVehicleInformation" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                @*<table id="tProductVehicleInformationTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>*@
+
+                                                <div class="col-sm-12">
+                                                    <div class="brn-group pull-right">
+                                                        <button class="btn btn-default" ng-if="tableVehicleisEditing" ng-click="tableVehiclecancelChanges()">
+                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                        </button>
+
+                                                        <button class="btn btn-default" ng-click="tableVehicleadd()">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="mb-10"></div>
+
+                                                    <div loading-container="tableVehicleParams.settings().$loading">
+                                                        <table ng-table="tableVehicleParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                                <td title="'Araç Marka'" filter="{Brand: 'text'}" sortable="'Brand'" ng-switch="row.isEditing" ng-class="Brand.$dirty ? 'bg-warning' : ''" ng-form="Brand" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Brand}}</span>
+                                                                </td>
+                                                                <td title="'Araç model'" filter="{Model: 'text'}" sortable="'Model'" ng-switch="row.isEditing" ng-class="Model.$dirty ? 'bg-warning' : ''" ng-form="Model" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Model}}</span>
+                                                                </td>
+                                                                <td title="'Araç Tip'" filter="{Type: 'text'}" sortable="'Type'" ng-switch="row.isEditing" ng-class="Type.$dirty ? 'bg-warning' : ''" ng-form="Type" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Type}}</span>
+                                                                </td>
+                                                                <td title="'Tarih'" filter="{Date: 'text'}" sortable="'Date'" ng-switch="row.isEditing" ng-class="Date.$dirty ? 'bg-warning' : ''" ng-form="Date" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Date}}</span>
+                                                                </td>
+                                                                <td title="'Motor Kodu'" filter="{EngineCode: 'text'}" sortable="'EngineCode'" ng-switch="row.isEditing" ng-class="EngineCode.$dirty ? 'bg-warning' : ''" ng-form="EngineCode" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.EngineCode}}</span>
+                                                                </td>
+                                                                <td title="'Hp'" filter="{Hp: 'number'}" sortable="'Hp'" ng-switch="row.isEditing" ng-class="Hp.$dirty ? 'bg-warning' : ''" ng-form="Hp" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Hp}}</span>
+                                                                </td>
+                                                                <td title="'Kw'" filter="{Kw: 'number'}" sortable="'Kw'" ng-switch="row.isEditing" ng-class="Kw.$dirty ? 'bg-warning' : ''" ng-form="Kw" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Kw}}</span>
+                                                                </td>
+                                                                <td>
+                                                                    <button class="btn btn-danger btn-xs" ng-click="tableVehicleaskForDelete(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductImages" role="tabpanel" class="tab-pane">
+                                            <div class="col-md-12">
+                                                <div class="col-md-6">
+                                                    <div class="warranty-form-row">
+                                                        <div class="warranty-form-column warranty-form-column-heading">
+                                                            <label> Dosya Seçimi</label>
+                                                            <span class="separator">:</span>
+                                                            <label> Filigran</label>
+                                                            <span class="separator">:</span>
+                                                            <input type="text" ng-keypress="reloadImageArea();" ng-model="txtwatermark" />
+                                                        </div>
+
+                                                        <div class="warranty-form-column warranty-form-column-content">
+                                                            <div id="fine-uploader-manual-trigger"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <script type="text/template" id="qq-template-manual-trigger">
+                                                        <div class="qq-uploader-selector qq-uploader uploaderClass" qq-drop-area-text="Dosyaları Sürükle Bırak">
+                                                            <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+                                                                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+                                                            </div>
+
+                                                            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                                                                <span class="qq-upload-drop-area-text-selector"></span>
+                                                            </div>
+
+                                                            <div class="buttons">
+                                                                <div class="qq-upload-button-selector qq-upload-button">
+                                                                    <div>Dosya Açınız</div>
+                                                                </div>
+
+                                                                <button type="button" id="trigger-upload" class="btn btn-primary">
+                                                                    <i class="icon-upload icon-white"></i>Yüklemeyi Başlat
+                                                                </button>
+                                                            </div>
+
+                                                            <span class="qq-drop-processing-selector qq-drop-processing">
+                                                                <span>Processing dropped files...</span>
+                                                                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+                                                            </span>
+
+                                                            <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+                                                                <li>
+                                                                    <div class="qq-progress-bar-container-selector">
+                                                                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                                                                    </div>
+                                                                    <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                                                                    <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+                                                                    <span class="qq-upload-file-selector qq-upload-file"></span>
+                                                                    <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
+                                                                    @*<input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">*@
+                                                                    <span class="qq-upload-size-selector qq-upload-size"></span>
+                                                                    <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">İptal</button>
+                                                                    <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Tekrar Dene</button>
+                                                                    <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Sil</button>
+                                                                    <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                                                                </li>
+                                                            </ul>
+
+                                                            <dialog class="qq-alert-dialog-selector">
+                                                                <div class="qq-dialog-message-selector"></div>
+
+                                                                <div class="qq-dialog-buttons">
+                                                                    <button type="button" class="qq-cancel-button-selector">Kapat</button>
+                                                                </div>
+                                                            </dialog>
+
+                                                            <dialog class="qq-confirm-dialog-selector">
+                                                                <div class="qq-dialog-message-selector"></div>
+
+                                                                <div class="qq-dialog-buttons">
+                                                                    <button type="button" class="qq-cancel-button-selector">Evet</button>
+                                                                    <button type="button" class="qq-ok-button-selector">Hayır</button>
+                                                                </div>
+                                                            </dialog>
+
+                                                            <dialog class="qq-prompt-dialog-selector">
+                                                                <div class="qq-dialog-message-selector"></div>
+
+                                                                <input type="text" />
+
+                                                                <div class="qq-dialog-buttons">
+                                                                    <button type="button" class="qq-cancel-button-selector">İptal</button>
+                                                                    <button type="button" class="qq-ok-button-selector">Onay</button>
+                                                                </div>
+                                                            </dialog>
+                                                        </div>
+                                                    </script>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <!-- row -->
+                                                    <div class="row mix-grid">
+                                                        <div class="gallery" data-lightbox="gallery">
+                                                            <!-- col -->
+                                                            <div ng-repeat="pictureItem in pictureList" style="min-width:250px;" class="col-md-3 col-sm-4 mb-20 mix mix_all" on-finish-render="ngRepeatFileListFinished">
+                                                                <div class="img-container">
+                                                                    <img class="img-responsive" alt="" ng-src="{{pictureItem.Path}}">
+                                                                    <div class="img-details">
+
+                                                                        <div class="img-controls">
+                                                                            <a href="javascript:;" class="img-select" ng-click="setIsDefault(pictureItem)">
+                                                                                <i class="fa fa-circle-o"></i>
+                                                                                <i class="fa fa-circle"></i>
+                                                                            </a>
+
+                                                                            <a href="{{pictureItem.Path}}" target="_blank" class="img-link">
+                                                                                <i class="fa fa-download"></i>
+                                                                            </a>
+
+
+                                                                            <a href="javascript:;" class="img-more" ng-click="deletePicture(false,pictureItem)">
+                                                                                <i class="fa fa-trash-o"></i>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- /col -->
+                                                        </div>
+                                                    </div>
+                                                    <!-- /row -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tProductDescription" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal">
+                                                <div class="col-sm-12">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Açıklama</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductDescription" class="col-xs-12 col-sm-3 col-md-2 control-label text-left hidden-xs hidden-sm">Açıklama</label>
+                                                                <div class="col-xs-12 col-sm-9 col-md-10">
+                                                                    <textarea id="iProductDescription" rows="5" ng-disabled="lockUpdate" ng-model="selectedProduct.Notes" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="5000" placeholder="Lütfen, Açıklama Giriniz..." class="form-control"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- #endregion -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+                        <!-- tile footer -->
+                        <div class="tile-footer dvd dvd-top">
+                            <div class="row">
+                                <div class="col-sm-2 hidden-xs">
+                                    <button class="btn btn-default btn-lg btn-rounded btn-ef btn-ef-5 btn-ef-5b" ng-click="getNextProduct(0);"><i class="fa fa-arrow-left"></i> <span>Önceki Ürün</span></button>
+                                </div>
+
+                                <div class="col-sm-8 text-center">
+                                    <div class="btn-group btn-group-rounded btn-group-lg">
+                                        <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="changeLockUpdate();"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                        <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a"><i class="fa fa-close"></i> <span>İptal</span></button>
+                                        <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="saveProduct()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                        <button class="btn btn-success btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="clear()"><i class="fa fa-plus-square"></i> <span>Yeni</span></button>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2 text-right">
+                                    <button class="btn btn-default btn-lg btn-rounded btn-ef btn-ef-5 btn-ef-5b" ng-click="getNextProduct(1);"><i class="fa fa-arrow-right"></i> <span>Sonraki Ürün</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile footer -->
+                    </section>
+                    <!-- /tile -->
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+
+    <!-- #region Custom Html Dircetive Modals -->
+    <custom-product-select></custom-product-select>
+    <custom-item-product-select></custom-item-product-select>
+    <custom-product-groups-select></custom-product-groups-select>
+    <custom-product-manufacturer-select></custom-product-manufacturer-select>
+    <custom-product-rule-select></custom-product-rule-select>
+    <custom-vehicle-select></custom-vehicle-select>
+    <!-- #endregion -->
+</div>
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/summernote/summernote.min.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/typeahead/typeahead.bundle.min.js")
+    @Scripts.Render("~/Content/fine-uploader/jquery.fine-uploader.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/animsition/js/jquery.animsition.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/screenfull/screenfull.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/magnific-popup/jquery.magnific-popup.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/mixitup/jquery.mixitup.js")
+}
+
+@section cScriptCode{
+
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/products.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productGroupsSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productItemSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productManufacturerSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productRuleSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/vehicleSelect.js", HttpContext.Current.Request)"></script>
+
+
+
+
+    <script type="text/javascript">
+        //$.extend($.fn.dataTable.defaults, {
+        //    responsive: true
+        //});
+
+        function fireScrollOnHover() {
+            $(".scroll-on-hover").mouseover(function () {
+                $(this).removeClass("ellipsis");
+                var maxscroll = $(this).width();
+                var speed = maxscroll * 10;
+                $(this).animate({
+                    scrollLeft: maxscroll
+                }, speed, "linear");
+            });
+
+            $(".scroll-on-hover").mouseout(function () {
+                $(this).stop();
+                $(this).addClass("ellipsis");
+                $(this).animate({
+                    scrollLeft: 0
+                }, 'slow');
+            });
+        }
+
+        $(window).load(function () {
+            //firelModalProductSearchLoad();
+
+            $('#select-all').change(function () {
+                if ($(this).is(":checked")) {
+                    $('#usersList .selectMe').prop('checked', true);
+                }
+                else {
+                    $('#usersList .selectMe').prop('checked', false);
+                }
+            });
+        });
+    </script>
+}

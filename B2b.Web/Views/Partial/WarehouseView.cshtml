@@ -1,0 +1,26 @@
+﻿@if (@ViewBag.WareHouseProductViewList.Count  > 0)
+{
+
+    <table class="table table-bordered table-tooltip">
+        <tbody>
+
+            @foreach (var item in @ViewBag.WareHouseProductViewList)
+            {
+                <tr>
+                    <td>@Html.Raw(@item.Name)</td>
+                    <td class="text-right">
+                        <span class="fa-stack fa-sm">
+                            <i class="fa calendar-text"></i>
+                            <i class="@Html.Raw(@item.AvailabilityCss)"></i>
+                        </span>
+                        <span>
+                           @Html.Raw(@item.AvailabilityText)
+                        </span>
+
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

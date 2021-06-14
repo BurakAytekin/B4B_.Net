@@ -1,0 +1,176 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@*@Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/jquery")*@
+
+
+<div class="tab-container clearfix">
+    <ul class="nav-tabs clearfix">
+        <li class="active"><a href="#alternative_@ViewBag.ProductId" data-toggle="tab" onclick="getAlternativeList()">Alternatif</a></li>
+        <li><a href="#linked_@ViewBag.ProductId" data-toggle="tab" onclick="getLinkedList()">İlgili Ürünler</a></li>
+        <li class=""><a href="#oem_@ViewBag.ProductId" data-toggle="tab" onclick="getOemRivalCodeList(0)">Oem</a></li>
+        <li class=""><a href="#rivalcode_@ViewBag.ProductId" data-toggle="tab" onclick="getOemRivalCodeList(1)">Rakip</a></li>
+        @*<li class=""><a href="#vehicle_@ViewBag.ProductId" data-toggle="tab" onclick="getVehicleList()">Kullanıldığı Araçlar</a></li>*@
+        <li class=""><a href="#productorder_@ViewBag.ProductId" data-toggle="tab" onclick="getProductOrderList()">Stok Hareketleri</a></li>
+        <li class=""><a href="#explanation_@ViewBag.ProductId" data-toggle="tab" onclick="getProductExplanation()">Detay</a></li>
+        @if (ViewBag.CampaignType > 0)
+        {
+            <li class=""><a href="#campaign_@ViewBag.ProductId" data-toggle="tab" onclick="getCampaignExplanation()">Kampanya Bilgisi</a></li>
+        }
+
+    </ul>
+
+    <div class="tab-content clearfix">
+        <div class="tab-pane active" id="alternative_@ViewBag.ProductId">
+
+            <table id="pDataTableAltenative" class="table table-striped table-hover table-custom">
+                <!---table-condensed table-striped table-hover-->
+                <thead>
+                    <tr>
+                        <th>Kodu</th>
+                        <th>Adı</th>
+                        <th>Üretici</th>
+                        <th>Üretici Kodu</th>
+                        <th>Birim</th>
+                        <th><i class="fa fa-picture-o fa-lg"></i></th>
+                        <th>İsk</th>
+                        <th class="text-right">Size Özel Fiyat</th>
+                        <th class="text-center">Depolar</th>
+                        <th>Sip.Mik</th>
+
+                    </tr>
+                </thead>
+                <tbody id="tbResultDetail_@ViewBag.ProductId"></tbody>
+            </table>
+
+        </div><!-- End .tab-pane -->
+        <div class="tab-pane" id="linked_@ViewBag.ProductId">
+
+            <table id="pDataTableLinked" class="table table-striped table-hover table-custom">
+                <!---table-condensed table-striped table-hover-->
+                <thead>
+                    <tr>
+                        <th>Kodu</th>
+                        <th>Adı</th>
+                        <th>Üretici</th>
+                        <th>Üretici Kodu</th>
+                        <th>Birim</th>
+                        <th><i class="fa fa-picture-o fa-lg"></i></th>
+                        <th>İsk</th>
+                        <th class="text-right">Size Özel Fiyat</th>
+                        <th class="text-center">Depolar</th>
+                        <th>Sip.Mik</th>
+
+                    </tr>
+                </thead>
+                <tbody id="tbResultLinkedDetail_@ViewBag.ProductId"></tbody>
+            </table>
+
+        </div><!-- End .tab-pane -->
+
+        <div class="tab-pane" id="oem_@ViewBag.ProductId">
+            <table id="pDataTableOem" class="table table-striped table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>Marka</th>
+                        <th>Oem</th>
+                        <th class="text-right">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="tbResultOem_@ViewBag.ProductId"></tbody>
+            </table>
+        </div><!-- End .tab-pane -->
+
+        <div class="tab-pane" id="rivalcode_@ViewBag.ProductId">
+            <table id="pDataTableRivalCode" class="table table-striped table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>Marka</th>
+                        <th>Rakip Kod</th>
+                        <th class="text-right">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="tbResultRivalCode_@ViewBag.ProductId"></tbody>
+            </table>
+        </div><!-- End .tab-pane -->
+        @*<div class="tab-pane" id="vehicle_@ViewBag.ProductId">
+            <table id="pDataTableVehicle" class="table table-striped table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>Araç Marka</th>
+                        <th>Araç Model</th>
+                        <th>Araç Tipi</th>
+                        <th>Yıl</th>
+                        <th>Motor Kodu</th>
+                        <th>Hp</th>
+                        <th>Kw</th>
+                    </tr>
+                </thead>
+                <tbody id="tbResultVehicle_@ViewBag.ProductId"></tbody>
+            </table>
+        </div>*@<!-- End .tab-pane -->
+        <div class="tab-pane" id="productorder_@ViewBag.ProductId">
+            <div class="btnMain">
+                <div class="export-items">
+                    <a class="btn btn-custom-2 btn-md"><i class="fa fa-file-excel-o fa-lg" aria-hidden="true"></i></a>
+                    <a class="btn btn-custom-2 btn-md"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>
+                </div>
+                <div class="us-form">
+                    <select id="comboYear_@ViewBag.ProductId"></select>
+                </div>
+            </div>
+            <table id="pDataTableProductOrder" class="table table-striped table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Evrak No</th>
+                        <th>Ürün Kodu</th>
+                        <th>Ürün Adı</th>
+                        <th>Üretici</th>
+                        <th>Miktar</th>
+                        <th>Birim</th>
+                        <th>Fiyat</th>
+                        <th>Toplam</th>
+                        <th>Isk1</th>
+                        <th>Isk2</th>
+                        <th>Isk3</th>
+                        <th>Isk4</th>
+
+                    </tr>
+                </thead>
+                <tbody id="tbResultProductOrder_@ViewBag.ProductId"></tbody>
+            </table>
+        </div><!-- End .tab-pane -->
+        <div class="tab-pane" id="explanation_@ViewBag.ProductId">
+
+        </div><!-- End .tab-pane -->
+
+        <div class="tab-pane" id="campaign_@ViewBag.ProductId">
+
+        </div><!-- End .tab-pane -->
+
+    </div><!-- End .tab-content -->
+</div>
+
+<script src="~/Scripts/date.format.js"></script>
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/productDetail.js", HttpContext.Current.Request)"></script>
+
+
+<script type="text/javascript">
+    var productId;
+    var groupId;
+    var productCode;
+    var selectedProduct;
+
+    $(document).ready(function () {
+
+        productId =   @ViewBag.ProductId ;
+        groupId = @ViewBag.GroupId;
+        productCode = '@ViewBag.ProductCode';
+        getAlternativeList();
+    });
+</script>
+

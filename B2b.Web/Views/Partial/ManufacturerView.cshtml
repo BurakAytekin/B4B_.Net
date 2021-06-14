@@ -1,0 +1,28 @@
+﻿
+<div class="col-md-12">
+    <div id="brand-slider-container" class="carousel-wrapper">
+        <header class="content-title">
+            <div class="title-bg">
+                <h2 class="title font-size-25">Üreticiler</h2>
+            </div><!-- End .title-bg -->
+        </header>
+        <div class="carousel-controls">
+            <div id="brand-slider-prev" class="crsl-btn">
+                <i class="fa fa-angle-left fa-lg"></i>
+            </div><!-- End .carousel-prev -->
+            <div id="brand-slider-next" class="crsl-btn crsl-space">
+                <i class="fa fa-angle-right fa-lg"></i>
+            </div><!-- End .carousel-next -->
+        </div><!-- End .carousel-controllers -->
+
+        <div class="row">
+            <div class="brand-slider owl-carousel">
+                @foreach (var item in @ViewBag.Manufacturers)
+                {
+                    <a href="#"><img src="@item.PicturePathShow" onerror="this.onerror = null; this.src ='Content/images/error.png'" alt="@item.Header"></a>
+                }
+            </div><!-- End .brand-slider -->
+        </div><!-- End .row -->
+    </div><!-- End #brand-slider-container -->
+</div>
+

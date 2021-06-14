@@ -1,0 +1,33 @@
+﻿<div id="mManufacturerSelect" tabindex="-1" role="dialog" aria-labelledby="mManufacturerSelectLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Üreticiler</h3>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="row form-horizontal form-group-sm">
+                        <div class="col-md-12">
+                            <table id="tProductManufacturerTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>İşlem</th>
+                                        <th>Adı</th>
+                                        <th>Kayıt Sayısı</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr on-finish-render="ngProductManufacturerFinished" ng-repeat="prodcutManufacturer in productManufacturerList">
+                                        <td><button class="btn btn-xs btn-rounded btn-primary" ng-click="manufacturerSelect(prodcutManufacturer);">Seçiniz</button></td>
+                                        <td>{{prodcutManufacturer.Name}}</td>
+                                        <td>{{prodcutManufacturer.RecordCount}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

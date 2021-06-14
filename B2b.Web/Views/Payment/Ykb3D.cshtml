@@ -1,0 +1,108 @@
+﻿
+@Styles.Render("~/bundles/css")
+@using B2b.Web.v4.Models.EntityLayer
+@using B2b.Web.v4.Models.Helper
+@using B2b.Web.v4.Models.Log.Entites
+@using _PosnetDotNetTDSOOSModule
+@{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+@{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+@{
+    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    string Installment = string.Empty;
+    string amounts = PosPaymentValue.TotalPrice.ToString("N2").Replace(".", ",");
+    string date = PosPaymentValue.ExpYear.Trim() + PosPaymentValue.ExpMounth.Trim();
+
+    if (amounts.Contains(",") || amounts.Contains("."))
+    {
+        amounts = amounts.Replace(",", "");
+        amounts = amounts.Replace(".", "");
+        amounts = amounts.Trim();
+    }
+
+    if (PosPaymentValue.Installment == 1)
+    {
+        Installment = "00";
+    }
+    else
+    { Installment = PosPaymentValue.Installment.ToString(); }
+    long i = 1;
+    foreach (byte b in Guid.NewGuid().ToByteArray())
+    {
+        i *= ((int)b + 1);
+    }
+
+    string strOrderID = string.Format("{0:x}", i - DateTime.Now.Ticks);
+    strOrderID =strOrderID + strOrderID.Substring(0, 4);
+    C_PosnetOOSTDS posnetOOSTDSObj = new C_PosnetOOSTDS();
+    string custName = PosPaymentValue.NameSurname;
+    string xid = strOrderID;
+
+    string ccno = PosPaymentValue.CardNumber;
+    string expdate = date;
+    string cvv = PosPaymentValue.Cvc;
+
+    string amount = amounts;
+    string currencyCode = "TL";
+    string instalment = Installment;
+    string tranType = "Sale";
+
+    string useJokerVadaa="";
+    if (PosPaymentValue.KOICode != "0" && !string.IsNullOrEmpty(PosPaymentValue.KOICode)) { useJokerVadaa = PosPaymentValue.KOICode;}
+
+    posnetOOSTDSObj.SetMid(PosBankDetails.StoreNumber);
+    posnetOOSTDSObj.SetTid(PosBankDetails.TerminalNo);
+    posnetOOSTDSObj.SetPosnetID(PosBankDetails.PosnetId);
+    posnetOOSTDSObj.SetKey(PosBankDetails._3dSecureKey);
+
+
+    if ((!posnetOOSTDSObj.CreateTranRequestDatas(custName, amount, currencyCode, instalment, xid, tranType, ccno, expdate, cvv)))
+    {
+        Response.Write("Posnet Data 'ları olusturulamadi (" + posnetOOSTDSObj.GetResponseText() + ")<br>");
+        Response.Write("Error Code : " + posnetOOSTDSObj.GetResponseCode());
+
+        Logger.LogPayment(LogPaymentType.Error, "Posnet Data ları olusturulamadi Hatası", "MdStatus :" + posnetOOSTDSObj.GetTDSMDStatus() + " ErrorMessage : " + posnetOOSTDSObj.GetResponseText()
+                   + " XML Request : " + posnetOOSTDSObj.GetXMLRequest() + " XML Response : " + posnetOOSTDSObj.GetXMLResponse(), PosPaymentValue.PaymentId, Bank.YAPIKREDI.ToString(),
+                 -1, -1, false);
+        //     string script = "<script type='text/javascript' language='javascript'>window.onload=parent.pageReload('" + paymentId + "');</script>";
+
+        Response.Redirect(GlobalSettings.B2bAddress + "Payment/Error/?paymentId=" + PosPaymentValue.PaymentId,false);
+        Response.End();
+        return;
+
+    }
+    var getPosnetDatas = posnetOOSTDSObj.GetPosnetData();
+    var getSign = posnetOOSTDSObj.GetSign();
+    var getPosnetData2 = posnetOOSTDSObj.GetPosnetData2();
+    string returnUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Ykb3DP";
+    string urls = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Ykb3D";
+
+}
+
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <div class="loader" style="margin: 5px;"></div>
+    <h2>İşleminiz Yapılıyor Lütfen Bekleyiniz.</h2>
+
+</div>
+<form id="ykb3DForm" action="@PosBankDetails.PosBank.PostUrl" name="ykb3DForm" method="post">
+    <input type="hidden" name="posnetData" id="posnetData" value="@getPosnetDatas" />
+    <input type="hidden" name="posnetData2" id="posnetData2" value="@getPosnetData2" />
+    <input type="hidden" name="digest" id="digest" value="@getSign"/>
+    <input type="hidden" name="mid" id="mid" value="@PosBankDetails.StoreNumber" />
+    <input type="hidden" name="posnetID" id="posnetID" value="@PosBankDetails.PosnetId" />
+    <input type="hidden" name="vftCode" id="vftCode" value="K001" />
+    <input type="hidden" name="koiCode" id="koiCode" />
+    <input type="hidden" name="merchantReturnURL" id="merchantReturnURL" value="@returnUrl" />
+    <!-- Static Parameters -->
+    <input type="hidden" name="lang" id="lang" value="tr"/>
+    <input type="hidden" name="url" id="url" value="@urls"/>
+    <input type="hidden" name="openANewWindow" id="openANewWindow" value="0" />
+    <input type="hidden" name="useJokerVadaa" id="useJokerVadaa" value="@useJokerVadaa"/>
+</form>
+<script type="text/javascript">
+    function hideformfunc() {
+        var frm = document.getElementById("ykb3DForm");
+        frm.submit();
+    }
+    window.onload = hideformfunc;
+</script>

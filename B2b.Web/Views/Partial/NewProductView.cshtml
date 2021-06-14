@@ -1,0 +1,79 @@
+﻿@using System.Collections.Generic
+@using B2b.Web.v4.Models.EntityLayer
+
+@model List<Product>
+
+<style type="text/css">
+    .new-product-list .item.item-hover {
+        border: 1px solid #e8e8e8;
+        margin-bottom: 0px;
+    }
+
+        .new-product-list .item.item-hover h3 {
+            color: #444645;
+            font-size: 15px;
+            text-transform: none;
+            font: 400 15px 'PT Sans', sans-serif;
+            margin-bottom: 0px;
+        }
+</style>
+
+<div class="widget latest-posts">
+    <header class="content-title">
+        <div class="title-bg">
+            <h2 class="title font-size-25">Yeni Ürünler</h2>
+        </div><!-- End .title-bg -->
+    </header>
+
+    <div class="new-product-slider flexslider sidebarslider">
+        <ul class="new-product-list clearfix">
+            @foreach (Product item in Model)
+            {
+                <li>
+                    <div class="item item-hover">
+                        <div class="item-image-wrapper">
+                            <figure class="item-image-container">
+                                <a href="/Search?searchText=@item.Code">
+                                    <img src="@item.PicturePath" alt="@item.Code" class="item-image">
+                                    <img src="@item.PicturePath" alt="@item.Code" class="item-image-hover">
+                                </a>
+                            </figure>
+                            <div class="item-price-container">
+                                <span class="old-price">@Html.Raw(@item.PriceListCustomerStr)</span>
+                                <span class="item-price">@Html.Raw(@item.PriceNetCustomerStr)</span>
+                            </div><!-- End .item-price-container -->
+                            <span class="new-rect">Yeni</span>
+                            <span class="discount-rect">@item.DiscountStr</span>
+                        </div><!-- End .item-image-wrapper -->
+                        <div class="item-meta-container">
+                            <h3 class="item-name"><a href="product.html"><span>@item.Name</span></a></h3>
+                            <hr />
+                            <div class="item-detail-part"><span>Üretici</span><span>@item.Manufacturer</span></div>
+                            <div class="item-detail-part"><span>Kodu</span><span>@item.Code</span></div>
+                            <hr />
+                            <div class="item-action">
+                                <div class="item-action-inner">
+                                    <input type="number" id="qtyIyy-@item.Id" placeholder="@item.MinOrder" class="form-control" />
+                                </div>
+                                <a class="btn btn-custom-3" href="javascript:;" onclick="angular.element(document.getElementById('homecontent')).scope().askAvailable(@item.Id,6);">
+                                    <i class="fa fa-shopping-cart fa-lg"></i> Sepete Ekle
+                                </a>
+                                @*<div class="item-action-inner">
+                                        <input class="form-control" type="text" placeholder="@item.MinOrder" value="@item.MinOrder" style="text-align:center"  />
+                                        <a href="#" class="btn btn-primary"><i class="fa fa-flag fa-lg"></i></a>
+                                        <a href="#" class="btn btn-warning"><i class="fa fa-compress fa-lg"></i></a>
+                                    </div>*@<!-- End .item-action-inner -->
+                            </div><!-- End .item-action -->
+                        </div><!-- End .item-meta-container -->
+                    </div><!-- End .item -->
+                </li>
+            }
+        </ul>
+    </div><!-- End .latest-posts-slider -->
+</div><!-- End .widget -->
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        fireItemHoverAnimation('ul.new-product-list li .item-hover');
+    });
+</script>

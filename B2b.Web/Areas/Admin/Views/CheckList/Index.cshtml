@@ -1,0 +1,181 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "CheckList Tanımı";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{
+    <style type="text/css">
+        .confirm {
+            color: green;
+            font-weight: bold;
+        }
+
+        .notNeed {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+
+}
+
+<div class="page page-currency" ng-controller="checkListController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="javascript:;"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Tanımlamalar</a>
+                </li>
+                <li>
+                    <a href="javascript:;">CheckList</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+
+
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12 col-md-12">
+                <!-- tile -->
+                <div class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>CheckList </strong>Bilgileri</h1>
+                        <ul class="controls">
+                            @*<li role="presentation"><a ng-click="updateCurrency()" aria-expanded="true"><i class="fa fa-refresh"></i> <strong>Şimdi Güncelle</strong></a></li>*@
+                            @*<li role="presentation"><a ng-click="openModal('Add',null)" aria-expanded="true"><i class="fa fa-plus"></i> <strong>Yeni</strong></a></li>*@
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body">
+                        <div class="row">
+                            <div class="col-md-9 text-center">
+                                <h1>Tamamlanma Durumu</h1>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="easypiechart animate" data-percent="50" data-size="130" data-bar-color="#5cb85c" data-line-cap="round" data-line-width="5" style="width:140px;">
+                                    <div class="pie-percent custom-font" style="line-height: 130px;"><span>50</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Durum</th>
+                                            <th class="text-center">Başlık</th>
+                                            <th class="text-center">İçerik</th>
+                                            <th class="text-center">Detay</th>
+                                            <th class="text-center">Not</th>
+                                            <th class="text-center">İşlem Yapan</th>
+                                            <th class="text-center">İşlem Yapma Tarihi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr ng-repeat="row in checkList" ng-class="{'notNeed' : row.Status == 2,'confirm' : row.Status ==1}">
+                                            <td class="text-center">
+                                                <span>{{row.StatusStr}}</span>
+                                                <div class="btn-group btn-group-xs mb-0">
+                                                    <button type="button" class="btn btn-xs btn-rounded dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                        <i class="fa fa-gear"></i> <span class="caret"></span>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu pull-left1 with-arrow animated littleFadeInUp" role="menu">
+                                                        <li ng-click="updateItem(row,0)">
+                                                            <a role="button" tabindex="0">
+                                                                <i class="fa fa-clock-o"></i> Beklemede
+                                                            </a>
+                                                        </li>
+                                                        <li ng-c
+                                                        <li ng-click="updateItem(row,1)">
+                                                            <a role="button" tabindex="0">
+                                                                <i class="fa fa-check"></i> Yapıldı
+                                                            </a>
+                                                        </li>
+                                                        <li class="divider m-0"></li>
+                                                        <li ng-click="updateItem(row,2)">
+                                                            <a role="button" tabindex="0">
+                                                                <i class="fa fa-close"></i> İhtiyaç Değil
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                            </td>
+                                            <td class="text-center">{{row.Header}}</td>
+                                            <td class="text-left">{{row.Content}}</td>
+                                            <td class="text-center"><i ng-click="showModal(row)" class="fa fa-info-circle" aria-hidden="true"></i></td>
+                                            <td class="text-center"><input type="text" ng-model="row.Notes" class="form-control" ng-blur="updateItem(row,row.Status)" /></td>
+                                            <td class="text-center">{{row.LastUpdateName}}</td>
+                                            <td class="text-center">{{row.EditDateStr}}</td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- /tile body -->
+                    <!-- /tile -->
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+            </div>
+        </div>
+
+        <div id="modal-detail" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title custom-font"><strong>{{deleteItem.Content}}</strong></h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <p>{{deleteItem.Description}}</p>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">Kapat<i class="fa fa-arrow-right"></i> </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@section cScriptLibrary{
+
+    <script src="~/Scripts/Admin/vendor/easypiechart/jquery.easypiechart.min.js"></script>
+
+    <script src="~/Scripts/Admin/vendor/countTo/jquery.countTo.js"></script>
+
+}
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/b2bCheckList.js", HttpContext.Current.Request)"></script>
+
+}

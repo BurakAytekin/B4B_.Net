@@ -1,0 +1,156 @@
+﻿<div id="mProductSearch" tabindex="-1" role="dialog" aria-labelledby="mProductSearchLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ürün Ara</h3>
+            </div>
+            <div class="modal-body">
+                <form id="mProductSearchForm" role="form" method="post" class="form-horizontal form-modal">
+                    <div class="row row-fixed">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="iProductCode" class="col-xs-4 col-sm-3 control-label">Kod</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductCode" type="text" ng-model="searchCriteria.Code" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Ürün Kodu Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductManufacturer" class="col-xs-4 col-sm-3 control-label">Üretici</label>
+
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductManufacturer" type="text" ng-model="searchCriteria.Manufacturer" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Üretici Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductManufacturerCode" class="col-xs-4 col-sm-3 control-label">Üretici Kodu</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductManufacturerCode" type="text" ng-model="searchCriteria.ManufacturerCode" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Üretici Kodu Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="iProductName" class="col-xs-4 col-sm-3 control-label">Ürün Adı</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductName" type="text" ng-model="searchCriteria.Name" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Ürün Adı Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductShelfAddress" class="col-xs-4 col-sm-3 control-label">Raf Adresi</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductShelfAddress" type="text" ng-model="searchCriteria.ShelfAdress" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Raf Adresi Giriniz..." class="form-control" />
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductRuleCode" class="col-xs-4 col-sm-3 control-label">Koşul Kodu</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <div class="input-group">
+                                        <input id="iProductRuleCode" type="text" ng-model="searchCriteria.RuleCode" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Koşul Kodu Giriniz..." class="form-control" />
+                                        <span class="input-group-btn">
+                                            <button ng-click="productRuleOpen(1);" class="btn btn-block btn-primary btn-rounded">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-fixed">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                <label for="iProductGeneralText" class="col-xs-3 col-sm-2 control-label">Genel</label>
+                                <div class="col-xs-9 col-sm-10">
+                                    <input id="iProductGeneralText" type="text" ng-model="searchCriteria.T9Text" ng-keypress="keypressEventSearch($event,searchCriteria)" placeholder="Lütfen, Bir Kriter Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6">
+                                    @*<button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal"><i class="fa fa-arrow-left"></i> İptal</button>*@
+                                    <button type="button" ng-click="clear()" class="btn btn-danger btn-block">Temizle</button>
+                                </div>
+                                <div class="col-xs-6 col-sm-6">
+                                    @*<button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c"><i class="fa fa-arrow-right"></i> Gönder</button>*@
+                                    <button type="button" ng-click="generalSearch(searchCriteria)" class="btn btn-success btn-block">Ara</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="" />
+                    <div class="row row-overflow">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                @*  <table id="mProductSearchTable" class="display" cellspacing="0" width="100%">*@
+                                <table id="mProductSearchTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100">
+                                    @*<thead>
+                                            <tr>
+                                                <th>İşlem</th>
+                                                <th>Ürün Kodu</th>
+                                                <th>Ürün Adı</th>
+                                                <th>Üretici</th>
+                                                <th>Üretici Kodu</th>
+                                                <th>Birim</th>
+                                                <th>Koşul</th>
+                                                <th>Raf Adresi</th>
+                                                <th>Resim</th>
+                                                <th>Satış Fiyatı 1</th>
+                                                <th>Alış Fiyatı 1</th>
+                                            </tr>
+                                        </thead>*@
+                                    @*{ defaultContent: '<button class="btn btn-xs btn-rounded btn-primary">Seçiniz</button>', className: "text-right ws-nowrap" },
+                                        //{ title: "Ürün Kodu", data: "Code" },
+                                        //{ title: "Üretici Kodu", data: "ManufacturerCode", className: "text-left ws-nowrap" },
+                                        //{ title: "Ürün Adı", data: "Name", className: "ws-nowrap overflow-hidden scroll-on-hover ellipsis" },
+                                        //{ title: "Üretici", data: "Manufacturer", className: "text-left ws-nowrap" },
+                                        //{ title: "Bakiye", data: "Bakiye", className: "text-center ws-nowrap" },
+                                        //{ title: "Birim", data: "Unit", className: "text-center ws-nowrap" },
+                                        //{ title: "Koşul", data: "RuleCode", className: "text-center ws-nowrap" },
+                                        //{ title: "Raf Adresi", data: "ShelfAddress", className: "text-center ws-nowrap" },
+                                        //{ title: "Resim", data: "HavePicture", className: "text-center ws-nowrap" },
+                                        //{ title: "Bakiye1", data: "Bakiye1", className: "text-center ws-nowrap" },
+                                        //{ title: "Bakiye2", data: "Bakiye2", className: "text-center ws-nowrap" },
+                                        //{ title: "Satış Fiyat", data: "SalesPrice1", className: "text-right ws-nowrap" },
+                                        //{ title: "Alış Fiyat", data: "PurchasePrice", className: "text-right ws-nowrap" },
+                                        ////{ title: "Döviz", data: "Döviz", className: "text-center ws-nowrap" }*@
+                                    @*<tbody>
+                                            <tr ng-dblclick="selectProduct(product);" on-finish-render="ngProductListFinished" ng-repeat="product in searchProductResultList">
+                                                <td class="text-right ws-nowrap"><button class="btn btn-xs btn-rounded btn-primary" ng-click="selectProduct(product);">Seçiniz</button></td>
+                                                <td class="">{{product.Code}}</td>
+                                                <td class="ws-nowrap overflow-hidden scroll-on-hover ellipsis">{{product.Name}}</td>
+                                                <td class="text-left ws-nowrap">{{product.Manufacturer}}</td>
+                                                <td class="text-left ws-nowrap">{{product.ManufacturerCode}}</td>
+                                                <td class="text-center ws-nowrap">{{product.Unit}}</td>
+                                                <td class="text-center ws-nowrap">{{product.RuleCode}}</td>
+                                                <td class="text-center ws-nowrap">{{product.ShelfAddress}}</td>
+                                                <td class="text-center ws-nowrap"><input type="checkbox" class="checkbox" readonly="readonly" checked="{{product.HavePicture}}" /></td>
+                                                <td ng-bind-html="product.SalesPrice1" class="text-right ws-nowrap"></td>
+                                                <td ng-bind-html="product.PurchasePrice" class="text-right ws-nowrap"></td>
+                                            </tr>
+                                        </tbody>*@
+                                    @*<tfoot>
+                                            <tr>
+                                                <th>İşlem</th>
+                                                <th>Ürün Kodu</th>
+                                                <th>Ürün Adı</th>
+                                                <th>Üretici</th>
+                                                <th>Üretici Kodu</th>
+                                                <th>Birim</th>
+                                                <th>Koşul</th>
+                                                <th>Raf Adresi</th>
+                                                <th>Resim</th>
+                                                <th>Satış Fiyatı 1</th>
+                                                <th>Alış Fiyatı 1</th>
+                                            </tr>
+                                        </tfoot>*@
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

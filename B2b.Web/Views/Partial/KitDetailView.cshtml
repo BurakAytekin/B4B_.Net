@@ -1,0 +1,32 @@
+﻿@if (@ViewBag.KitList.Count > 0)
+{
+
+    <div class="panel panel-warning">
+        <div class="panel-body">
+            <b>Bu ürün birden çok ürünün toplaması şeklindedir. Lütfen aşağıdaki tabloyu kontrol ediniz.</b>
+        </div>
+    </div>
+    
+
+    <table class="table table-bordered ">
+        <thead>
+            <tr>
+                <th>Kodu</th>
+                <th>Açıklaması</th>
+                <th>Liste Fiyatı</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (B2b.Web.v4.Models.EntityLayer.Product item in @ViewBag.KitList)
+            {
+                <tr>
+                    <td>@Html.Raw(@item.Code)</td>
+                    <td>@Html.Raw(@item.Name)</td>
+                    <td class="text-right">@item.PriceList</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

@@ -1,0 +1,51 @@
+﻿@using B2b.Web.v4.Models.Helper
+
+<section class="container" ng-controller="contactController">
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">İletişim</a></li>
+                <li><a href="#">Sık Sorulan Sorular</a></li>
+            </ul>
+        </div>
+    </div>
+  <div class="container">
+      <div class="col-md-12 box">
+          <div class="row">
+
+
+              <div class="panel-accordion" style="padding-left:20px;padding-right:20px;">
+
+
+                  <div class="alert alert-danger" ng-show="faqList.length < 1">
+                      <strong>Dikkat !</strong> Karşılaştırmak için ürün bulunmamaktadır !!
+                  </div>
+
+                  <div class="panel panel-default" ng-repeat="row in faqList" ng-show="faqList.length > 0">
+                      <div class="panel-heading">
+                          <h3 class="panel-title">
+                              <a data-toggle="collapse" data-parent="#questions-accordion" href="#collapse{{row.Id}}">
+                                  <i class="fa fa-angle-right"></i>{{row.Question}}
+                              </a>
+                          </h3>
+                      </div>
+                      <div id='collapse{{row.Id}}' class="panel-collapse collapse in">
+                          <div class="panel-body">
+                              {{row.Answer}}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+  </div>
+</section>
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/contact.js", HttpContext.Current.Request)"></script>
+
+
+
+
+

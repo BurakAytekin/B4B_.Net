@@ -1,0 +1,21 @@
+﻿
+<table class="table table-bordered table-tooltip">
+    <tbody>
+        <tr>
+            <td>Fiyat</td>
+            <td class="text-right">@Html.Raw(@ViewBag.PriceViewItem.Product.PriceListCustomerStr)</td>
+        </tr>
+        <tr>
+            <td>Net Fiyat</td>
+            <td class="text-right">@Html.Raw(@ViewBag.PriceViewItem.Product.PriceNetCustomerStr)</td>
+        </tr>
+        <tr>
+            <td>Tutar</td>
+            <td class="text-right">@Html.Raw(@ViewBag.PriceViewItem.PriceTotalStr)</td>
+        </tr>
+        <tr>
+            <td>Net Fiyat Kdv Dahil</td>
+            <td class="text-right">@Html.Raw(@ViewBag.PriceViewItem.PriceCostWithVatStr)</td>
+        </tr>
+    </tbody>
+</table>

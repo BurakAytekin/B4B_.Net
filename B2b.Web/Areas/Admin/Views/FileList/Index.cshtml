@@ -1,0 +1,206 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Dosyalar";
+}
+
+@section cStyleLibrary{
+    @Styles.Render("~/Scripts/Admin/vendor/animsition/css/animsition.css")
+    @Styles.Render("~/Scripts/Admin/vendor/magnific-popup/magnific-popup.css")
+}
+
+@section cStyleCode{}
+<link rel="stylesheet" type="text/css" href="~/Content/Admin/FileList.css"/>
+<div class="page page-file-list">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/FileList">Dosyalar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Dosyalar</strong></h1>
+                        <ul role="tablist" class="controls">
+
+                            <li id="tFileListLi" role="presentation" class="active">
+                                <a href="#tFileList" aria-controls="tFileList" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-list mr-5"></i> Dosyalar</a>
+                            </li>
+
+                            <li id="tFileNew" role="presentation">
+                                <a href="#tNewFile" aria-controls="tNewFile" role="tab" data-toggle="tab" aria-expanded="false">
+                                    <i class="fa fa-plus mr-5"></i> Yeni Dosya
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12" ng-controller="fileListController">
+                                <div class="tab-content">
+                                    <div id="tFileList" role="tabpanel" class="tab-pane p-0 active">
+                                        <!-- Nav tabs -->
+                                        <ul class="mix-filter pull-right">
+                                            <li class="filter active" data-filter="all">
+                                                Tümü
+                                            </li>
+                                            <li class="filter" ng-repeat="filterItem in fileFilterList" data-filter=".{{filterItem}}">
+                                                {{filterItem}}
+                                            </li>
+                                        </ul>
+
+                                        <ul class="mix-controls">
+                                            <li class="select-all">
+                                                <label class="checkbox checkbox-custom-alt checkbox-custom inline-block m-0">
+                                                    <input type="checkbox" ng-click="fileSelectAll(checkValue)" ng-model="checkValue"><i></i> Tümünü Seç
+                                                </label>
+                                            </li>
+                                            <li class="mix-control disabled" ng-click="fileDownloadAll()">
+                                                <a href="javascript:;"><i class="fa fa-download"></i> İndir</a>
+                                            </li>
+                                            <li class="mix-control disabled" ng-click="askForDelete(null)">
+                                                <a href="javascript:;"><i class="fa fa-trash-o"></i> Sil</a>
+                                            </li>
+                                        </ul>
+
+                                        <!-- row -->
+                                        <div class="row mix-grid">
+                                            <div class="gallery" data-lightbox="gallery">
+                                                <!-- col -->
+                                                <div ng-repeat="fileItem in fileList" class="col-md-3 col-sm-4 mb-20 mix mix_all {{fileItem.FileType}}" on-finish-render="ngRepeatFileListFinished">
+                                                    <div class="img-container">
+                                                        <img class="img-responsive" alt="" ng-src="{{fileItem.PicturePath}}">
+                                                        <div class="img-details">
+                                                            <h4 class="ng-binding">{{fileItem.Name}}</h4>
+                                                            <div class="img-controls">
+                                                                <a href="javascript:;" class="img-select" ng-click="checkItem(fileItem,!fileItem.Checked)">
+                                                                    <i class="fa fa-circle-o"></i>
+                                                                    <i class="fa fa-circle"></i>
+                                                                </a>
+
+                                                                <a href="{{fileItem.Path}}" target="_blank" class="img-link">
+                                                                    <i class="fa fa-download"></i>
+                                                                </a>
+
+                                                                <a href="{{fileItem.PicturePath}}" title="{{fileItem.Name}}" ng-if="(fileItem.FileType=='jpeg'||fileItem.FileType=='jpg'||fileItem.FileType=='png'||fileItem.FileType=='gif')" data-lightbox="gallery-item" class="img-preview">
+                                                                    <i class="fa fa-search"></i>
+                                                                </a>
+
+                                                                <a href="javascript:;" class="img-more" ng-click="askForDelete(fileItem)">
+                                                                    <i class="fa fa-trash-o"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- /col -->
+                                            </div>
+                                        </div>
+                                        <!-- /row -->
+                                    </div>
+
+                                    <div id="tNewFile" role="tabpanel" class="tab-pane p-0">
+                                        <!-- Tab panes -->
+                                        <div class="tab-content form-horizontal">
+                                            <div class="form-group">
+                                                <label for="iFileTitle" class="col-sm-2 control-label">Başlık</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" id="iFileTitle" ng-model="fileTitle" class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="iFileName" class="col-sm-2 control-label">İsim</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" id="iFileName" ng-model="fileName" class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="form-group">
+                                                <label for="iFileAll" class="col-sm-2 control-label">Döküman Yükle</label>
+                                                <div class="col-sm-10">
+                                                    <input type="file" id="iFileAll" ng-model="fileAll" base-sixty-four-input onchange="angular.element(this).scope().setFile(this)" accept="all/*" data-buttonText="Dosya Yükle" data-iconName="fa fa-file" class="filestyle" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="iFileImage" class="col-sm-2 control-label">Görsel Yükle</label>
+                                                <div class="col-sm-10">
+                                                    <input type="file" id="iFileImage" ng-model="fileImage" base-sixty-four-input onchange="angular.element(this).scope().setFileImage(this)" accept="image/*" data-buttonText="Görsel Yükle" data-iconName="fa fa-image" class="filestyle" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Kısıtlamalar</label>
+                                                <div class="col-sm-10">
+                                                    <div class="btn-group btn-group-sm" data-toggle="buttons">
+                                                        <label class="btn btn-primary active" ng-click="rblRestriction=0">
+                                                            <input type="radio" name="options" id="option1" autocomplete="off" checked="">Tümü
+                                                        </label>
+
+                                                        <label class="btn btn-primary" ng-click="rblRestriction=1">
+                                                            <input type="radio" name="options" id="option2" autocomplete="off"> Sadece Plasiyer
+                                                        </label>
+
+                                                        <label class="btn btn-primary" ng-click="rblRestriction=2">
+                                                            <input type="radio" name="options" id="option3" autocomplete="off"> Sadece Müşteri
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group text-right">
+                                                <div class="col-xs-12">
+                                                    <button type="button" ng-click="clearValues()" class="btn btn-danger">Temizle</button>
+
+                                                    <button type="button" ng-click="save()" class="btn btn-primary">Yükle</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/animsition/js/jquery.animsition.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/screenfull/screenfull.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/magnific-popup/jquery.magnific-popup.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/mixitup/jquery.mixitup.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/filestyle/bootstrap-filestyle.min.js")
+}
+
+@section cScriptCode{
+
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/fileList.js", HttpContext.Current.Request)"></script>
+
+}

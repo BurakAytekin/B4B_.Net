@@ -1,0 +1,160 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<section ng-controller="ComparisonController">
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li class="active"><a href="#">Ürün Karşılaştırma</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 box">
+
+                @if (ViewBag.ComparisonList.Count < 1)
+                {
+
+                    <div class="alert alert-danger">
+                        <strong>Dikkat !</strong> Karşılaştırmak için ürün bulunmamaktadır !!
+                    </div>
+                }
+
+
+                @if (ViewBag.ComparisonList.Count > 0)
+                {
+
+                    <div class="row">
+
+                        <div class="col-md-12 table-responsive">
+
+                            <table class="table table-striped compare-item-table">
+                                <tr class="item-brand-col">
+                                    <td class="table-title">ADI</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td>
+                                            <figure>
+                                                <a href="javascript:;"><img src="@item.Product.PicturePath" onerror="this.onerror = null; this.src = 'Content/images/error.png'" alt="@item.Product.Name"></a>
+                                            </figure>
+                                            <p class="item-name"><a href="#">@item.Product.Name</a></p>
+                                        </td>
+                                    }
+
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">KODU</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.Code </td>
+                                    }
+
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">NET FİYAT</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td><span class="item-price-special">@Html.Raw(@item.Product.PriceNetCustomerStr) </span></td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">MARKA</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.Manufacturer </td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">MIKTAR</td>
+
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td title="@item.Product.AvailabilityCss" class="tooltip-box"><span class="fa-stack fa-sm"><i class="@item.Product.AvailabilityCss"></i></span><span class="ng-binding"><strong>@item.Product.AvailabilityText</strong></span></td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">İSKONTO</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.DiscountStr </td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">GENİŞLİK</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.Width </td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">UZUNLUK</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.Lenght </td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">YÜKSEKLİK</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.Height </td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">BÜRÜT AĞIRLIK</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.GrossWeight </td>
+                                    }
+                                </tr>
+                                <tr class="item-brand-col">
+                                    <td class="table-title">NET AĞIRLIK</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.NetWeight </td>
+                                    }
+                                </tr>
+
+                                <tr class="item-brand-col">
+                                    <td class="table-title">AÇIKLAMA</td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td> @item.Product.Notes </td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td class="table-title"></td>
+                                    @foreach (var item in @ViewBag.ComparisonList)
+                                    {
+                                        <td class="comparison-operation">
+
+                                            <input type="number" min="@item.Product.MinOrder" class="form-control bfh-number" id="qty_@item.Product.Id" placeholder="@item.Product.MinOrder" />
+                                            <a href="javascript:;" class="btn btn-custom-2 add-baskets" ng-click="askAvailable(@item.Product.Id)">
+                                                Sepete Ekle
+                                            </a>
+                                            <a href="javascript:;" class="close-button" ng-click="deleteProductComparison(@item.Id)"></a>
+                                        </td>
+                                    }
+                                </tr>
+                            </table>
+                            <div class="xlg-margin"></div><!-- Space -->
+                        </div><!-- End .col-md-12 -->
+
+                    </div>
+                }
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/comparison.js", HttpContext.Current.Request)"></script>
+
+

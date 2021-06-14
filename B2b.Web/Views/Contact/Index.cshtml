@@ -1,0 +1,148 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "İstek - Öneri - Şikayet";
+}
+
+
+
+<section class="container" ng-controller="suggestionRequestReportController">
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">İletişim</a></li>
+                <li><a href="#">Bize Ulaşın</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-md-12 box">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="row" ng-repeat="contactItem in cantactList">
+                                <div class="col-md-8 col-sm-8 col-xs-8 contact-page-map" ng-bind-html="trustDangerousSnippet(contactItem.MapPath)">
+                                </div>
+                                <div class="col-md-4 col-sm-4 col-xs-12">
+                                    <h2 class="sub-title">{{contactItem.AddressTitle}}</h2>
+                                    <ul class="contact-details-list">
+                                        <li ng-show="(contactItem.Phone1 != '' && contactItem.Phone1 != undefined) || (contactItem.Phone2 != '' && contactItem.Phone2 != undefined)">
+                                            <span class="contact-icon">
+                                                <i class="fa fa-home fa-lg"></i>
+                                            </span>
+                                            <ul>
+                                                <li>{{contactItem.Phone1}}</li>
+                                                <li>{{contactItem.Phone2}}</li>
+                                            </ul>
+                                        </li>
+
+                                        <li ng-show="(contactItem.Gsm != '' && contactItem.Phone1 != Gsm) || (contactItem.Fax != '' && contactItem.Phone2 != Fax)">
+                                            <span class="contact-icon">
+                                                <i class="fa fa-phone fa-lg"></i>
+                                            </span>
+                                            <ul>
+                                                <li>{{contactItem.Gsm}}</li>
+                                                <li>{{contactItem.Fax}}</li>
+                                            </ul>
+                                        </li>
+                                        <li ng-show="(contactItem.Email1 != '' && contactItem.Email1 != undefined) || (contactItem.Email2 != '' && contactItem.Email2 != undefined)">
+                                            <span class="contact-icon">
+                                                <i class="fa fa-envelope fa-lg"></i>
+                                            </span>
+                                            <ul>
+                                                <li>{{contactItem.Email1}}</li>
+                                                <li>{{contactItem.Email2}}</li>
+                                            </ul>
+                                        </li>
+                                        <li ng-show="(contactItem.TaxOffice != '' && contactItem.TaxOffice != undefined) || (contactItem.TaxNumber != '' && contactItem.TaxNumber != undefined)">
+                                            <span class="contact-icon">
+                                                <i class="fa fa-amazon fa-lg"></i>
+                                            </span>
+                                            <ul>
+                                                <li>{{contactItem.TaxOffice}}</li>
+                                                <li>{{contactItem.TaxNumber}}</li>
+                                            </ul>
+                                        </li>
+                                        <li ng-show="(contactItem.Address != '' && contactItem.Address != undefined)">
+                                            <span class="contact-icon">
+                                                <i class="fa fa-address-card fa-lg"></i>
+                                            </span>
+                                            <ul>
+                                                <li>{{contactItem.Address}}</li>
+
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <form action="#" id="contact-form">
+                                    <div class="col-md-5 col-sm-5 col-xs-12">
+
+                                        <div class="input-group no-margin">
+                                            <span class="input-group-addon"><span class="input-icon"><i class="fa fa-book"></i></span><span class="input-text">Konu&nbsp; &#42;</span></span>
+                                            <select required class="form-control input-lg" ng-model="suggestionRequestReport.SubjectTypeId">
+                                                <option ng-value="{{row.KeyId}}" ng-repeat="row in subjectTypeList">{{row.Title}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="input-group no-margin">
+                                            <span class="input-group-addon"><span class="input-icon"><i class="fa fa-envelope"></i></span><span class="input-text">Email&nbsp; &#42;</span></span>
+                                            <input type="email" name="contact-email" ng-model="suggestionRequestReport.Email" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" id="contact-email" required class="form-control input-lg" placeholder="Email Adresinizi Yazınız...">
+                                        </div>
+
+                                        <div class="input-group no-margin">
+                                            <span class="input-group-addon"><span class="input-icon"><i class="fa fa-phone"></i></span><span class="input-text">Tel.&nbsp; &#42;</span></span>
+                                            <input ng-model="suggestionRequestReport.PhoneNumber" required class="form-control input-lg" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" placeholder="Telefon Numaranızı Yazınız...">
+                                        </div>
+
+                                        <div class="input-group no-margin" ng-if="suggestionRequestReport.SubjectTypeId === 2">
+                                            <span class="input-group-addon"><span class="input-icon"><i class="fa fa-clipboard"></i></span><span class="input-text">Ürün Kod.&nbsp; &#42;</span></span>
+                                            <input ng-model="suggestionRequestReport.ProductCode" required class="form-control input-lg" placeholder="Ürün Kodnu Yazınız..." />
+                                        </div>
+                                        <p class="item-desc">
+                                            Lütfen tüm alanları doldurunuz.
+                                        </p>
+
+                                    </div>
+                                    <!-- End .col-md-6 -->
+
+                                    <div class="col-md-7 col-sm-7 col-xs-12">
+
+                                        <div class="input-group no-margin">
+                                            <span class="input-group-addon"><span class="input-icon"><i class="fa fa-clipboard"></i></span><span class="input-text">Başlık &nbsp; &#42;</span></span>
+                                            <input ng-model="suggestionRequestReport.Header" required class="form-control input-lg" placeholder="Başlık Yazınız..." onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                        </div>
+
+                                        <div class="input-group textarea-container no-margin">
+                                            <span class="input-group-addon"><span class="input-icon"><i class="fa fa-envelope-o"></i></span><span class="input-text">Mesaj</span></span>
+                                            <textarea name="contact-message" ng-model="suggestionRequestReport.Message" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="40000" id="contact-message" class="form-control" cols="30" rows="6" placeholder="Mesajınızı Yazınız..."></textarea>
+                                        </div>
+                                        <!-- End .input-group -->
+                                        <button ng-click="saveSuggestionRequestReport()" class="form-control btn btn-block btn-custom">GÖNDER</button>
+                                    </div><!-- End .col-md-6 -->
+                                </form>
+                            </div><!-- End .row -->
+
+                        </div><!-- End .col-md-8 -->
+
+                    </div><!-- End .row -->
+
+                </div><!-- End .col-md-12 -->
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/suggestionRequestReport.js", HttpContext.Current.Request)"></script>
+
+

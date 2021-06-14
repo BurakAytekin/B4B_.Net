@@ -1,0 +1,66 @@
+﻿<div id="mCustomerSearch" tabindex="-1" role="dialog" aria-labelledby="mCustomerSearchLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Müşteri Ara</h3>
+            </div>
+            <div class="modal-body">
+                <form id="mCustomerSearchForm" role="form" method="post" class="form-horizontal form-modal">
+                    <div class="row row-fixed">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="iCustomerCode" class="col-xs-4 col-sm-3 control-label">Kod</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iCustomerCode" type="text" ng-model="searchCriteria.Code" ng-keypress="keypressEventSearch($event,searchCriteria,'selectedCustomer')" placeholder="Lütfen, Müşteri Kodu Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="iCustomerName" class="col-xs-4 col-sm-3 control-label">Ünvan</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iCustomerName" type="text" ng-model="searchCriteria.Name" ng-keypress="keypressEventSearch($event,searchCriteria,'selectedCustomer')" placeholder="Lütfen, Ünvan Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="iCustomerRuleCode" class="col-xs-4 col-sm-3 control-label">Koşul Kodu</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <div class="input-group">
+                                        <input id="iCustomerRuleCode" type="text" ng-model="searchCriteria.RuleCode" ng-keypress="keypressEventSearch($event,searchCriteria,'selectedCustomer')" placeholder="Lütfen, Koşul Kodu Giriniz..." class="form-control" />
+                                        <span class="input-group-btn">
+                                            <button ng-click="customerRuleOpen(1);" class="btn btn-block btn-primary btn-rounded">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-6 col-sm-6">
+                                    <button type="button" ng-click="clear()" class="btn btn-danger btn-block">Temizle</button>
+                                </div>
+
+                                <div class="col-xs-6 col-sm-6">
+                                    <button type="button" ng-click="generalSearch(searchCriteria)" class="btn btn-success btn-block">Ara</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="" />
+
+                    <div class="row row-overflow">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table id="mCustomerSearchTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

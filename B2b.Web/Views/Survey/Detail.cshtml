@@ -1,0 +1,193 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@model SurveyCs
+@{
+    ViewBag.Title = "Detail";
+}
+
+
+<link href="~/Content/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<style>
+    input.error {
+        border-color: #f00 !important;
+    }
+
+    small.required {
+        color: #f00;
+    }
+</style>
+
+<section>
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Anketler</a></li>
+                <li><a href="#">@Model.Header</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="col-md-12 box">
+            @if (ViewBag.Result != null && ViewBag.Result != "Error")
+            {
+                <div class="alert alert-success">
+                    <strong>Başarılı!</strong> Anket Başarıyla Gönderilmiştir.
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm("Detail", "Survey", FormMethod.Post, new { id = "surveyFrom" }))
+                {
+                    <ul class="nav nav-tabs">
+
+                        @for (int i = 1; i < Model.Questions.Count + 1; i++)
+                        {
+                            <li class="@(i==1 ? "active" : "")"><a href="#tab@(i)" data-toggle="tab">@i</a></li>
+                        }
+
+                    </ul>
+                    <div class="tab-content">
+
+                        <br />
+
+                        @Html.ValidationSummary()
+
+                        <br />
+
+
+                        @for (int i = 0; i < Model.Questions.Count; i++)
+                        {
+                            <div class="tab-pane @(i==0 ? "active" : "")" id="tab@(i+1)">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel panel-primary">
+                                            <div class="panel-heading" style="font-size:20px">
+                                                @Html.HiddenFor(model => Model.Id)
+                                                @Html.HiddenFor(model => Model.Questions[i].Id)
+                                                @Html.HiddenFor(model => Model.Questions[i].Question)
+                                                @Html.DisplayFor(model => Model.Questions[i].Question)
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+
+                                                        @Html.HiddenFor(model => Model.Questions[i].Type)
+                                                    
+
+                                                        @if (Model.Questions[i].Type == SurveyQuestionType.Single)
+                                                        {
+                                                            foreach (var item in Model.Questions[i].Options)
+                                                            {
+                                                                <div class="input-group">
+
+                                                                    <label>
+                                                                        @Html.RadioButtonFor(model => model.Questions[i].Answer, item.Option)
+                                                                        @item.Option
+                                                                    </label>
+                                                                </div>
+
+                                                            }
+                                                        }
+
+                                                        else if (Model.Questions[i].Type == SurveyQuestionType.Multi)
+                                                        {
+                                                            foreach (var item in Model.Questions[i].Options)
+                                                            {
+                                                                <div class="input-group">
+                                                                    <label>
+                                                                        <input type="checkbox" 
+                                                                               name="@("Questions[" + i.ToString() +"].SelectedOptions")"
+                                                                               value="@item.Option" />
+                                                                        @item.Option
+                                                                    </label>
+                                                                </div>
+
+                                                            }
+                                                        }
+
+                                                        else if (Model.Questions[i].Type == SurveyQuestionType.Text)
+                                                        {
+
+                                                            <div class="input-group textarea-container">
+                                                                <span class="input-group-addon"><span class="input-icon input-icon-message"></span><span class="input-text">Lütfen Cevabınızı Giriniz</span></span>
+                                                                @Html.TextAreaFor(model => Model.Questions[i].Answer, new { @class = "form-control" })
+                                                            </div>
+
+                                                        }
+                                                        else if (Model.Questions[i].Type == SurveyQuestionType.DateTime)
+                                                        {
+                                                            <div class="input-group">
+                                                                @Html.TextBoxFor(model => Model.Questions[i].Answer, new { @class = "form-control datetimepicker" })
+                                                            </div>
+                                                        }
+
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="input-group textarea-container">
+                                                            <span class="input-group-addon"><span class="input-icon input-icon-message"></span><span class="input-text">Notunuz</span></span>
+                                                            @Html.TextAreaFor(model => Model.Questions[i].Note, new { @class = "form-control", placeholder = "Notunuz" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    @if (i == 0)
+                                    {
+                                        <div class="col-md-6 col-md-offset-6">
+                                            <a class="btn btn-primary btn-block btnNext">İleri</a>
+                                        </div>
+                                    }
+                                    else if (i == Model.Questions.Count - 1)
+                                    {
+                                        <div class="col-md-6">
+                                            <a class="btn btn-warning btn-block btnPrevious">Geri</a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="submit" value="Kaydet" class="btn btn-success btn-block" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-6">
+                                            <a class="btn btn-warning btn-block btnPrevious">Geri</a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a class="btn btn-primary btn-block btnNext">İleri</a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<script src="~/Scripts/Js/moment.min.js"></script>
+<script src="~/Scripts/Js/moment-tr.js"></script>
+<script src="~/Scripts/Js/bootstrap-datetimepicker.min.js"></script>
+
+<script>
+    $('.btnNext').click(function () {
+        $('.nav-tabs > .active').next('li').find('a').trigger('click');
+    });
+
+    $('.btnPrevious').click(function () {
+        $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+        console.log($('.nav-tabs > .active').prev('li'));
+    });
+
+    $('.datetimepicker').datetimepicker({
+        format: "DD/MM/YYYY",
+        defaultDate: new Date(),
+        locale: "tr",
+    });
+</script>

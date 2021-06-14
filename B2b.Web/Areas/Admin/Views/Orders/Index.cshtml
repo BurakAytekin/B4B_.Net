@@ -1,0 +1,408 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@using B2b.Web.v4.Models.EntityLayer
+@{ List<AuthorityGroup> AuthoritySalesman = (List<AuthorityGroup>)HttpContext.Current.Session["AuthoritySalesman"]; }
+@{
+    ViewBag.Title = "Siparişler";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode
+{
+    <style type="text/css">
+        .order-print {
+            background-color: #007400 !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+
+        .k-grid td {
+            overflow: inherit !important;
+        }
+    </style>
+}
+
+<div class="page page-orders">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Orders">Siparişler</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- #region Page Content -->
+    <div ng-controller="OrderController" class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Sipariş </strong>Ara</h1>
+                        <ul class="controls">
+                            <li role="presentation">
+                                @if (AuthoritySalesman.Where(x => x.Id == 79).Count() == 0)
+                                {
+                                    <a href="#" ng-click="exportToExcel()" aria-expanded="true">
+                                        <i class="fa fa-file-excel-o"></i>
+                                        <strong>Excel'e Kaydet</strong>
+                                    </a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="iOrderCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Tarih Aralığı</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <div class="input-group">
+                                                <input id="iOrderStartDate" ng-model="orderSearchCriteria.StartDate" type="text" placeholder="Başlangıç Tarihi" class="form-control" />
+                                                <span class="input-group-btn" style="width:0;"></span>
+                                                <input id="iOrderEndDate" type="text" ng-model="orderSearchCriteria.EndDate" placeholder="Bitiş Tarihi" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="iOrderSearch" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Genel Arama</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <input id="iOrderSearch" type="text" ng-model="orderSearchCriteria.T9Text" ng-keypress="keypressEventOrderSearch($event,orderSearchCriteria)" placeholder="Lütfen, Sipariş Bilgisi Giriniz..." class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="p-0">
+                                                @if (AuthoritySalesman.Where(x => x.Id == 70).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-5">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu0" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=-1" ng-checked="orderSearchCriteria.OrderStatu==-1" type="radio"><i></i> Tümü
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 71).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-5">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu1" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=1" ng-checked="orderSearchCriteria.OrderStatu==1" type="radio"><i></i> Onaylanmış Sip.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 72).Count() == 0)
+                                                {
+
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu2" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=3" ng-checked="orderSearchCriteria.OrderStatu==3" type="radio"><i></i> Havuzda Bek.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 73).Count() == 0)
+                                                {
+
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu2" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=98" ng-checked="orderSearchCriteria.OrderStatu==98" type="radio"><i></i> Aktarım Bekleyen
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="p-0">
+                                                @if (AuthoritySalesman.Where(x => x.Id == 74).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-5">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu3" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=0" ng-checked="orderSearchCriteria.OrderStatu==0" type="radio"><i></i> Bekleyen Sip.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 76).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-5">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu4" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=2" ng-checked="orderSearchCriteria.OrderStatu==2" type="radio"><i></i> Silinmiş Sip.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 77).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu99" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=99" ng-checked="orderSearchCriteria.OrderStatu==99" type="radio"><i></i> Askıda Bek. Sip.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 78).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu99" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=90" ng-checked="orderSearchCriteria.OrderStatu==90" type="radio"><i></i> Aktarım Hatası Alan
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 87).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu89" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=89" ng-checked="orderSearchCriteria.OrderStatu==89" type="radio"><i></i> Bölge Müdürü Onayında Olanlar
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                }
+                                                @if (AuthoritySalesman.Where(x => x.Id == 88).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu88" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=88" ng-checked="orderSearchCriteria.OrderStatu==88" type="radio"><i></i> Merkez Onayında Olanlar
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                @if (AuthoritySalesman.Where(x => x.Id == 89).Count() == 0)
+                                                {
+                                                    <div class="form-group mb-0">
+                                                        <div class="col-sm-12">
+                                                            <label class="checkbox checkbox-custom-alt">
+                                                                <input id="iOrderStatu87" name="iOrderStatu" ng-model="orderSearchCriteria.OrderStatu" ng-change="orderSearchCriteria.OrderStatu=87" ng-checked="orderSearchCriteria.OrderStatu==87" type="radio"><i></i> Finans Müdürü Onayında Olanlar
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3 text-center">
+                                    <div class="mb-20"></div>
+                                    <div class="btn-group btn-group-rounded btn-group-md">
+                                        <button class="btn btn-primary btn-rounded " ng-click="OrderSearch(orderSearchCriteria)"><i class="fa fa-search"></i> <span>Ara</span></button>
+                                        @*<button class="btn btn-warning btn-rounded " ng-click="OrderSearch(orderSearchCriteria)"><i class="fa fa-refresh"></i> <span>Yenile</span></button>*@
+                                        <button class="btn btn-danger btn-rounded  " ng-click="clear();"><i class="fa fa-reply"></i> <span>Temizle</span></button>
+                                        <button ng-show="orderSearchCriteria.OrderStatu == 3" class="btn btn-info btn-rounded " ng-click="ConcatOrders()"><i class="fa fa-adjust"></i> <span>Birleştir</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal form-group-sm">
+                                    <div class="col-sm-12">
+                                        <div loading-container="tableOrdersParams.settings().$loading">
+                                            <table ng-table="tableOrdersParams" class="table table-condensed table-bordered table-striped" ng-form="tableOrderForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                <tr ng-repeat="row in $data" ng-form="rowOrderForm" demo-tracked-table-row="row" ng-class="row.PrintStatu ? 'order-print' : ''">
+                                                    <td title="'No'" filter="{Id: 'text'}" sortable="'Id'" ng-switch="row.isEditing" ng-class="Id.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Id" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.Id}}</span>
+                                                    </td>
+                                                    <td title="'Kod'" filter="{'Customer.Code': 'text'}" sortable="'Code'" ng-switch="row.isEditing" ng-class="Customer.Code.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Customer.Code" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.Customer.Code}}</span>
+                                                    </td>
+                                                    <td title="'Adı'" filter="{'Customer.Name': 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Customer.Name.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Customer.Name" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.Customer.Name}}</span>
+                                                    </td>
+                                                    <td title="'Gönderi Şekli'" filter="{ShipmentName: 'text'}" sortable="'ShipmentName'" ng-switch="row.isEditing" ng-class="ShipmentName.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ShipmentName" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.ShipmentName}}</span>
+                                                    </td>
+                                                    <td title="'Sipariş T.'" filter="{CreateDate: 'text'}" sortable="'CreateDate'" ng-switch="row.isEditing" ng-class="CreateDate.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CreateDate" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="ConvertDate(row.CreateDate)"></span>
+                                                    </td>
+                                                    <td title="'Onay T.'" filter="{ConfirmDate: 'text'}" sortable="'ConfirmDate'" ng-switch="row.isEditing" ng-class="ConfirmDate.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ConfirmDate" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="ConvertDate(row.ConfirmDate)"></span>
+                                                    </td>
+                                                    <td title="'Toplam'" filter="{TotalStr: 'text'}" sortable="'Total'" ng-switch="row.isEditing" ng-class="TotalStr.$dirty ? 'bg-warning text-right' : 'text-right'" ng-form="TotalStr" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="row.TotalStr"></span>
+                                                    </td>
+                                                    @*<td title="'Kdv'" filter="{VatStr: 'text'}" sortable="'VatStr'" ng-switch="row.isEditing" ng-class="VatStr.$dirty ? 'bg-warning text-right' : 'text-right'" ng-form="VatStr" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text" ng-bind-html="row.VatStr"></span>
+                                                        </td>*@
+                                                    <td title="'İl'" filter="{ShipmentCity: 'text'}" sortable="'ShipmentCity'" ng-switch="row.isEditing" ng-class="ShipmentCity.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="ShipmentCity" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.ShipmentCity == '' ? row.Customer.City : row.ShipmentCity}}</span>
+                                                    </td>
+
+                                                    <td title="'İskonto'" filter="{DiscountStr: 'text'}" sortable="'DiscountStr'" ng-switch="row.isEditing" ng-class="DiscountStr.$dirty ? 'bg-warning text-right' : 'text-right'" ng-form="DiscountStr" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="row.DiscountStr"></span>
+                                                    </td>
+                                                    <td title="'Gönderen'" filter="{SenderName: 'text'}" sortable="'SenderName'" ng-switch="row.isEditing" ng-class="SenderName.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="SenderName" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="row.SenderName"></span>
+                                                    </td>
+                                                    <td title="'Durum'" filter="{StatusStr: 'text'}" sortable="'StatusStr'" ng-switch="row.isEditing" ng-class="StatusStr.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="StatusStr" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.StatusStr}}</span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="btn-group btn-group-xs mb-0">
+                                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                <i class="fa fa-gears"></i> <span class="caret"></span>
+                                                            </button>
+
+                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                <li ng-if="row.Status!=2" ng-click="showModalCustomDeleteOrder(row,2)"><a href="javascript:;"><i class="fa fa-trash-o"></i> Sil</a></li>
+                                                                <li ng-if="row.Status==2 || row.Status == 98" ng-click="showModalConfirmation(row,0)"><a href="javascript:;"><i class="fa fa-reply"></i> Geri Al</a></li>
+                                                                <li ng-if="row.Status==0 || row.Status == 3" ng-click="showModalConfirmation(row,98)"><a href="javascript:;"><i class="fa fa-check"></i> Onayla</a></li>
+                                                                @if (ViewBag.AuthoritySendPool == true || ViewBag.AuthorityAdmin == true)
+                                                                {
+                                                                    <li ng-if="row.Status==0" ng-click="showModalConfirmation(row,3)"><a href="javascript:;"><i class="fa fa-forward"></i> Havuza Gönder</a></li>
+                                                                }
+                                                                <li ng-if="row.Status!=2" ng-click="showPdf(row)"><a href="javascript:;"><i class="fa fa-file-pdf-o"></i> Yazdır</a></li>
+                                                                <li ng-if="row.Status==89" ng-click="confirmOrder(row,88)"><a href="javascript:;"><i class="fa fa-check"></i> Onayla</a></li>
+                                                                <li ng-if="row.Status==88" ng-click="confirmOrder(row,87)"><a href="javascript:;"><i class="fa fa-check"></i> Onayla</a></li>
+                                                                <li ng-if="row.Status==87" ng-click="confirmOrder(row,0)"><a href="javascript:;"><i class="fa fa-check"></i> Onayla</a></li>
+                                                                <li ng-click="showSystemNotes(row)" ng-if="row.Status==2 || row.Status == 90"><a href="javascript:;"><i class="fa fa-newspaper-o"></i> Hata Notları</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="javascript:;" class="btn btn-xs btn-primary" ng-click="tableOrderDetail(row)"><i class="fa fa-delicious"></i> Detay</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+
+        <!--MODALS-->
+        <div id="modal-custom-delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" hidden>
+                        <h3 class="modal-title custom-font">Silme Sebebi</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4><strong>Silme Sebebi</strong></h4>
+                        <div class="row">
+
+                            <div class="col-md-9">
+                                <input class="form-control" ng-model="note" placeholder="Siparişi silme nedenini yazınız..." />
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" ng-disabled="note === undefined || note === ''" ng-click="updateOrderStatu(selectedOrder,2)"><i class="fa fa-arrow-"></i> Sil</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer" hidden>
+                        @*<button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c"><i class="fa fa-arrow-right"></i> Submit</button>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="modal-systemNotes" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title custom-font"><strong>Sistem Notları </strong></h3>
+                    </div>
+                    <div class="modal-body">
+                        <span>{{selectedOrder.ErrorMessage}}</span>
+                        @*<form class="form-horizontal" role="form">
+
+                                <hr class="line-dashed line-full">
+                                <div class="form-group">
+                                    <label class="col-sm-3"><strong>Sistem Notları</strong></label>
+                                    <div class="col-sm-9">
+                                        <span ng-bind-html="selectedOrder.ErrorMessage"></span>
+                                    </div>
+                                </div>
+
+                            </form>*@
+
+                    </div>
+                    <div class="modal-footer">
+
+
+                        <button class="btn btn-warning btn-ef btn-ef-3 btn-ef-3c">
+                            Kapat<i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mPdfShow" tabindex="-1" role="dialog" aria-labelledby="mPdfShowLabel" aria-hidden="true" class="modal fade" style="min-height:800px;width:100%">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <iframe style="min-height:600px;width:100%" src="{{frameUrl}}"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL GLOBAL DELETE-->
+        @Html.Partial("~/Areas/Admin/Views/Partial/ConfirmationModal.cshtml")
+
+    </div>
+    <!-- #endregion -->
+</div>
+
+
+
+<script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/FileSaver.js" type="text/javascript"></script>
+@section cScriptLibrary{
+
+}
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/orders.js", HttpContext.Current.Request)"></script>
+
+}

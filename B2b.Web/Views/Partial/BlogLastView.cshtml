@@ -1,0 +1,41 @@
+﻿
+<div class="widget recent-posts">
+    <h3>Son Eklenenler</h3>
+
+    <div class="recent-posts-slider flexslider sidebarslider">
+        <ul class="recent-posts-list clearfix">
+            @foreach (var item in @ViewBag.BlogList)
+            {
+                <li>
+                    <a href="/Blog/BlogDetail?detail=@item.Id">
+
+                        @if (item.Type == 0)
+                        {
+                            <figure class="recent-posts-media-container">
+                                <img src="@item.Path" class="img-responsive" alt="lats post">
+                            </figure>
+                        }
+                        else
+                        {
+                            <i class="fa fa-play-circle fa-6" aria-hidden="true"></i>
+                        }
+
+
+                    </a>
+                    <h4><a href="/Blog/BlogDetail?detail=@item.Id">@item.Header</a></h4>
+                    <p>@item.ShortContent</p>
+                    <div class="recent-posts-meta-container clearfix">
+                        <div class="pull-left">
+                            <a href="/Blog/BlogDetail?detail=@item.Id">Devamını Oku...</a>
+                        </div><!-- End .pull-left -->
+                        <div class="pull-right">
+                            @(((DateTime)item.CreateDate).ToString("dd-MM-yyyy"))
+                        </div><!-- End .pull-right -->
+                    </div><!-- End .recent-posts-meta-container -->
+                </li>
+            }
+
+
+        </ul>
+    </div><!-- End .recent-posts-slider -->
+</div><!-- End .widget -->

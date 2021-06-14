@@ -1,0 +1,170 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+<div class="page" ng-controller="FAQController">
+
+
+    @*<style>
+            input.ng-invalid, textarea.ng-invalid{
+                border:2px solid red;
+
+            }
+        </style>*@
+
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="#"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="#">Tanımlamalar</a>
+                </li>
+                <li>
+                    <a href="#">Sık Sorulan Sorular</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!--List-->
+    <section class="tile tile-simple col-md-8 " ng-show="actionMode=='List'">
+        <style>
+            .list-head {
+                display: table;
+                width: 100%;
+                padding: 10px 0;
+            }
+
+                .list-head h5,
+                .list-head span {
+                    display: table-cell;
+                    vertical-align: middle;
+                }
+        </style>
+
+        <!-- tile widget -->
+        <div class="list-head">
+            <h5 class="text-strong m-0">SIK SORULAN SORULAR </h5>
+            <span class="pull-right"><a role="button" class="btn btn-default mb-10" id="LinkNewFaq" href="#" ng-click="setActionMode('Add')"><i class="fa fa-plus"></i> Yeni</a></span>
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="Aranacak Bilgiyi Giriniz..." ng-model="searchValue" ng-change="search()">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+        <hr />
+
+        <!-- /tile widget -->
+        <!-- tile body -->
+        <div class="alert alert-cyan" ng-show="faqList.length < 1">
+            <strong>Veri Bulunamadı</strong>
+        </div>
+
+
+
+        <div class="tile-body p-0 slim-scroll" ng-hide="faqList.length < 1">
+
+
+            <ul class="list-unstyled">
+                <li class="p-10 b-b" ng-repeat="row in faqList">
+                    <div class="media">
+                        <div class="media-body">
+                            <div class="col-md-9">
+
+                                <h5 class="media-heading mb-0">
+                                    <label style="font-weight:600">{{row.Question}}</label>
+
+                                </h5>
+                                <p class="text-muted">{{row.Answer}}</p>
+                                <small class="text-muted pull-right">{{row.EditDate  | jsonDate | date:"dd/MM/yyyy HH:mm"}}</small><br />
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b mb-10" ng-click="setActionMode('Edit',row)"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b mb-10" ng-click="setActionMode('Delete',row)"><i class="fa fa-trash"></i> <span>Sil</span></button>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+
+        </div>
+        <!-- /tile body -->
+
+    </section>
+
+    <!--Add or Edit-->
+    <section class="tile tile-simple col-md-8 " ng-show="actionMode=='Add' || actionMode =='Edit'">
+        <!-- tile header -->
+        <div class="tile-header dvd dvd-btm">
+            <h1 class="custom-font"><strong>Sık Sorulan Soru </strong> {{actionMode == 'Add' ? 'Yeni' :'Düzenle'}}</h1>
+
+            <button class="btn btn-default btn-rounded " ng-click="setActionMode('List','')" style="float:right;"><i class="fa fa-arrow-left"></i> <span> Geri</span></button>
+        </div>
+        <!-- /tile header -->
+        <!-- tile body -->
+        <div class="tile-body">
+
+            <form role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Soru</label>
+                    <textarea class="form-control" ng-model="faq.Question" rows="2" name="message" placeholder="Mesaj Yazınız..." onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="500"></textarea>
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Cevap</label>
+                    <textarea class="form-control" rows="4" name="message" id="message" placeholder="Cevap Yazınız..." required="" data-parsley-id="7974" ng-model="faq.Answer" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="500"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2  pull-right">
+                        <button type="reset" class="btn btn-default" ng-click="setActionMode('List',null)">İptal</button>
+                        <button type="submit" class="btn btn-success" ng-click="save()">{{actionMode == 'Add' ? 'Kaydet' :'Güncelle'}}</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <!-- /tile body -->
+
+    </section>
+
+
+
+
+    <!--MODAL DELETE-->
+    <div id="modal-faq-delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title custom-font">Sık Sorulan Soru - Sil</h3>
+                </div>
+                <div class="modal-body">
+
+                    <p><b>{{faq.Question}}</b> sorusunu silmek istediğinize emin misiniz ?</p>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">Hayır<i class="fa fa-arrow-right"></i> </button>
+                    <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="delete(faq)"> Evet<i class="fa fa-arrow-right"></i> </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--MODAL DELETE-->
+
+
+</div>
+
+@section cScriptCode{
+<script src="@Url.ContentVersioned("/Scripts/Admin/faq.js", HttpContext.Current.Request)"></script>
+
+
+
+
+}

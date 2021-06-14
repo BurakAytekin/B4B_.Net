@@ -1,0 +1,111 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Banka Bilgileri";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-bank-account">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/BankAccount">Banka Bilgileri</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="bankAccountController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Banka </strong>Bilgileri</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a ng-if="isEditing" ng-click="cancelChanges()" aria-expanded="true"><span class="glyphicon glyphicon-remove mr-5"></span> İptal</a></li>
+                            <li role="presentation"><a ng-click="add()" aria-expanded="true"><span class="glyphicon glyphicon-plus mr-5"></span> Yeni</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div loading-container="tableParams.settings().$loading">
+                                    <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                            <td title="'Banka Adı'" @*filter="{BankName: 'text'}"*@ sortable="'BankName'" ng-switch="row.isEditing" ng-class="BankName.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="BankName" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.BankName}}</span>
+                                                <div class="controls" ng-class="BankName.$invalid && BankName.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <select id="bankName-select{{row.Id}}" name="bankName-select" ng-model="row.BankId" style="width: 100%;" class="form-control" ng-options="item.Id as item.BankName for item in bankNameList"></select>
+                                                </div>
+                                            </td>
+                                            <td title="'Şube Kodu'" @*filter="{Branch: 'text'}"*@ sortable="'Branch'" ng-switch="row.isEditing" ng-class="Branch.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Branch" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Branch}}</span>
+
+                                                <div class="controls" ng-class="Branch.$invalid && Branch.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Branch" ng-model="row.Branch" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                                </div>
+                                            </td>
+                                            <td title="'Hesap No'" @*filter="{AccountNumber: 'text'}"*@ sortable="'AccountNumber'" ng-switch="row.isEditing" ng-class="AccountNumber.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="AccountNumber" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.AccountNumber}}</span>
+
+                                                <div class="controls" ng-class="AccountNumber.$invalid && AccountNumber.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="AccountNumber" ng-model="row.AccountNumber" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)"   onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100"/>
+                                                </div>
+                                            </td>
+                                            <td title="'IBAN'" @*filter="{Iban: 'text'}"*@ sortable="'Iban'" ng-switch="row.isEditing" ng-class="Iban.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Iban" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Iban}}</span>
+
+                                                <div class="controls" ng-class="Iban.$invalid && Iban.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Iban" ng-model="row.Iban" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-success btn-xs" ng-click="save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid">
+                                                    <i class="fa fa-check"></i>
+
+                                                </button>
+                                                
+                                                <button class="btn btn-default btn-xs" ng-click="cancel(row, rowForm)" ng-if="row.isEditing">
+                                                    <i class="fa fa-remove"></i>
+                                                </button>
+
+                                                <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="row.isEditing = true" ng-if="!row.isEditing"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                             
+                                                <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="askForDelete(row)" ng-if="!row.isEditing"><i class="fa fa-trash"></i> <span>Sil</span></button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/bankAccount.js", HttpContext.Current.Request)"></script>
+   
+}

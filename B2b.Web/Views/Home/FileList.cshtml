@@ -1,0 +1,78 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+
+<section ng-controller="FileListController">
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Diğer</a></li>
+                <li><a href="#">Dosya Listesi</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 box">
+                <div class="alert alert-danger" ng-show="filelist.length < 1">
+                    <strong>Dikkat !</strong> Dosya bulunmamaktadır !!
+                </div>
+
+                <div class="input-group input-criteria" ng-show="filelist.length > 0">
+                    <div class="btn-group btn-group-justified btn-group-radio-eryaz" data-toggle="buttons">
+
+                        <label class="btn btn-default btn-md active">
+                            <input type="radio" name="folderTypes" id="option2" checked="checked" autocomplete="off" data-select="all">
+                            <span class="glyphicon glyphicon-ok hidden-xs"></span>
+                            <span class="hidden-xs">Tümü</span>
+                            <i class="fa fa-filter fa-lg visible-xs" aria-hidden="true"></i>
+                        </label>
+
+                        <label class="btn btn-default btn-md" ng-repeat="fileListTypeItem in filelistType">
+                            <input type="radio" name="folderTypes" id="option2" autocomplete="off" data-select="{{fileListTypeItem.FileType}}">
+                            <span class="glyphicon glyphicon-ok hidden-xs"></span>
+                            <span class="hidden-xs">{{fileListTypeItem.FileType}}</span>
+                            <i class="fa fa-file-image-o fa-lg visible-xs" aria-hidden="true"></i>
+                        </label>
+
+                        @*  <label class="btn btn-default btn-md">
+                    <input type="radio" name="folderTypes" id="option2" autocomplete="off" data-select="zip">
+                    <span class="glyphicon glyphicon-ok hidden-xs"></span>
+                    <span class="hidden-xs">Zip</span>
+                    <i class="fa fa-file-archive-o fa-lg visible-xs" aria-hidden="true"></i>
+                </label>
+                <label class="btn btn-default btn-md">
+                    <input type="radio" name="folderTypes" id="option2" autocomplete="off" data-select="excel">
+                    <span class="glyphicon glyphicon-ok hidden-xs"></span>
+                    <span class="hidden-xs">Excel</span>
+                    <i class="fa fa-file-excel-o fa-lg visible-xs" aria-hidden="true"></i>
+                </label>
+                <label class="btn btn-default btn-md">
+                    <input type="radio" name="folderTypes" id="option2" autocomplete="off" data-select="pdf">
+                    <span class="glyphicon glyphicon-ok hidden-xs"></span>
+                    <span class="hidden-xs">Pdf</span>
+                    <i class="fa fa-file-pdf-o fa-lg visible-xs" aria-hidden="true"></i>
+                </label>*@
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-6 service-box-container" ng-repeat="fileListItem in filelist" data-type="{{fileListItem.FileType}}" on-finish-render="ngRepeatFileListFinished" ng-show="filelist.length > 0">
+                    <div class="folders-box">
+                        <div class="folders-icon service-icon-responsive">
+                            <img ng-src="{{fileListItem.PicturePath}}" class="folders-icon-img" />
+                            <a href="{{fileListItem.Path}}" class="folders-download"><i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i></a>
+                        </div>
+                        <h3><a href="{{fileListItem.Path}}">{{fileListItem.Name}}</a><span class="small-bottom-border"></span></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/fileList.js", HttpContext.Current.Request)"></script>
+
+

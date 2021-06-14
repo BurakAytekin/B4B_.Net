@@ -1,0 +1,74 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+<link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="~/Content/buttons.dataTables.min.css" rel="stylesheet" />
+<style type="text/css">
+    table.dataTable tfoot th, table.dataTable tfoot td {
+        padding: 0;
+    }
+
+    table.dataTable thead th {
+        padding: 0;
+    }
+</style>
+<div class="md-margin"></div>
+<div class="container" ng-app="b2bApp" ng-init="ReportId = @Html.Raw(ViewBag.ReportId)" ng-controller="b2bReportController">
+    <div class="col-md-3">
+        <ul id="navigation" class="list-group">
+            <li ng-class="ReportId==menuItem.Id ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action'" ng-repeat="menuItem in menuList"><a href="/B2bReport/Index/{{menuItem.Id}}"><i class="fa fa-line-chart"></i> <span>{{menuItem.Header}}</span></a></li>
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="report-header-main">
+                <div class="report-cols">
+                    <div class="form-group row" ng-repeat="params in detailsList.Parameters" on-finish-render="ngRepeatLoadResultFinished">
+                        <label class="col-md-2 col-sm-2 col-xs-2 col-form-label control-label text-left hidden-xs hidden-sm">{{params.Header}}</label>
+                        <div class="col-md-10 col-sm-10 col-xs-10">
+                            <label ng-if="params.Type=='checkbox'" class="checkbox checkbox-custom-alt m-0 p-5">
+                                <input id="inp{{$index}}" type="{{params.paramName=='CariKod' || params.paramName=='PlasiyerKod' ? 'hidden' : params.Type}}" ng-model="reportParams[$index]" /><i class="ml-5"></i>
+                            </label>
+                            <input id="inp{{$index}}" type="{{(params.paramName=='CariKod' || params.paramName=='PlasiyerKod' || params.Type=='checkbox') ? 'hidden' : params.Type}}" ng-model="reportParams[$index]" />
+                            <select class="form-control" id="{{params.paramName=='CariKod' ? 'showCustomer' : 'hideCustomer'}}" ng-model="cariKod" ng-options="customers.Name for customers in detailsList.Customers track by customers.Code"></select>
+                            <select class="form-control" id="{{params.paramName=='PlasiyerKod' ? 'showPlasiyer' : 'hidePlasiyer'}}" ng-model="plasiyerKod" ng-options="salesmans.Name for salesmans in detailsList.Salesmans track by salesmans.Code"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-cols">
+                    <input ng-show="ReportId!=0" type="button" class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" value="Listele" ng-click="getReport()" />
+                </div>
+            </div>
+            <table id="reportTable" class="display" style="width:100%">
+                <thead id="tableHead">
+                    <tr>
+                        <th ng-repeat="column in cols">{{column}}</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr ng-repeat="row in reportResult" on-finish-render="ngRepeatsearchResultFinished">
+                        <td ng-repeat="column in cols">{{row[column]}}</td>
+                    </tr>
+                </tbody>
+                <tfoot id="tableFoot">
+                    <tr>
+                        <th ng-repeat="column in cols">{{column}}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="@Url.ContentVersioned("/Scripts/Pages/b2bReport.js", HttpContext.Current.Request)"></script>
+
+@Scripts.Render("https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+@Scripts.Render("https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.js")
+@Scripts.Render("https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js")
+@Scripts.Render("https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js")
+@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
+@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.37/pdfmake.min.js")
+@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.37/vfs_fonts.js")
+
+
+
+
+

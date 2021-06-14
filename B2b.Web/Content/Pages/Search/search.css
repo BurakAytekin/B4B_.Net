@@ -1,0 +1,106 @@
+﻿    .search-criteria-right .form-group
+    {
+        margin-bottom: 0px;
+    }
+
+    .search-banner .banner-slider-container .flexslider
+    {
+        height: 195px;
+        overflow: hidden;
+    }
+
+    /*Seyfo burdan*/
+
+    .calendar-text
+    {
+        color: white;
+        font-size: 10px;
+    }
+
+    .file-text
+    {
+        margin-top: .2em;
+    }
+
+
+    .fa-stack
+    {
+        font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .stacked-icons
+    {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .fa-stack + .fa-stack
+    {
+        margin-left: .3em;
+    }
+
+    .fa-stack
+    {
+        margin-bottom: 0px;
+    }
+
+    /*buraya kadar düzene sokarsın */
+
+    .selectdemoSelectHeader
+    {
+        /* Please note: All these selectors are only applied to children of elements with the 'selectdemoSelectHeader' class */
+    }
+
+        .selectdemoSelectHeader .demo-header-searchbox
+        {
+            border: none;
+            outline: none;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+        }
+
+        .selectdemoSelectHeader .demo-select-header
+        {
+            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.12);
+            padding-left: 10.667px;
+            height: 48px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: auto;
+        }
+
+        .selectdemoSelectHeader md-content._md
+        {
+            max-height: 240px;
+        }
+
+    .campaign > td
+    {
+        /*background-color: #FFF176 !important;*/
+    }
+
+    .new-product > td
+    {
+        background-color: #b9d3f7 !important;
+    }
+
+
+    mark
+    {
+        background: #F6954E;
+        color: black;
+    }
+
+    header.content-title
+    {
+        display: none;
+    }
+
+.input-criteria{
+     margin-bottom: 0px !important;
+}
+    
+    

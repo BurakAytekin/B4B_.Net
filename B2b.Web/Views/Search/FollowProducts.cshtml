@@ -1,0 +1,33 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@Styles.Render("~/bundles/iztoastcss")
+<table id="pFollowsProductDataTable" class="table table-striped table-hover table-custom">
+    <thead>
+        <tr>
+            <th data-field="Code" data-sortable="true">Kodu</th>
+            <th data-field="Name" data-sortable="true">İsmi</th>
+            <th data-field="Manufacturer" data-sortable="true">Üretici</th>
+            <th data-field="ManufacturerCode" data-sortable="true">Üretici Kodu</th>
+            <th data-field="CreateDate" data-sortable="true">Takip Tarihi</th>
+            <th data-field="Detail" data-sortable="false"></th>
+        </tr>
+    </thead>
+    <tbody id="tbUsersResult">
+        @foreach (var item in @ViewBag.Products)
+        {
+            <tr id="tbUsersTrresult_@item.Id">
+                <td>@item.Product.Code</td>
+                <td>@item.Product.NameShort</td>
+                <td>@item.Product.Manufacturer</td>
+                <td>@item.Product.ManufacturerCode</td>
+                <td>@item.CreateDate</td>
+                <td class="text-center">
+                    <a href="javascript;:" id="@item.Id" onclick="removeFollowProduct(@item.Id); return false;" class="btn btn-sm btn-block btn-custom"><i class="fa fa-ban"></i>&nbsp;Çıkar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Scripts.Render("~/bundles/iztoastjs")
+<script src="@Url.ContentVersioned("/Scripts/Pages/followProducts.js", HttpContext.Current.Request)"></script>
+

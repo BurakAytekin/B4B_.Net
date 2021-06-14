@@ -1,0 +1,739 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Gösterge Paneli";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-dashboard" ng-controller="homeController">
+    <div class="row">
+        <!-- col -->
+        <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+            <div class="card">
+                <div class="front bg-greensea">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        <div class="col-xs-4">
+                            <i class="fa fa-bell faa-ring animated fa-4x"></i>
+                        </div>
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-8">
+                            <p class="text-elg text-strong mb-0">{{headerInformation.WaitingOrder}}</p>
+                            <span>Bekleyen Sipariş</span>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+                <div class="back bg-greensea">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        @*<div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-cog fa-2x"></i> Ayarlar</a>
+                            </div>
+                            <!-- /col -->
+                            <!-- col -->
+                            <div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-chain-broken fa-2x"></i> İçerik</a>
+                            </div>*@
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-12">
+                            <a href="/Admin/Orders"><i class="fa fa-ellipsis-h fa-2x"></i> Detay</a>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+            </div>
+        </div>
+        <!-- /col -->
+        <!-- col -->
+        <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+            <div class="card">
+                <div class="front bg-lightred">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        <div class="col-xs-4">
+                            <i class="fa fa-shopping-cart fa-4x"></i>
+                        </div>
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-8">
+                            <p class="text-elg text-strong mb-0">{{headerInformation.OrderCount}} </p>
+                            <span>Toplam Sipariş</span>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+                <div class="back bg-lightred">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        @*<div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-cog fa-2x"></i> Ayarlar</a>
+                            </div>
+                            <!-- /col -->
+                            <!-- col -->
+                            <div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-chain-broken fa-2x"></i> İçerik</a>
+                            </div>*@
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-12">
+                            <a href="/Admin/Orders"><i class="fa fa-ellipsis-h fa-2x"></i> Detay</a>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+            </div>
+        </div>
+        <!-- /col -->
+        <!-- col -->
+        <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+            <div class="card">
+                <div class="front bg-blue">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        <div class="col-xs-4">
+                            <i class="fa fa-try fa-4x"></i>
+                        </div>
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-8">
+                            <p class="text-elg text-strong mb-0">{{headerInformation.OrderTotal | priceFilter}}</p>
+                            <span>Satışlar</span>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+                <div class="back bg-blue">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        @*<div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-cog fa-2x"></i> Ayarlar</a>
+                            </div>
+                            <!-- /col -->
+                            <!-- col -->
+                            <div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-chain-broken fa-2x"></i> İçerik</a>
+                            </div>*@
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-12">
+                            <a href="/Admin/Orders"><i class="fa fa-ellipsis-h fa-2x"></i> Detay</a>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+            </div>
+        </div>
+        <!-- /col -->
+        <!-- col -->
+        <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+            <div class="card">
+                <div class="front bg-slategray">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        <div class="col-xs-4">
+                            <i class="fa fa-credit-card fa-4x"></i>
+                        </div>
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-8">
+                            <p class="text-elg text-strong mb-0">{{headerInformation.PaymentTotal | priceFilter}} <i class="fa fa-try"></i></p>
+                            <span>Sanalpos</span>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+                <div class="back bg-slategray">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        @*<div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-cog fa-2x"></i> Ayarlar</a>
+                            </div>
+                            <!-- /col -->
+                            <!-- col -->
+                            <div class="col-xs-4">
+                                <a href="javascript:void(0);"><i class="fa fa-chain-broken fa-2x"></i> İçerik</a>
+                            </div>*@
+                        <!-- /col -->
+                        <!-- col -->
+                        <div class="col-xs-12">
+                            <a href="/Admin/Payment/PaymentList"><i class="fa fa-ellipsis-h fa-2x"></i> Detay</a>
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+            </div>
+        </div>
+        <!-- /col -->
+    </div>
+
+    <div class="row">
+        <!-- col -->
+        <div class="col-md-8">
+            <!-- tile -->
+            <section class="tile" id="divOrderPayment">
+                <!-- tile header -->
+                <div class="tile-header bg-greensea dvd dvd-btm">
+                    <h1 class="custom-font"><strong>Sipariş - Tahsilat </strong>Grafiği</h1>
+                </div>
+                <!-- /tile header -->
+                <!-- tile widget -->
+                <div class="tile-widget bg-greensea">
+                    <div id="statistics-chart" style="height: 250px;"></div>
+                </div>
+                <!-- /tile widget -->
+                <!-- tile body -->
+                <div class="tile-body">
+                    <!-- row -->
+                    <div class="row">
+                        <!-- col -->
+                        @*<div class="col-md-8 col-sm-12">
+                                <h4 class="underline custom-font mb-20"><strong>Gerçek</strong> İstatistikler</h4>
+                                <!-- row -->
+                                <div class="row">
+                                    <!-- col -->
+                                    <div class="col-lg-4 text-center">
+                                        <div class="easypiechart"
+                                             data-percent="100"
+                                             data-size="140"
+                                             data-bar-color="#418bca"
+                                             data-scale-color="false"
+                                             data-line-cap="round"
+                                             data-line-width="4"
+                                             style="width: 140px; height: 140px;">
+                                            <i class="fa fa-usd fa-4x text-blue" style="line-height: 140px;"></i>
+                                        </div>
+                                        <p class="text-uppercase text-elg mt-20 mb-0"><strong class="text-blue">6,175</strong> <small class="text-lg text-light text-default lt">Satış</small></p>
+                                        <p class="text-light"><i class="fa fa-caret-up text-success"></i> 18% bu ay</p>
+                                    </div>
+                                    <!-- /col
+                                    <!-- col -->
+                                    <div class="col-lg-4 text-center">
+                                        <div class="easypiechart"
+                                             data-percent="75"
+                                             data-size="140"
+                                             data-bar-color="#e05d6f"
+                                             data-scale-color="false"
+                                             data-line-cap="round"
+                                             data-line-width="4"
+                                             style="width: 140px; height: 140px;">
+                                            <i class="fa fa-eye fa-4x text-lightred" style="line-height: 140px;"></i>
+                                            <p class="text-uppercase text-elg mt-20 mb-0"><strong class="text-lightred">8,213</strong> <small class="text-lg text-light text-default lt">Ziyaretçi</small></p>
+                                            <p class="text-light"><i class="fa fa-caret-down text-warning"></i> 25% bu ay</p>
+                                        </div>
+                                    </div>
+                                    <!-- /col -->
+                                    <!-- col -->
+                                    <div class="col-lg-4 text-center">
+                                        <div class="easypiechart"
+                                             data-percent="46"
+                                             data-size="140"
+                                             data-bar-color="#16a085"
+                                             data-scale-color="false"
+                                             data-line-cap="round"
+                                             data-line-width="4"
+                                             style="width: 140px; height: 140px;">
+                                            <i class="fa fa-user fa-4x text-greensea" style="line-height: 140px;"></i>
+                                            <p class="text-uppercase text-elg mt-20 mb-0"><strong class="text-greensea">632</strong> <small class="text-lg text-light text-default lt">Kullanıcı</small></p>
+                                            <p class="text-light"><i class="fa fa-caret-down text-danger"></i> 61% bu ay</p>
+                                        </div>
+                                    </div>
+                                    <!-- /col -->
+                                </div>
+                                <!-- /row -->
+                            </div>*@
+                        <!-- /col -->
+                        <!-- col -->
+                        @*<div class="col-md-4 col-sm-12">
+                                <h4 class="underline custom-font"><strong>Ziyaretçi</strong> İstatistikleri</h4>
+                                <div class="progress-list">
+                                    <div class="details">
+                                        <div class="title">Amerika</div>
+                                        <div class="description">Amerika'dan Ziyaretçiler</div>
+                                    </div>
+                                    <div class="status pull-right">
+                                        <span>40</span>%
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="progress-xs not-rounded progress">
+                                        <div class="progress-bar progress-bar-dutch" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                            <span class="sr-only">40%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress-list">
+                                    <div class="details">
+                                        <div class="title">Avrupa</div>
+                                        <div class="description">Avrupa'dan Ziyaretçiler</div>
+                                    </div>
+                                    <div class="status pull-right">
+                                        <span>38</span>%
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="progress-xs not-rounded progress">
+                                        <div class="progress-bar progress-bar-greensea" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" style="width: 38%">
+                                            <span class="sr-only">38%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress-list">
+                                    <div class="details">
+                                        <div class="title">Asya</div>
+                                        <div class="description">Asya'dan Ziyaretçiler</div>
+                                    </div>
+                                    <div class="status pull-right">
+                                        <span>12</span>%
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="progress-xs not-rounded progress">
+                                        <div class="progress-bar progress-bar-lightred" role="progressbar" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100" style="width: 12%">
+                                            <span class="sr-only">12%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress-list">
+                                    <div class="details">
+                                        <div class="title">Afrika</div>
+                                        <div class="description">Afrika'dan Ziyaretçiler</div>
+                                    </div>
+                                    <div class="status pull-right">
+                                        <span>7</span>%
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="progress-xs not-rounded progress">
+                                        <div class="progress-bar progress-bar-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0" aria-valuemax="100" style="width: 7%">
+                                            <span class="sr-only">7%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress-list">
+                                    <div class="details">
+                                        <div class="title">Diğer</div>
+                                        <div class="description">Diğer Ziyaretçiler</div>
+                                    </div>
+                                    <div class="status pull-right">
+                                        <span>6</span>%
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="progress-xs not-rounded progress">
+                                        <div class="progress-bar progress-bar-hotpink" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100" style="width: 6%">
+                                            <span class="sr-only">6%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                </div>
+                <!-- /tile body -->
+            </section>
+            <!-- /tile -->
+            <div class="col-md-12">
+                <div class="row">
+                    <!-- col -->
+                    <div class="col-md-6">
+                        <div class="row pr-10">
+                            <!-- tile -->
+                            <!-- /tile -->
+                            <!-- tile -->
+                            <section class="tile widget-todo" fullscreen="isFullscreen04" id="divSalesmanNote">
+                                <!-- tile header -->
+                                <div class="tile-header dvd dvd-btm">
+                                    <h1 class="custom-font"><strong>Yapılacaklar </strong>Listesi</h1>
+                                </div>
+                                <!-- /tile header -->
+                                <!-- tile body -->
+                                <div class="tile-body lined-paper">
+                                    <form class="form-horizontal" role="form">
+                                        <label for="todo" class="text-strong mb-0">Öğe Ekle: </label>
+                                        <div class="form-group mb-0">
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control input-unstyled" id="todo" placeholder="Yapılacak iş yazınız..." ng-keypress="keypressEventSalesmanNote($event)" ng-model="salesmanNote" maxlength="100">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-link" ng-click="addSalesmanNote()"><i class="fa fa-chevron-right text-lg"></i></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <ul class="todo-list list-unstyled">
+                                        <li ng-repeat="row in salesmanNoteList" ng-class="!row.IsActive ? 'completed' : ''">
+                                            <div class="view">
+                                                <label class="checkbox checkbox-custom-alt m-0 text-muted inline">
+                                                    <input type="checkbox" ng-checked="!row.IsActive" ng-click="updateSalesmanNote(row,false)"><i></i>
+                                                </label>
+                                                <span>{{row.Notes}}</span>
+                                                <a role="button" tabindex="0" class="text-danger remove-todo pull-right" ng-click="updateSalesmanNote(row,true)">
+                                                    <i class="fa fa-times"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- /tile body -->
+                            </section>
+                            <!-- /tile -->
+                        </div>
+                    </div>
+                    <!-- /col -->
+                    <!-- col -->
+                    <div class="col-md-6">
+                        <div class="row pl-10">
+                            <!-- tile -->
+                            <!-- /tile -->
+                            <!-- tile -->
+                            <section class="tile bg-slategray widget-calendar">
+                                <!-- tile header -->
+                                <div class="tile-header dvd dvd-btm">
+                                    <h1 class="custom-font"><strong>Mini </strong>Takvim</h1>
+                                </div>
+                                <!-- /tile header -->
+                                <!-- tile body -->
+                                <div class="tile-body p-0">
+                                    <div id="mini-calendar"></div>
+                                </div>
+                                <!-- /tile body -->
+                            </section>
+                            <!-- /tile -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /col -->
+        <!-- col -->
+        <div class="col-md-4">
+            <!-- tile -->
+            <section class="tile" fullscreen="isFullscreen02" id="divManufacturer">
+                <!-- tile header -->
+                <div class="tile-header dvd dvd-btm">
+                    <h1 class="custom-font"><strong>Üretici </strong>Dağılımı</h1>
+                </div>
+                <!-- /tile header -->
+                <!-- tile widget -->
+                <div class="tile-widget">
+                    <div id="manufacturer-usage" style="height: 250px"></div>
+                </div>
+                <!-- /tile widget -->
+                <!-- tile body -->
+                <div class="tile-body p-0">
+                    <div class="panel-group icon-plus" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default panel-transparent">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" ng-click="loadManufacturerReport(0)">
+                                        <span><i class="fa fa-minus text-sm mr-5"></i> Bu Ay</span>
+                                        @*<span class="badge pull-right bg-lightred">3</span>*@
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                <div class="panel-body">
+                                    <table class="table table-no-border m-0">
+                                        <tbody>
+                                            <tr ng-repeat="row in manufacturerReportList">
+                                                <td>{{row.Manufacturer}}</td>
+                                                <td class="text-right">{{row.Total}}</td>
+                                                <td><i class="fa fa-caret-up text-success"></i></td>
+                                            </tr>
+                                            @*<tr>
+                                                    <td>2</td>
+                                                    <td>Diğer</td>
+                                                    <td>2697</td>
+                                                    <td><i class="fa fa-caret-up text-success"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>Safari</td>
+                                                    <td>3597</td>
+                                                    <td><i class="fa fa-caret-down text-danger"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>4</td>
+                                                    <td>Firefox</td>
+                                                    <td>2145</td>
+                                                    <td><i class="fa fa-caret-up text-success"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>5</td>
+                                                    <td>Internet Explorer</td>
+                                                    <td>1854</td>
+                                                    <td><i class="fa fa-caret-down text-danger"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>6</td>
+                                                    <td>Opera</td>
+                                                    <td>654</td>
+                                                    <td><i class="fa fa-caret-up text-success"></i></td>
+                                                </tr>*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default panel-transparent">
+                            <div class="panel-heading" role="tab" id="headingTwo">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" ng-click="loadManufacturerReport(1)">
+                                        <span><i class="fa fa-minus text-sm mr-5"></i> Geçen Ay</span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                <div class="panel-body">
+                                    <table class="table table-no-border m-0">
+                                        <tbody>
+                                            <tr ng-repeat="row in manufacturerReportList">
+                                                <td>{{row.Manufacturer}}</td>
+                                                <td>{{row.Total}}</td>
+                                                <td><i class="fa fa-caret-up text-success"></i></td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default panel-transparent">
+                            <div class="panel-heading" role="tab" id="headingThree">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree" ng-click="loadManufacturerReport(2)">
+                                        <span><i class="fa fa-minus text-sm mr-5"></i> Bu Yıl</span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                <div class="panel-body">
+                                    <table class="table table-no-border m-0">
+                                        <tbody>
+                                            <tr ng-repeat="row in manufacturerReportList">
+                                                <td>{{row.Manufacturer}}</td>
+                                                <td>{{row.Total}}</td>
+                                                <td><i class="fa fa-caret-up text-success"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /tile body -->
+            </section>
+            <!-- /tile -->
+        </div>
+        <!-- /col -->
+    </div>
+
+    <!-- col -->
+    @*<div class="col-md-4">
+            <section class="tile tile-simple bg-blue" style="min-height: 190px; overflow: hidden;">
+                <!-- tile header -->
+                <div class="tile-header">
+                    <h1 class="custom-font"><strong>Social</strong> Feed</h1>
+                    <ul class="controls">
+                        <li class="remove"><a role="button" tabindex="0" class="tile-close"><i class="fa fa-times"></i></a></li>
+                    </ul>
+                </div>
+                <!-- /tile header -->
+                <!-- tile body -->
+                <div class="tile-body">
+                    <div id="feed-carousel" class="owl-carousel">
+                        <div class="media social-feed">
+                            <span class="pull-left">
+                                <i class="fa fa-facebook fa-2x icon-border wh45 text-center" style="line-height: 45px"></i>
+                            </span>
+                            <div class="media-body">
+                                <p class="media-heading"><strong>Imrich Kamarel</strong> <small class="text-light text-transparent-white">18 minutes ago</small></p>
+                                <p class="text-transparent-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim...</p>
+                            </div>
+                        </div>
+                        <div class="media social-feed">
+                            <span class="pull-left">
+                                <i class="fa fa-twitter fa-2x icon-border wh45 text-center" style="line-height: 45px"></i>
+                            </span>
+                            <div class="media-body">
+                                <p class="media-heading"><strong>George Schwarz</strong> <small class="text-light text-transparent-white">1 hour ago</small></p>
+                                <p class="text-transparent-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim...</p>
+                            </div>
+                        </div>
+                        <div class="media social-feed">
+                            <span class="pull-left">
+                                <i class="fa fa-google-plus fa-2x icon-border wh45 text-center" style="line-height: 45px"></i>
+                            </span>
+                            <div class="media-body">
+                                <p class="media-heading"><strong>Milan Klement</strong> <small class="text-light text-transparent-white">56 minutes ago</small></p>
+                                <p class="text-transparent-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /tile body -->
+            </section>
+            <!-- /tile -->
+        </div>*@
+    <!-- /col -->
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode
+{
+    <script type="text/javascript">
+        $(window).load(function () {
+
+            //Initialize mini calendar datepicker
+            $('#mini-calendar').datetimepicker({
+                inline: true
+            });
+
+            $('#todo-carousel, #feed-carousel, #notes-carousel').owlCarousel({
+                autoPlay: 5000,
+                stopOnHover: true,
+                slideSpeed: 300,
+                paginationSpeed: 400,
+                singleItem: true,
+                responsive: true
+            });
+
+
+            // Initialize Statistics chart
+
+            // * Initialize Statistics chart
+
+            //Initialize morris chart
+            //Morris.Donut({
+            //    element: 'browser-usage',
+            //    data: [
+            //        { label: 'Chrome', value: 25, color: '#00a3d8' },
+            //        { label: 'Safari', value: 20, color: '#2fbbe8' },
+            //        { label: 'Firefox', value: 15, color: '#72cae7' },
+            //        { label: 'Opera', value: 5, color: '#d9544f' },
+            //        { label: 'Internet Explorer', value: 10, color: '#ffc100' },
+            //        { label: 'Diğer', value: 25, color: '#1693A5' }
+            //    ],
+            //    resize: true
+            //});
+            //*Initialize morris chart
+
+            // Initialize owl carousels
+
+            //$('#appointments-carousel').owlCarousel({
+            //    autoPlay: 5000,
+            //    stopOnHover: true,
+            //    slideSpeed: 300,
+            //    paginationSpeed: 400,
+            //    navigation: true,
+            //    navigationText: ['<i class=\'fa fa-chevron-left\'></i>', '<i class=\'fa fa-chevron-right\'></i>'],
+            //    singleItem: true
+            //});
+            //* Initialize owl carousels
+
+            // Initialize rickshaw chart
+            //var graph;
+
+            //var seriesData = [[], []];
+            //var random = new Rickshaw.Fixtures.RandomData(50);
+
+            //for (var i = 0; i < 50; i++) {
+            //    random.addData(seriesData);
+            //}
+
+            //graph = new Rickshaw.Graph({
+            //    element: document.querySelector("#realtime-rickshaw"),
+            //    renderer: 'area',
+            //    height: 133,
+            //    series: [{
+            //        name: 'Series 1',
+            //        color: 'steelblue',
+            //        data: seriesData[0]
+            //    },
+            //    {
+            //        name: 'Series 2',
+            //        color: 'lightblue',
+            //        data: seriesData[1]
+            //    }]
+            //});
+
+            //var hoverDetail = new Rickshaw.Graph.HoverDetail({
+            //    graph: graph,
+            //});
+
+            //graph.render();
+
+            //setInterval(function () {
+            //    random.removeData(seriesData);
+            //    random.addData(seriesData);
+            //    graph.update();
+
+            //}, 1000);
+            //* Initialize rickshaw chart
+
+
+            //*Initialize mini calendar datepicker
+
+
+            //todo's
+            $('.widget-todo .todo-list li .checkbox').on('change', function () {
+                var todo = $(this).parents('li');
+
+                if (todo.hasClass('completed')) {
+                    todo.removeClass('completed');
+                }
+                else {
+                    todo.addClass('completed');
+                }
+            });
+            //* todo's
+
+            //initialize datatable
+            //$('#project-progress').DataTable({
+            //    "aoColumnDefs": [
+            //        { 'bSortable': false, 'aTargets': ["no-sort"] }
+            //    ]
+            //});
+            //*initialize datatable
+
+            //load wysiwyg editor
+            //$('#summernote').summernote({
+            //    toolbar: [
+            //        //['style', ['style']], // no style button
+            //        ['style', ['bold', 'italic', 'underline', 'clear']],
+            //        ['fontsize', ['fontsize']],
+            //        ['color', ['color']],
+            //        ['para', ['ul', 'ol', 'paragraph']],
+            //        ['height', ['height']]//,
+            //        //['insert', ['picture', 'link']], // no insert buttons
+            //        //['table', ['table']], // no table button
+            //        //['help', ['help']] //no help button
+            //    ],
+            //    height: 143   //set editable area's height
+            //});
+            //*load wysiwyg editor
+        });
+    </script>
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/home.js", HttpContext.Current.Request)"></script>
+  
+}

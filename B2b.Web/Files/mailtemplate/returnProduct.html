@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body style="font-family:Arial;">
+    <div style="display:table;width:100%;width:100%;max-width:1200px;margin:0 auto;">
+        <h3 style="text-align:center;font-size:25px;">Ürün İade Formu</h3>
+    </div>
+    <div style="display:table;width:100%;width:100%;max-width:1200px;margin:0 auto;">
+        <div style="position:relative;background: #444;
+    margin-bottom: 0 !important;
+    border-left: 4px solid #0f3488;margin-bottom:5px;">
+            <h3 style="border-left:0; width:100%; padding:5px; font-size:21px; background: #444; color: #ffffff; margin: 7.5px 0; position: relative;
+    display: inline-block;
+    left: 0;
+    padding-right: 30px;
+    z-index: 1; box-sizing:border-box;">
+                Ürün İade Bilgileri
+            </h3>
+        </div>
+    </div>
+    <div style="display:table;width:100%;width:100%;max-width:1200px;margin:0 auto;">
+        <div style="display:table-cell;width:50%;">
+            <div style="display:table;width:100%;margin-top:5px;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Ürün İade Tipi</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488;  padding:10px;">
+                        <span>{TypeStr}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Ürün Adı</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{ProductName}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Üretici Kodu</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{ProductManuCode}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Miktar</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{Quantity}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;margin-bottom:5px;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">İade Nedeni</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{ReturnReason}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display:table-cell;width:50%;">
+            <div style="display:table;width:100%;margin-top:5px;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Ürün Kodu</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488;  padding:10px;">
+                        <span>{ProductCode}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Üretici</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{ProductManu}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Fatura Tarihi</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{InvoiceDate}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">Net Fiyat</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{Price}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;width:100%;">
+                <div style="display:table-cell;width:30%; font-size: 14px; color: #0f3488; text-align: left; background-color: #f2f2f2; border-bottom: 2px solid #dcdcdc; padding:10px; min-width: 150px; position: relative;">
+                    <span style="font-size:16px;">İade Notu</span>
+                </div>
+                <div style="display:table-cell;width:70%;">
+                    <div style="border-bottom:2px solid #0f3488; padding:10px;">
+                        <span>{Explanation}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

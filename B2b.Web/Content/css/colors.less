@@ -1,0 +1,770 @@
+﻿/*#region Variables Definition */
+/*#region Global Color Definitions */
+/*@primary-dark1-color: #324d7a;*/
+/*@primary-dark2-color: #39598c;*/
+/*@primary-dark3-color: #41649e;*/
+@import "../../Files/Color2.less";
+@primary-dark3-color: darken(@primary-color, 15%);
+@primary-dark2-color: darken(@primary-color, 10%);
+@primary-dark1-color: darken(@primary-color, 5%);
+/*@primary-color: #013d83;*/
+/*@primary-color: @primary-color;*/
+/*@primary-menu-color: #1e2f43;*/
+@primary-footer-color: #444645;
+@campaign-color: #fff176;
+@new-product: #cfcfcf;
+/*@import "admincolor.css";*/
+/*@primary-color*/
+@primary-light1-color: lighten(@primary-color, 5%);
+@primary-light2-color: lighten(@primary-color, 10%);
+@primary-light3-color: lighten(@primary-color, 15%);
+@primary-light4-color: lighten(@primary-color, 35%);
+/*@primary-light1-color: #577dba;*/
+/*@primary-light2-color: #698bc2;*/
+/*@primary-light3-color: #e20a17;*/
+/*@primarytwo-color: .primarytwo-color;*/
+/*@secondary-color: darken(@primary-color, 10%);*/
+/*@tertiary-color: #96b4de;*/
+@tertiary-color: lighten(@primary-color, 20%);
+@white-color: #ffffff;
+@black-color: #000000;
+@dark-color: #575a59;
+@gray-color: #cfcfcf;
+@border-color: #cfcfcf;
+@font-color: #696969;
+@font-name: "";
+@none: none;
+/*#endregion */
+
+/*#region Master Color Definitions */
+@menu-main-bg-color: #1d1d1b;
+@menu-main-border-color: lighten(@menu-main-bg-color, 10%);
+@link-color-hover: darken(@primary-color, 20%);
+/*#endregion */
+
+/*#region Buttons Color Definitions */
+@button-primary-color: @primary-color;
+@button-primary-hover-color: lighten(@button-primary-color, 10%);
+@button-primary-active-color: darken(@button-primary-color, 10%);
+@button-primary-border-color: darken(@button-primary-color, 10%);
+@button-primary-font-color: @white-color;
+
+@button-custom-2-color: @dark-color;
+@button-custom-2-hover-color: lighten(@primary-light1-color, 10%);
+@button-custom-2-active-color: darken(@primary-light1-color, 10%);
+@button-custom-2-border-color: lighten(@primary-light1-color, 10%);
+@button-custom-2-font-color: @white-color;
+
+@button-inverse-color: @black-color;
+@button-inverse-hover-color: lighten(@button-inverse-color, 10%);
+@button-inverse-active-color: darken(@button-inverse-color, 10%);
+@button-inverse-border-color: darken(@button-inverse-color, 10%);
+@button-inverse-font-color: @white-color;
+
+@button-action-color: #2ecc71;
+@button-action-hover-color: lighten(@button-action-color, 10%);
+@button-action-active-color: darken(@button-action-color, 10%);
+@button-action-border-color: darken(@button-action-color, 10%);
+@button-action-font-color: @white-color;
+
+@button-highlight-color: #e67e22;
+@button-highlight-hover-color: lighten(@button-highlight-color, 10%);
+@button-highlight-active-color: darken(@button-highlight-color, 10%);
+@button-highlight-border-color: darken(@button-highlight-color, 10%);
+@button-highlight-font-color: @white-color;
+
+@button-caution-color: #e74c3c;
+@button-caution-hover-color: lighten(@button-caution-color, 10%);
+@button-caution-active-color: darken(@button-caution-color, 10%);
+@button-caution-border-color: darken(@button-caution-color, 10%);
+@button-caution-font-color: @white-color;
+
+@button-royal-color: #3498db;
+@button-royal-hover-color: lighten(@button-royal-color, 10%);
+@button-royal-active-color: darken(@button-royal-color, 10%);
+@button-royal-border-color: darken(@button-royal-color, 10%);
+@button-royal-font-color: @white-color;
+/*#endregion */
+
+/*#region Eryaz Software Color Definitions */
+@eryaz-darken-color: #00549e;
+@eryaz-main-color: #4870b0;
+@eryaz-lighten-color: #96b4de;
+/*@eryaz-main-light1-color: #698bc2;*/
+/*@eryaz-main-light2-color: #7b99c9;*/
+@eryaz-main-light2-color: lighten(@eryaz-main-color, 10%);
+@eryaz-main-light2-color: lighten(@eryaz-main-color, 15%);
+/*#endregion */
+/*#endregion */
+
+
+/*#region All Color Styles*/
+
+.title {
+    border-left: 4px solid @primary-color;
+}
+
+a {
+    color: @primary-color;
+}
+
+a:active, a:hover, a:focus {
+    color: @primary-light2-color;
+}
+
+#pDataTable tr:hover td {
+    background: @primary-light4-color;
+}
+
+.table.table-custom > tbody > tr.detail-view > td, .table.table-custom > tbody > tr.detail-view:hover > td {
+    color: @primary-color;
+    background-color: #333333 !important;
+}
+
+.tab-container .nav-tabs > li > a:hover {
+    background: @primary-dark2-color;
+}
+
+.table.table-custom > tbody > tr > td .table.table-custom > thead > tr > th {
+    background: @primary-color;
+}
+
+.detail-view .list-group .list-group-item > .row > div > div {
+    color: @primary-color;
+}
+
+#header-top {
+    border-top: 4px solid @primary-color;
+}
+
+#main-nav-container #main-nav .menu li:hover > a, #main-nav-container #main-nav .menu li > ul li > ul li:hover > a {
+    color: @primary-light3-color;
+}
+
+#main-nav-container #main-nav .menu li ul, #main-nav-container #main-nav .menu li ul li ul,
+#main-nav-container #main-nav .menu li .mega-menu {
+    border-top: 3px solid @primary-light3-color;
+}
+
+#top-links li a:hover {
+    color: @primary-color;
+}
+
+#main-nav-container #main-nav .menu li .mega-menu .mega-menu-title:hover, #main-nav-container #main-nav .menu li .mega-menu .mega-menu-list li:hover > a {
+    color: @primary-color;
+}
+
+#scroll-top {
+    background: @primary-color;
+    border: 1px solid @primary-color;
+}
+
+#scroll-top:hover {
+    background-color: @primary-light2-color;
+    border-color: @primary-light2-color;
+}
+
+.item-name a:hover {
+    color: @primary-color;
+}
+
+.crsl-btn:hover {
+    background-color: @primary-color;
+    border-color: @primary-color;
+}
+
+.new-product-list .item.item-hover:hover {
+    border: 1px solid @primary-color;
+}
+
+.accordion-btn:hover, .accordion-btn.active {
+    background-color: @primary-color;
+    border-color: @primary-light1-color;
+}
+
+::selection {
+    background-color: @primary-color;
+}
+
+::-moz-selection {
+    background-color: @primary-color;
+    color: #fff;
+}
+
+.form-group input[type="checkbox"] + .btn-group.btn-checkbox > label.btn, .form-group .btn-checkbox input[type="radio"] + .btn-group.btn-checkbox > label.btn {
+    border-color: @primary-color;
+}
+
+.input-criteria .SumoSelect .CaptionCont,
+.input-criteria .form-control {
+    border-color: @primary-color;
+}
+
+.folders-box h3 a:hover {
+    color: @primary-color;
+}
+
+.small-bottom-border {
+    background-color: @primary-color;
+}
+
+.sidebarslider .flex-direction-nav a:hover, .footerslider .flex-direction-nav a:hover {
+    background-color: @primary-color;
+    border-color: @primary-color;
+}
+
+#footer-bottom .other-link a:before {
+    color: @primary-color;
+}
+
+.social-links li a:hover,
+#footer #footer-bottom a:hover {
+    color: @primary-light2-color;
+}
+
+#header .dropdown-menu > li > a:hover, #header .dropdown-menu > li > a:focus {
+    background-color: @primary-color;
+    color: @white-color;
+}
+
+.return-product-header .content-title {
+    border-left: 4px solid @primary-color;
+}
+
+.header-box.header-basket {
+    background: @primary-color;
+}
+
+.header-box.header-basket:hover {
+    background: @primary-light2-color;
+    cursor: pointer;
+}
+
+.header-box.header-basket .header-basket-main .header-basket-row .header-box-icon .header-box-piece {
+    color: @primary-color;
+}
+
+#main-nav-container {
+    background: @primary-menu-color;
+}
+
+#footer {
+    background: @primary-footer-color;
+}
+
+#responsive-nav-button:hover #responsive-nav-button-icon, #responsive-nav-button.active #responsive-nav-button-icon {
+    background-color: @primary-color;
+}
+
+#main-nav-container #main-nav #responsive-nav ul {
+    border-top: 5px solid @primary-color;
+}
+
+#main-nav-container #main-nav #responsive-nav ul li a:hover {
+    color: @primary-color;
+}
+
+.customer-name-main {
+    background: @primary-light1-color;
+}
+
+.customer-name-main:before {
+    border-color: @primary-menu-color transparent transparent transparent;
+}
+
+.customer-name-main:after {
+    border-color: @primary-menu-color transparent transparent transparent;
+}
+
+.header-box a:hover {
+    color: @primary-color;
+}
+
+.highlight.first-color {
+    color: #fff;
+    background: @primary-color;
+}
+
+.highlight.second-color {
+    color: #fff;
+    background: @primary-light2-color;
+}
+
+.first-color {
+    color: @primary-color;
+}
+
+.second-color {
+    color: @primary-light1-color;
+}
+
+.dropcap.first-color {
+    color: @primary-color;
+}
+
+.dropcap.second-color {
+    color: @primary-light1-color;
+}
+
+.item-add-btn:hover,
+.item-add-btn:focus,
+.item-add-btn:active,
+.item-add-btn.active {
+    color: @white-color;
+    background: @primary-color;
+    border-color: @primary-color;
+}
+
+
+.banner-slider .flex-control-paging li a.flex-active {
+    background: @primary-color;
+}
+
+#breadcrumb-container {
+    background: @primary-color;
+}
+
+#category-breadcrumb .breadcrumb a:hover,
+#breadcrumb-container.light .breadcrumb a:hover,
+#breadcrumb-container.transparent .breadcrumb a:hover {
+    color: @primary-color;
+}
+
+.portfolio-item > figure > figcaption > .zoom-button,
+.portfolio-item > figure > figcaption > .link-button {
+    border: 1px solid @primary-color;
+    background-color: @primary-color;
+}
+
+.portfolio-item > figure > figcaption > .like-button:hover {
+    color: @primary-color;
+}
+
+.portfolio-item h2 a:hover,
+.portfolio-item p a:hover,
+.portfolio-meta-list li a:hover {
+    color: @primary-color;
+}
+
+.select-dropdown:hover .dropdown-toggle {
+    background: @primary-color;
+    color: @white-color;
+    border-color: @primary-color;
+}
+
+.select-dropdown .dropdown-menu > li > a:hover {
+    color: @white-color;
+    background: @primary-color;
+}
+
+.category-filter-list li a:hover {
+    color: @primary-color;
+}
+
+/*#endregion*/
+
+/*#region Slider Colors*/
+.tp-bullets.simplebullets .bullet:hover,
+.tp-bullets.simplebullets .bullet.selected {
+    background-color: @primary-color !important;
+}
+
+.tp-caption.rev-price {
+    background: @primary-color !important;
+}
+
+.tparrows:hover {
+    background-color: @primary-color !important;
+    border-color: @primary-color;
+}
+
+
+.category-image-slider-container .new-rect {
+    background: @primary-color;
+}
+
+.category-image-slider-container .discount-rect {
+    background: @primarytwo-color;
+}
+
+.featured-slider .featured-product h5 a:hover,
+.related-slider .related-product h5 a:hover {
+    color: @primary-color;
+}
+
+.featured-slider .featured-product .featured-price,
+.related-slider .related-product .related-price {
+    color: @primarytwo-color;
+}
+
+/*#endregion*/
+
+/*#region Search Page Style Start*/
+
+#pDataTable thead {
+    background: @primary-color;
+}
+
+.table.table-custom > thead > tr > th {
+    border-bottom: 2px solid @primary-color;
+}
+
+.table.table-tooltip > tbody > tr > td:first-child {
+    color: @primary-color;
+}
+
+
+mark {
+    background: @primary-light3-color;
+}
+
+.campaign > td {
+    background-color: @campaign-color !important;
+}
+
+.new-product > td {
+    background-color: @new-product !important;
+}
+
+.custom-loading > span.information {
+    color: @primary-color;
+}
+
+/*#endregion Search Page Style Finish*/
+
+/*#region Login Page Style Start*/
+.loginbox {
+    border-top: 6px solid @primary-color;
+}
+
+.loginbox .textbox-wrap.focused {
+    border-left-color: @primary-color;
+    background-color: #f0f0f0;
+}
+
+.input-group-addon {
+    color: @primary-color;
+}
+
+/*#endregion Login Page Style Finish*/
+
+/*#region Customer Select Page Style Start*/
+
+
+.customer-select-top-border {
+    border-top: 5px solid @primary-color;
+}
+
+.customer-select-user-icon {
+    background: @primary-color !important;
+    color: @white-color;
+}
+
+/*#endregion Customer Select Page Style Finish*/
+
+/*#region Campaign Product Style*/
+
+.new-rect {
+    background: @primary-color;
+}
+
+.discount-rect {
+    background: @primarytwo-color;
+}
+
+.item-price-container {
+    background: @primary-light3-color;
+}
+
+#products-tabs-content .item:hover {
+    border: 1px solid @primary-color;
+}
+
+.folders-box .folders-icon a.folders-download {
+    top: -200%;
+    color: @primary-color;
+}
+
+.folders-box:hover .folders-icon {
+    border: 2px solid @primary-color;
+}
+
+.custom-loading > span.information {
+    color: @primary-color;
+}
+
+.item.item-hover:hover {
+    border: 1px solid @primary-color;
+}
+
+/*#endregion*/
+
+/*#region Payment Page Colors*/
+
+.vp-content ul.anchor li a.done {
+    background: @primary-color;
+    border: 1px solid @primary-color;
+}
+
+.vp-content ul.anchor li a.selected {
+    background: @primary-light3-color;
+    border: 1px solid @primary-light3-color;
+}
+
+.vp-content .stepContainer .StepTitle {
+    background-color: @primary-color;
+}
+
+.vp-content .buttonPrevious {
+    border: 1px solid @primarytwo-color;
+    background-color: @primarytwo-color;
+}
+
+.vp-content .buttonNext {
+    border: 1px solid @primary-color;
+    background-color: @primary-color;
+}
+
+.vp-content .buttonPrevious:hover {
+    border: 1px solid @primary-color;
+    background-color: @primary-color;
+}
+
+.vp-content .buttonNext:hover {
+    border: 1px solid @primary-light2-color;
+    background-color: @primary-light2-color;
+}
+
+.vp-content ul.anchor li a.selected:hover {
+    background: @primary-dark1-color;
+}
+
+/*#endregion*/
+
+/*#region Contact Page Styles Start*/
+
+.contact-icon {
+    background-color: @primary-color;
+    border: 1px solid @primary-color;
+}
+
+/*#endregion*/
+
+/*#region Buttons Styles Start */
+
+.btn-custom {
+    background-color: @primary-color;
+}
+
+#header .header-top-dropdowns .btn-group:hover .btn-custom, #header .header-top-dropdowns .btn-custom:hover, #header .header-top-dropdowns .btn-custom:focus, #header .header-top-dropdowns .btn-custom:active, #header .header-top-dropdowns .btn-custom.active, #header .header-top-dropdowns .open .dropdown-toggle.btn-custom, #header .header-top-dropdowns .dropdown-menu > li > a:hover {
+    background-color: @button-primary-hover-color;
+}
+
+
+.tab-style-1 li a {
+    background: @dark-color;
+    border: 1px solid @dark-color;
+}
+
+.tab-style-1 li a:hover, .tab-style-1 li.active a {
+    background: @button-primary-hover-color;
+    border-color: @button-primary-hover-color;
+}
+
+.btn-custom:hover,
+.btn-custom:focus,
+.btn-custom:active,
+.btn-custom.active,
+.open .dropdown-toggle.btn-custom {
+    background-color: @button-primary-hover-color;
+    color: @button-primary-font-color;
+}
+
+.btn-custom-3 {
+    color: #fff;
+    background-color: @dark-color;
+    border-color: #5c5f5e;
+    /*-webkit-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);
+	box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);*/
+}
+
+.btn-custom-3:hover,
+.btn-custom-3:focus,
+.btn-custom-3:active,
+.btn-custom-3.active,
+.open .dropdown-toggle.btn-custom-3 {
+    color: #fff;
+    background-color: @primary-light1-color;
+    border-color: @primary-light1-color;
+    /*-webkit-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);
+	box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);*/
+}
+
+.btn-custom-3:active,
+.btn-custom-3.active,
+.open .dropdown-toggle.btn-custom-3 {
+    background-image: none;
+}
+
+.btn-custom-3.disabled,
+.btn-custom-3[disabled],
+fieldset[disabled] .btn-custom-3,
+.btn-custom-3.disabled:hover,
+.btn-custom-3[disabled]:hover,
+fieldset[disabled] .btn-custom-3:hover,
+.btn-custom-3.disabled:focus,
+.btn-custom-3[disabled]:focus,
+fieldset[disabled] .btn-custom-3:focus,
+.btn-custom-3.disabled:active,
+.btn-custom-3[disabled]:active,
+fieldset[disabled] .btn-custom-3:active,
+.btn-custom-3.disabled.active,
+.btn-custom-3[disabled].active,
+fieldset[disabled] .btn-custom-3.active {
+    background-color: @primary-light1-color;
+    border-color: @primary-light1-color;
+}
+
+.btn-custom .badge {
+    color: @primary-color;
+    background-color: @white-color;
+}
+
+.btn-custom-2:hover, .btn-custom-2:focus, .btn-custom-2:active, .btn-custom-2.active, .open .dropdown-toggle.btn-custom-2 {
+    background-color: @button-primary-hover-color;
+    border-color: @button-primary-hover-color;
+}
+
+.btn-group-radio-eryaz {
+    border-bottom: 2px solid @primary-color;
+}
+
+.btn-group-radio-eryaz .btn.btn-default.active {
+    background-color: @primary-color;
+    color: @white-color;
+    border-color: @primary-color;
+}
+
+.btn-custom .badge {
+    color: @primary-color;
+    background-color: #ffffff;
+}
+
+/*#endregion*/
+
+/*#region Tooltip Style*/
+
+.tooltip-inner {
+    background-color: @primary-color;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: @primary-color;
+}
+
+.tooltip.top-left .tooltip-arrow {
+    border-top-color: @primary-color;
+}
+
+.tooltip.top-right .tooltip-arrow {
+    border-top-color: @primary-color;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: @primary-color;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: @primary-color;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: @primary-color;
+}
+
+.tooltip.bottom-left .tooltip-arrow {
+    border-bottom-color: @primary-color;
+}
+
+.tooltip.bottom-right .tooltip-arrow {
+    border-bottom-color: @primary-color;
+}
+
+.progress-bar-custom {
+    background-color: @primary-color;
+    color: @dark-color;
+}
+
+/*#endregion*/
+
+/*Notification Styles*/
+
+.menu_container-right .notification-header {
+    background-color: @primary-light1-color;
+}
+
+.menu_container-right .notification-full .notification-main .notification-content .notification-content-icon i {
+    color: @primary-color;
+}
+
+/*#endregion*/
+
+/*#region New Search Style*/
+
+.header-searchbox:after {
+    background: @primary-light2-color;
+}
+
+.searchbox-full {
+    background: rgba(red(@primary-light2-color), green(@primary-light2-color), blue(@primary-light2-color), 0.9);
+}
+
+.searchbox-full .searchbox-main .search-box-col .searchbox-new-product-main .searchbox-new-product-cols .searchbox-new-product-bg {
+    background: @primary-light1-color;
+}
+
+.searchbox-full .searchbox-main .search-box-col .searchboxs .searchboxs-form .searchbox-input input[type="text"] ~ .focus-border {
+    background-color: @primary-color;
+}
+
+.header-basket .header-basket-main .header-basket-row .header-box-icon .header-box-piece {
+    background: @primary-color;
+}
+
+.action-button .ab-link {
+    background: @primary-color;
+}
+
+.action-button .ab-link:hover {
+    background: @primary-light2-color;
+}
+
+.action-button.open .ab-link {
+    background: @primary-light2-color;
+}
+
+/*#endregion*/
+
+/*#region Responsive Color Less*/
+
+@media only screen and (max-width : 991px) and (min-width : 768px) {
+    .customer-name-main:after {
+        background-color: @primary-light1-color;
+    }
+}
+
+@media only screen and (max-width : 767px) and (min-width : 501px) {
+
+
+    .customer-name-main:after {
+        background-color: @primary-light1-color;
+    }
+}
+
+@media only screen and (max-width : 500px) and (min-width : 320px) {
+    .customer-name-main:after {
+        background-color: @primary-light1-color;
+    }
+}
+
+/*#endregion*/

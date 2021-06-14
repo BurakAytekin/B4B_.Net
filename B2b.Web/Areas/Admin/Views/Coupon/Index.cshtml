@@ -1,0 +1,759 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@section cStyleLibrary{
+}
+
+@section cStyleCode{
+    @Styles.Render("~/Content/coupon.css")
+}
+
+<div class="page page-warehouse" ng-controller="couponController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Coupon">Kupon Tanımları</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Kupon </strong>Tanımları</h1>
+                        <ul class="controls">
+                            <li role="presentation" class="active"><a href="#tCouponList" aria-controls="tCouponList" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-list mr-5"></i> Kuponlar</a></li>
+                            <li role="presentation"><a href="#tCouponAdd" aria-controls="tCouponAdd" role="tab" data-toggle="tab" aria-expanded="false" ng-click="openNewCoupon(null)"><i class="fa fa-plus mr-5"></i> Yeni Kupon</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="tab-content">
+                                    <div id="tCouponList" role="tabpanel" class="tab-pane active">
+                                        <div class="row">
+
+                                            <div class="col-md-4" ng-repeat="row in couponList">
+                                                <div class="panel coupon" ng-class="'panel-'+row.CssClassAdmin">
+                                                    <div class="panel-heading" id="head">
+                                                        <div class="text-right">
+                                                            <span>Öncelik:</span>
+                                                            <input style="width:35px;text-align:center;" ng-model="row.Priority" ng-change="updateCouponPriority(row.Id,row.Priority)" type="number" />
+                                                        </div>
+
+                                                        <div class="panel-title cupon-title" id="title">
+                                                            <i class="fa fa-tags fa-2x"></i>
+                                                            <span class="hidden-xs">{{row.Header}}</span>
+                                                            <span class="visible-xs">{{row.Header}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <img src="" class="coupon-img img-rounded">
+                                                        @*<div class="col-md-12 well well-sm">
+                                                                <div id="business-info">
+                                                                    <ul>
+                                                                        <li>
+                                                                            <div class="col-md-12">
+                                                                                <div class="offer text-danger text-center">
+                                                                                    <span class="usd"><sup>$</sup></span>
+                                                                                    <span class="number">39</span>
+                                                                                    <span class="cents"><sup>95</sup></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>*@
+
+                                                        <div class="col-md-12">
+                                                            <div class="offer text-center" ng-class="'text-'+row.CssClassAdmin">
+                                                                <span class="usd" ng-if="row.Type == 0"><sup>%</sup></span>
+                                                                <span class="usd" ng-if="row.Type == 1"><sup>₺</sup></span>
+                                                                <span class="number" ng-if="row.Type == 0">{{row.Discount}}</span>
+                                                                <span class="number" ng-if="row.Type == 1">{{row.PriceLeft}}</span>
+                                                                <span class="cents" ng-if="row.Type == 1"><sup>{{row.PriceRight}}</sup></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                                    <div class="panel panel-default">
+                                                                        <div class="panel-heading" role="tab" id="headingOne">
+                                                                            <h4 class="panel-title text-center">
+                                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{row.Id}}" aria-expanded="true" aria-controls="collapseOne{{row.Id}}" class="">
+                                                                                    Detay
+                                                                                </a>
+                                                                            </h4>
+                                                                        </div>
+                                                                        <div id="collapseOne{{row.Id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
+                                                                            <div class="panel-body">
+                                                                                <div class="row">
+
+                                                                                    <div class="col-md-12">
+                                                                                        <p>
+                                                                                            {{row.Explanation1}}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <div class="col-md-12">
+                                                                                        <p class="disclosure">
+                                                                                            {{row.Explanation2}}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel-footer">
+                                                        <div class="coupon-code">
+                                                            Kupon Kodu: {{row.Code}}
+                                                            <div class="print btn-group">
+                                                                <button type="button" class="btn dropdown-toggle" ng-class="'btn-'+row.CssClassAdmin" data-toggle="dropdown" aria-expanded="false">
+                                                                    İşlemler <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="javascript:;" ng-click="openNewCoupon(row)"><i class="fa fa-refresh"></i>Düzenle</a></li>
+                                                                    <li><a href="javascript:;" ng-if="row.IsActive" ng-click="changeActivity(row)"><i class="fa fa-thumbs-o-down"></i>Pasif Et</a></li>
+                                                                    <li><a href="javascript:;" ng-if="!row.IsActive" ng-click="changeActivity(row)"><i class="fa fa-thumbs-o-up"></i>Aktif Et</a></li>
+                                                                    <li><a href="javascript:;" ng-click="setAllCustomers(row)"><i class="fa fa-users"></i>Tüm Müşterilere Tanımla</a></li>
+                                                                    <li><a href="javascript:;" ng-click="getCopunCustomerList(row,0)"><i class="fa fa-user-plus"></i>Tanımlı Müşteriler ve Tanımlama</a></li>
+                                                                    <li><a href="javascript:;" ng-click="getCouponStatistics(row)"><i class="fa fa-bar-chart"></i>İstatistikler</a></li>
+                                                                    <li class="divider"></li>
+                                                                    <li><a href="javascript:;" ng-click="deleteCoupon(row)"><i class="fa fa-times"></i>Sil</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="exp">Tarih Aralığı: {{row.StartDate  | dateFilterErp  | date:'dd.MM.yyyy'}}-{{row.EndDate  | dateFilterErp  | date:'dd.MM.yyyy'}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div id="tCouponAdd" role="tabpanel" class="tab-pane">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Kodu</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" readonly ng-model="selectedCoupon.Code" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Başlık</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedCoupon.Header" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Kampanyalı Ürünlere Uygulansın</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isIgnoreCampaign" class="onoffswitch-checkbox" id="isIgnoreCampaign">
+                                                        <label class="onoffswitch-label" for="isIgnoreCampaign">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Sepette Otomatik Uygulansın</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isAutoUse" class="onoffswitch-checkbox" id="isAutoUse">
+                                                        <label class="onoffswitch-label" for="isAutoUse">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Ana İskonto İptal Edilsin</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isCancelMainDisc" class="onoffswitch-checkbox" id="isCancelMainDisc">
+                                                        <label class="onoffswitch-label" for="isCancelMainDisc">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Ek İskonto İptal Edilsin</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isCancelAdditionalDisc" class="onoffswitch-checkbox" id="isCancelAdditionalDisc">
+                                                        <label class="onoffswitch-label" for="isCancelAdditionalDisc">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Manuel İskonto İptal Edilsin</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isCancelManuelDisc" class="onoffswitch-checkbox" id="isCancelManuelDisc">
+                                                        <label class="onoffswitch-label" for="isCancelManuelDisc">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Tek Kullanımlık Kupon</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isOneUsed" checked class="onoffswitch-checkbox" id="isOneUsed">
+                                                        <label class="onoffswitch-label" for="isOneUsed">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Ekleme Tipi</label>
+                                                <div class="col-sm-10">
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.Type = 0">
+                                                        <input name="customRadio" type="radio" checked value="0"><i></i> İskonto
+                                                    </label>
+
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.Type = 1">
+                                                        <input name="customRadio" type="radio" value="1"><i></i> Fiyat
+                                                    </label>
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.Type = 2">
+                                                        <input name="customRadio" type="radio" value="2"><i></i> Promosyon Ürün
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 0">
+                                                <label for="input01" class="col-sm-2 control-label">İskonto 1</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedCoupon.Discount">
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 0">
+                                                <label for="input01" class="col-sm-2 control-label">İskonto 2</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedCoupon.Discount1">
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 0">
+                                                <label for="input01" class="col-sm-2 control-label">İskonto 3</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedCoupon.Discount2">
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 1">
+                                                <label for="input01" class="col-sm-2 control-label">Fiyat</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input" ng-change="changePrice()" ng-model="selectedCoupon.Price">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 2">
+                                                <label for="input01" class="col-sm-2 control-label">Ürün</label>
+                                                <div class="col-sm-10">
+
+                                                    <div class="input-group">
+                                                        <input type="text" ng-model="selectedCoupon.ProductCode" ng-keypress="keypressEventSearchCoupon($event)" placeholder="Lütfen, Ürün Kodu Giriniz..." class="form-control" />
+                                                        <span class="input-group-btn">
+                                                            <button ng-click="selectItemProductCoupon();" class="btn btn-block btn-primary btn-rounded">
+                                                                <i class="fa fa-search"></i>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 2">
+                                                <label for="input01" class="col-sm-2 control-label">Hediye Ürün Miktarı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedCoupon.ProductQuantity">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="selectedCoupon.Type == 2">
+                                                <label class="col-sm-2 control-label">Tutar / Miktara Göre Katlasın</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isCounter" class="onoffswitch-checkbox" id="isCounter">
+                                                        <label class="onoffswitch-label" for="isCounter">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Hesaplama Tipi</label>
+                                                <div class="col-sm-10">
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.CalculateType = 0">
+                                                        <input name="customCalculateType" type="radio" checked value="0"><i></i> Tutar
+                                                    </label>
+
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.CalculateType = 1">
+                                                        <input name="customCalculateType" type="radio" value="1"><i></i> Miktar
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Kullanıcı Tipi</label>
+                                                <div class="col-sm-10">
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.UserType = 0">
+                                                        <input name="customUserType" type="radio" checked value="0"><i></i> Tümü
+                                                    </label>
+
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.UserType = 1">
+                                                        <input name="customUserType" type="radio" value="1"><i></i> Sadece Müşteriler
+                                                    </label>
+                                                    <label class="checkbox checkbox-custom" ng-click="selectedCoupon.UserType = 2">
+                                                        <input name="customUserType" type="radio" value="1"><i></i> Sadece Temsilciler
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="selectedCoupon.CalculateType == 0">
+                                                <label for="input01" class="col-sm-2 control-label">Minimum Sepet Fiyatı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input" ng-model="selectedCoupon.MinPrice">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Sepet Fiyatı/Miktarı Seçili Grupları Kapsasın</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isOnlySelectedItemTotal" class="onoffswitch-checkbox" id="isOnlySelectedItemTotal">
+                                                        <label class="onoffswitch-label" for="isOnlySelectedItemTotal">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Sepet Fiyatı/Miktarı Karşılanabilen Ürünlerden Hesaplansın</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isJustAvailable" class="onoffswitch-checkbox" id="isJustAvailable">
+                                                        <label class="onoffswitch-label" for="isJustAvailable">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="selectedCoupon.CalculateType == 1">
+                                                <label for="input01" class="col-sm-2 control-label">Minimum Sepet Miktarı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedCoupon.MinQuantity">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Başlangıç Tarihi</label>
+                                                <div class="col-sm-10">
+                                                    <input id="iCampaignStartDate" onblur="setDate()" type="text" placeholder="Lütfen, Başlangıç Tarihi Giriniz..." class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Bitiş Tarihi</label>
+                                                <div class="col-sm-10">
+                                                    <input id="iCampaignEndDate" onblur="setDate()" type="text" placeholder="Lütfen, Başlangıç Tarihi Giriniz..." class="form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Önizleme</label>
+                                                <div id="divPreview0" class="col-sm-10">
+                                                    <div class="col-md-6">
+                                                        <div class="panel panel-danger coupon">
+                                                            <div class="panel-heading" id="head">
+                                                                <div class="panel-title cupon-title" id="title">
+                                                                    <i class="fa fa-tags fa-2x"></i>
+                                                                    <span class="hidden-xs">{{selectedCoupon.Header}}</span>
+                                                                    <span class="visible-xs">{{selectedCoupon.Header}}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <img src="" class="coupon-img img-rounded">
+                                                                <div class="col-md-12">
+                                                                    <div class="offer text-danger text-center">
+                                                                        <span class="usd" ng-if="selectedCoupon.Type == 0"><sup>%</sup></span>
+                                                                        <span class="usd" ng-if="selectedCoupon.Type == 1"><sup>₺</sup></span>
+                                                                        <span class="number" ng-if="selectedCoupon.Type == 0">{{selectedCoupon.Discount}}</span>
+                                                                        <span class="number" ng-if="selectedCoupon.Type == 1">{{priceLeft}}</span>
+                                                                        <span class="cents" ng-if="selectedCoupon.Type == 1"><sup>{{priceRight}}</sup></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="row">
+                                                                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                                            <div class="panel panel-default">
+                                                                                <div class="panel-heading" role="tab" id="headingOne">
+                                                                                    <h4 class="panel-title text-center">
+                                                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdd" aria-expanded="true" aria-controls="collapseAdd" class="">
+                                                                                            Detay
+                                                                                        </a>
+                                                                                    </h4>
+                                                                                </div>
+                                                                                <div id="collapseAdd" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
+                                                                                    <div class="panel-body">
+                                                                                        <div class="row">
+
+                                                                                            <div class="col-md-12">
+                                                                                                <p>
+                                                                                                    {{selectedCoupon.Explanation1}}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                            <div class="col-md-12">
+                                                                                                <p class="disclosure">
+                                                                                                    {{selectedCoupon.Explanation2}}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel-footer">
+                                                                Kupon Kodu: {{selectedCoupon.Code}}
+                                                            </div>
+                                                            <div class="exp">Tarih Aralığı: {{selectedCoupon.StartDate  | dateFilterErp  | date:'dd.MM.yyyy'}}-{{selectedCoupon.EndDate  | dateFilterErp  | date:'dd.MM.yyyy'}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Açıklama 1</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" ng-model="selectedCoupon.Explanation1" placeholder="Metin Giriniz.." maxlength="100"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Açıklama 2</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" ng-model="selectedCoupon.Explanation2" placeholder="Metin Giriniz.." maxlength="100"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="col-sm-12 alert alert-cyan">
+                                                <strong>Üretici, ürün grubu veya özel kod seçilmediğinde tüm ürünlere uygulanacaktır</strong>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="col-sm-3">
+                                                <table ng-table="tableActiveManufacturerParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormAcitveManufacturer" disable-filter="isAddingActiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="tableFormAcitveManufacturer" demo-tracked-table-row="row" class="m-0 p-0">
+                                                        <td title="'Üreticiler'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Name" demo-tracked-table-cell>
+                                                            <label class="checkbox checkbox-custom m-0 p-5">
+                                                                <input id="iChkAcitveManufacturer" type="checkbox" ng-checked="selectedCoupon != null && selectedCoupon.Manufacturers.indexOf('<'+row.Name+'>') != -1" ng-click="addManufacturerText(row,chkacitve);" ng-model="chkacitve" /><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <table ng-table="tableProductGroupParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormProductGroup" disable-filter="isAddingActiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="tableFormProductGroup" demo-tracked-table-row="row" class="m-0 p-0">
+                                                        <td title="'Ürün Grupları'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Name" demo-tracked-table-cell>
+                                                            <label class="checkbox checkbox-custom m-0 p-5">
+                                                                <input id="iChkAcitveProductGroup" type="checkbox" ng-checked="selectedCoupon != null && selectedCoupon.ProductGroups.indexOf('<'+row.Name+'>') != -1" ng-click="addProductGroupText(row,chkacitve);" ng-model="chkacitve" /><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <table ng-table="tableRulesParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormRules" disable-filter="isAddingActiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="tableFormRules" demo-tracked-table-row="row" class="m-0 p-0">
+                                                        <td title="'Ürün Koşul Kod'" filter="{Product: 'text'}" sortable="'Product'" ng-switch="row.isEditing" ng-class="Product.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Product" demo-tracked-table-cell>
+                                                            <label class="checkbox checkbox-custom m-0 p-5">
+                                                                <input id="iChkAcitveRule" type="checkbox" ng-checked="selectedCoupon != null && selectedCoupon.Rules.indexOf('<'+row.Product+'>') != -1" ng-click="addRulesText(row,chkacitve);" ng-model="chkacitve" /><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-switch-default class="editable-text">{{row.Product}}</span>
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <table ng-table="tableSpecialCodesParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormSpecialCodes" disable-filter="isAddingActiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="tableFormSpecialCodes" demo-tracked-table-row="row" class="m-0 p-0">
+                                                        <td title="'Ürün Özel Kod'" filter="{SpecialCode1: 'text'}" sortable="'SpecialCode1'" ng-switch="row.isEditing" ng-class="SpecialCode1.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="SpecialCode1" demo-tracked-table-cell>
+                                                            <label class="checkbox checkbox-custom m-0 p-5">
+                                                                <input id="iChkAcitveSpecialCode" type="checkbox" ng-checked="selectedCoupon != null && selectedCoupon.SpecialCodes.indexOf('<'+row.SpecialCode1+'>') != -1" ng-click="addSpecialCodesText(row,chkacitve);" ng-model="chkacitve" /><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-switch-default class="editable-text">{{row.SpecialCode1}}</span>
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group text-right">
+                                            <div class="col-xs-12">
+                                                <button type="reset" class="btn btn-lightred" ng-click="clearValues()">Temizle</button>
+                                                <button type="button" class="btn btn-default" ng-click="saveCoupon()">Kaydet</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+
+    <div id="mCouponCustomers" tabindex="-1" role="dialog" aria-labelledby="mCouponCustomersLabel" aria-hidden="true" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!-- #region Nav Tabs -->
+                                <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                    <li role="presentation" class="active"><a ng-click="getCopunCustomerList(selectedCoupon,0)" href="#tCouponCustomerList" aria-controls="tCouponCustomerList" role="tab" data-toggle="tab"><span class="hidden-sm">Tanımlı Müşteriler</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                    <li role="presentation"><a ng-click="getCopunCustomerList(selectedCoupon,1)" href="#tCouponCustomerAdd" aria-controls="tCouponCustomerAdd" role="tab" data-toggle="tab"><span class="hidden-sm">MüşteriTanımla</span> <i class="fa fa-money visible-sm"></i></a></li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div id="tCouponCustomerList" role="tabpanel" class="tab-pane active">
+
+                                        <form id="mTaskListCommentForm" role="form" method="post" class="form-horizontal form-modal">
+                                            <section class="tile widget-chat">
+                                                <!-- tile body -->
+                                                <div class="tile-body" style="max-height: 380px; overflow: auto;">
+                                                    <table ng-table="tableCouponCustomersParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" demo-tracked-table="tableTracker">
+                                                        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+
+                                                            <td title="'Cari Kodu'" filter="{CustomerCode: 'text'}" sortable="'CustomerCode'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CustomerCode" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.CustomerCode}}</span>
+                                                            </td>
+                                                            <td title="'Cari Adı'" filter="{CustomerName: 'text'}" sortable="'CustomerName'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CustomerName" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.CustomerName}}</span>
+                                                            </td>
+
+                                                            <td title="'Koşul Kodu'" filter="{RuleCode: 'text'}" sortable="'RuleCode'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="RuleCode" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.RuleCode}}</span>
+                                                            </td>
+
+
+                                                            <td title="'Durumu'" class="text-left">
+                                                                <span class="label bg-greensea" ng-if="row.IsActive">Aktif</span>
+                                                                <span class="label bg-lightred" ng-if="!row.IsActive">Pasif</span>
+                                                            </td>
+                                                            <td title="'Kullanım Durumu'" class="text-left">
+                                                                <span class="label bg-greensea" ng-if="row.IsUsed">Kullanıldı</span>
+                                                                <span class="label bg-warning" ng-if="!row.IsUsed">Beklemede</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="btn-group btn-group-xs mb-0">
+                                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                        <i class="fa fa-gear"></i> <span class="caret"></span>
+                                                                    </button>
+
+                                                                    <ul class="dropdown-menu pull-right with-arrow animated littleFadeInUp" role="menu">
+
+                                                                        <li ng-click="changeStatus(row)">
+                                                                            <a role="button" tabindex="0" ng-if="row.IsActive">
+                                                                                <i class="fa fa-ban"></i> Pasif Et
+                                                                            </a>
+                                                                            <a role="button" tabindex="0" ng-if="!row.IsActive">
+                                                                                <i class="fa fa-ban"></i> Aktif Et
+                                                                            </a>
+
+                                                                        </li>
+                                                                        <li class="divider m-0"></li>
+                                                                        <li ng-click="deleteCustomerCoupon(row)">
+                                                                            <a role="button" tabindex="0">
+                                                                                <i class="fa fa-trash"></i> Sil
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <!-- /tile body -->
+                                                <!-- tile footer -->
+                                                <div class="tile-footer">
+
+                                                </div>
+                                                <!-- /tile footer -->
+                                            </section>
+                                        </form>
+                                    </div>
+                                    <div id="tCouponCustomerAdd" role="tabpanel" class="tab-pane">
+
+                                        <form id="mTaskListCommentForm" role="form" method="post" class="form-horizontal form-modal">
+                                            <section class="tile widget-chat">
+                                                <!-- tile body -->
+                                                <div class="tile-body" style="max-height: 380px; overflow: auto;">
+                                                    <table ng-table="tableCouponCustomersAddParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" demo-tracked-table="tableTracker">
+                                                        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+
+                                                            <td title="'Cari Kodu'" filter="{CustomerCode: 'text'}" sortable="'CustomerCode'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CustomerCode" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.CustomerCode}}</span>
+                                                            </td>
+                                                            <td title="'Cari Adı'" filter="{CustomerName: 'text'}" sortable="'CustomerName'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CustomerName" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.CustomerName}}</span>
+                                                            </td>
+
+
+                                                            <td title="'Koşul Kodu'" filter="{RuleCode: 'text'}" sortable="'RuleCode'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="RuleCode" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.RuleCode}}</span>
+                                                            </td>
+
+
+                                                            <td title="'Durumu'" class="text-left">
+                                                                <span class="label bg-greensea" ng-if="row.IsActive">Aktif</span>
+                                                                <span class="label bg-lightred" ng-if="!row.IsActive">Pasif</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <button type="button" ng-click="addCouponCustomers(row)" class="btn btn-primary dropdown-toggle">
+                                                                    Tanımla
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <!-- /tile body -->
+                                                <!-- tile footer -->
+                                                <div class="tile-footer">
+
+                                                </div>
+                                                <!-- /tile footer -->
+                                            </section>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mCouponStatistics" tabindex="-1" role="dialog" aria-labelledby="mCouponStatisticsLabel" aria-hidden="true" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <section class="tile simple">
+
+                        <!-- tile widget -->
+                        <div class="tile-widget bg-slategray p-20">
+
+                            <div class="media">
+                                <div class="media-body">
+                                    <h4 class="media-heading mb-0 mt-10">
+                                        {{selectedCoupon.Header}}
+                                        <i class="fa fa-bar-chart pull-right"></i>
+                                    </h4>
+                                    <small class="text-transparent-white">{{selectedCoupon.Code}}</small>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /tile widget -->
+                        <!-- tile body -->
+                        <div class="tile-body p-0">
+                            <div class="list-group no-radius no-border">
+                                <a href="#" class="list-group-item">
+                                    <span class="badge">{{couponStatistics.CustomerCount}}</span>
+                                    <i class="fa fa-users text-muted mr-5"></i>
+                                    Tanımlı Müşteri Sayısı
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <span class="badge">{{couponStatistics.ActiveCustomerCount}}</span>
+                                    <i class="fa fa-users text-muted mr-5"></i>
+                                    Tanımlı Aktif Müşteri Sayısı
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <span class="badge badge-warning">{{couponStatistics.UsedCount}}</span>
+                                    <i class="fa fa-check-circle text-muted mr-5"></i>
+                                    Kullanan Müşteri Sayısı
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <span class="badge badge-info">{{couponStatistics.UnUsedCount}}</span>
+                                    <i class="fa fa-minus-circle text-muted mr-5"></i>
+                                    Kullanmayan Müşteri Sayısı
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <span class="badge badge-success">{{couponStatistics.CouponTotal}}</span>
+                                    <i class="fa fa-try text-muted mr-5"></i>
+                                    Toplam Yapılan İndirim
+                                </a>
+
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <custom-item-product-select></custom-item-product-select>
+</div>
+
+@section cScriptLibrary{
+}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/coupon.js", HttpContext.Current.Request)"></script>
+<script src="@Url.ContentVersioned("/Scripts/Admin/productItemSelect.js", HttpContext.Current.Request)"></script>
+
+}

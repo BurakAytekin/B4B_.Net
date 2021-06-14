@@ -1,0 +1,267 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Blog";
+}
+
+@section cStyleLibrary{
+    @Styles.Render("~/Scripts/Admin/vendor/summernote/summernote.css")
+}
+
+@section cStyleCode{}
+
+<div class="page page-blog">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Blog">Haberler</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="blogController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Haberler</strong></h1>
+                        <ul role="tablist" class="controls">
+                            <li role="presentation" class="active"><a href="#tBlogList" aria-controls="tBlogList" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-list mr-5"></i> Haberler</a></li>
+                            <li role="presentation"><a href="#tNewBlog" aria-controls="tNewBlog" role="tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-plus mr-5"></i> Yeni Haber</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="tab-content">
+                                    <div id="tBlogList" role="tabpanel" class="tab-pane active">
+                                        <div loading-container="tableParams.settings().$loading" id="divTable">
+                                            <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                    <td title="'Kategori'" filter="{Category: 'text'}" sortable="'Category'" class="text-left">
+                                                        {{row.Category}}
+                                                    </td>
+                                                    <td title="'Başlık'" filter="{Header: 'text'}" sortable="'Header'" class="text-left">
+                                                        {{row.Header}}
+                                                    </td>
+                                                    <td title="'Temsilci'" filter="{SalesmanName: 'text'}" sortable="'SalesmanName'" class="text-left">
+                                                        {{row.SalesmanName}}
+                                                    </td>
+                                                    <td title="'Tip'" filter="{TypeStr: 'text'}" sortable="'TypeStr'" class="text-center">
+                                                        {{row.TypeStr}}
+                                                    </td>
+                                                    <td title="'Yorumlar'" class="text-center">
+                                                        <button class="btn btn-default btn-xs" ng-click="openModal(row.Id)"><span class="glyphicon glyphicon-comment"></span></button>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-default btn-xs" ng-click="editBlogItem(row)"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                        <button class="btn btn-danger btn-xs" ng-click="askForDelete(row)"><span class="glyphicon glyphicon-trash"></span></button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div id="tNewBlog" role="tabpanel" class="tab-pane">
+                                        <div class="form-horizontal">
+                                            <div class="form-group" id="divCategory">
+                                                <label for="input01" class="col-sm-2 control-label">Kategori</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="txtCategory" ng-model="category"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Başlık</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="txtHeader" ng-model="header"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Yorum Yapanlar Gözüksün</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isShowCommentUser" class="onoffswitch-checkbox" id="isShowCommentUser">
+                                                        <label class="onoffswitch-label" for="isShowCommentUser">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Yorumları Otomatik Onaylansın</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="approvalComment" class="onoffswitch-checkbox" id="approvalComment">
+                                                        <label class="onoffswitch-label" for="approvalComment">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Tüm Yorumlara Kapat</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isLockComment" class="onoffswitch-checkbox" id="isLockComment">
+                                                        <label class="onoffswitch-label" for="isLockComment">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Ekleme Tipi</label>
+                                                <div class="col-sm-10">
+                                                    <label class="checkbox checkbox-custom-alt" ng-click="isShow=false; image_source=''">
+                                                        <input name="customRadio" type="radio" value="0"><i></i> Resim
+                                                    </label>
+
+                                                    <label class="checkbox checkbox-custom-alt" ng-click="isShow=true">
+                                                        <input name="customRadio" type="radio" value="1"><i></i> Video
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="!isShow">
+                                                <label for="iFileImage" class="col-sm-2 control-label">Dosya Yükle</label>
+                                                <div class="col-sm-10">
+                                                    <input type="file" id="iFileImage" ng-model="myfile" base-sixty-four-input onchange="angular.element(this).scope().setFile(this)" accept="image/*" data-buttonText="Görsel Yükle" data-iconName="fa fa-image" class="filestyle" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-class="isShow ? 'hidden' : ''">
+                                                <label for="input01" class="col-sm-2 control-label">Önizleme</label>
+                                                <div id="divPreview0" class="col-sm-10">
+                                                    <img ng-src="{{image_source}}" id="imgPreview" style="max-width:400px" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-show="isShow">
+                                                <label for="input01" class="col-sm-2 control-label">Video Bağlantısı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="txtVideo" ng-change="videoConnectChange(videoValue)" ng-model="videoValue">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" ng-class="!isShow ? 'hidden' : ''">
+                                                <label for="input01" class="col-sm-2 control-label">Önizleme</label>
+                                                <div id="divPreview" class="col-sm-10"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Kısa Açıklama</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="txtHeader" ng-model="shortContent"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">İçerik</label>
+                                                <div class="col-sm-10">
+                                                    <div id="txtConntent" placeholder="Metin Giriniz.."></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group text-right">
+                                                <div class="col-xs-12">
+                                                    <button type="reset" class="btn btn-lightred" ng-click="clearValues()">Temizle</button>
+                                                    <button type="button" class="btn btn-default" ng-if="!isEditing" ng-click="saveBlog(0)">Kaydet</button>
+                                                    <button type="button" class="btn btn-default" ng-if="isEditing" ng-click="saveBlog(1)">Güncelle</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="mBlogComment" tabindex="-1" role="dialog" aria-labelledby="mBlogCommentLabel" aria-hidden="true" class="modal fade">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <form id="mTaskListCommentForm" role="form" method="post" class="form-horizontal form-modal">
+                                                    <section class="tile widget-chat">
+                                                        <!-- tile header -->
+                                                        <div class="tile-header dvd dvd-btm">
+                                                            <h1 class="custom-font">Yorumlar</h1>
+                                                        </div>
+                                                        <!-- /tile header -->
+                                                        <!-- tile body -->
+                                                        <div class="tile-body slim-scroll" style="max-height: 320px; overflow: auto;">
+                                                            <ul class="chats p-0">
+                                                                <li class="in" ng-repeat="blogCommentItem in blogComment">
+                                                                    <div class="media">
+                                                                        <div class="pull-left thumb thumb-sm">
+                                                                            <img class="media-object img-circle" ng-if="blogCommentItem.Salesman.Id = -1" ng-src="{{blogCommentItem.Customer.Users.AvatarPath}}" alt="">
+                                                                            <img class="media-object img-circle" ng-if="blogCommentItem.Salesman.Id != -1" ng-src="blogCommentItem.Salesman.AvatarPath" alt="">
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <p class="media-heading">
+                                                                                <a role="button" tabindex="0" class="name">{{blogCommentItem.UserName}} </a><span class="datetime">{{blogCommentItem.CreateDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'}}</span>
+                                                                                <a role="button" tabindex="0" class="tile-close" ng-click="askForDeleteComment(blogCommentItem)"><i class="fa fa-times"></i></a>
+                                                                                <a role="button" tabindex="0" class="tile-close" ng-if="!blogCommentItem.IsApproval" ng-click="approveComment(blogCommentItem)"><i class="fa fa-check"></i></a>
+                                                                            </p>
+
+                                                                            <span class="body">{{blogCommentItem.Content}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <!-- /tile body -->
+                                                        <!-- tile footer -->
+                                                        <div class="tile-footer">
+                                                            <div class="chat-form">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" placeholder="Lütfen Yorumunuzu Yazınız" id="txtCommentContent" ng-model="commentText" ng-keypress="keypressEventAddBlogComment($event,selectedBlogId)">
+                                                                    <span class="input-group-btn">
+                                                                        <button class="btn btn-default" type="button" ng-click="addBlogComment(selectedBlogId)"><i class="fa fa-chevron-right"></i></button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /tile footer -->
+                                                    </section>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/summernote/summernote.min.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/filestyle/bootstrap-filestyle.min.js")
+}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/blog.js", HttpContext.Current.Request)"></script>
+  
+}

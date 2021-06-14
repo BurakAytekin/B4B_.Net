@@ -1,0 +1,1475 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@using B2b.Web.v4.Models.EntityLayer
+@{ List<AuthorityGroup> AuthoritySalesman = (List<AuthorityGroup>)HttpContext.Current.Session["AuthoritySalesman"]; }
+@{
+    ViewBag.Title = "Müşteriler";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{
+    <style type="text/css">
+        .ws-nowrap {
+            max-width: 100px;
+            white-space: nowrap;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .ellipsis {
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+        }
+
+        .alternativeProdcut {
+            background-color: #C9302C !important;
+            color: white !important;
+        }
+
+        #trigger-upload {
+            color: white;
+            background-color: #00ABC7;
+            font-size: 14px;
+            padding: 7px 20px;
+            background-image: none;
+        }
+
+        #fine-uploader-manual-trigger .qq-upload-button {
+            margin-right: 15px;
+        }
+
+        #fine-uploader-manual-trigger .buttons {
+            width: 36%;
+        }
+
+        #fine-uploader-manual-trigger .qq-uploader .qq-total-progress-bar-container {
+            width: 60%;
+        }
+    </style>
+}
+
+<div ng-controller="IndexController">
+    <div class="page page-customers">
+        <div class="pageheader">
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Customers">Müşteriler</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- page content -->
+        <div class="pagecontent">
+            <div class="row">
+                <!-- col -->
+                <div class="col-sm-12">
+                    <!-- tile -->
+                    <section class="tile">
+                        <!-- tile header -->
+                        <div class="tile-header bg-blue dvd dvd-btm">
+                            <h1 class="custom-font"><strong>Müşteri </strong>Ara</h1>
+                        </div>
+                        <!-- /tile header -->
+                        <!-- tile widget -->
+                        <div class="tile-widget">
+                            <div class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="iProductCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kod</label>
+                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                <div class="input-group">
+                                                    <input id="iProductCode" type="text" ng-keypress="keypressEventSearch($event,searchCriteria,'selectedCustomer',1)" ng-model="searchCriteria.Code" placeholder="Lütfen, Müşteri Kodu Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                    <span class="input-group-btn">
+                                                        <button ng-click="CustomerSelectOpen(searchCriteria,'selectedCustomer');" class="btn btn-block btn-primary btn-rounded">
+                                                            <i class="fa fa-search"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="iProductName" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Müşteri Adı</label>
+                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                <div class="input-group">
+                                                    <input id="iProductName" type="text" ng-model="searchCriteria.Name" ng-keypress="keypressEventSearch($event,searchCriteria,'selectedCustomer',2)" placeholder="Lütfen, Müşteri Adı Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" />
+                                                    <span class="input-group-btn">
+                                                        <button ng-click="CustomerSelectOpen(searchCriteria,'selectedCustomer');" class="btn btn-block btn-primary btn-rounded">
+                                                            <i class="fa fa-search"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <button ng-click="clear();" class="btn btn-block btn-danger btn-rounded">
+                                                    <span class="hidden-sm">Temizle</span> <i class="fa fa-trash-o visible-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <button ng-click="CustomerSelectOpen(searchCriteria,'selectedCustomer');" class="btn btn-block btn-primary btn-rounded">
+                                                    <span class="hidden-sm">Gelişmiş Arama</span> <i class="fa fa-search visible-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="text-orange">Müşteri No:</dt>
+                                            <dd> {{selectedCustomer.Id}}</dd>
+                                            <dt class="text-orange">Entegre No:</dt>
+                                            <dd>{{selectedCustomer.EntegreId}}</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile widget -->
+
+                        <hr class="m-0" />
+
+                        <!-- tile body -->
+                        <div class="tile-body p-10">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <!-- #region Nav Tabs -->
+                                    <ul id="customerDetailTabs" role="tablist" class="nav nav-tabs tabs-dark">
+                                        @if (AuthoritySalesman.Where(x => x.Id == 56).Count() == 0)
+                                        {
+                                            <li role="presentation" class="active">
+                                                <a id="link-customerDetail-generalTab" href="#tCustomerGeneralInformation" aria-controls="tCustomerGeneralInformation" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Genel</span>
+                                                    <i class="fa fa-book visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 57).Count() == 0)
+                                        {
+                                            <li role="presentation">
+                                                <a href="#tCustomerAdditionalInformation" aria-controls="tCustomerAdditionalInformation" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Diğer Bilgiler</span>
+                                                    <i class="fa fa-info-circle visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 58).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a href="#tCustomerPassiveManufacturer" ng-click="getManufacturers();" aria-controls="tCustomerPassiveManufacturer" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Pasif Üreticiler</span>
+                                                    <i class="fa fa-calendar visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 59).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a href="#tCustomerLicence" ng-click="getCustomerLicence();" aria-controls="tCustomerLicence" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Lisans</span>
+                                                    <i class="fa fa-cubes visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 60).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a href="#tCustomerLogin" ng-click="getcustomerLoginLog();" aria-controls="tCustomerLogin" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Login Logları</span> <i class="fa fa-files-o visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 61).Count() == 0)
+                                        {
+                                            <li role="presentation">
+                                                <a href="#tCustomerSearch" aria-controls="tCustomerSearch" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Arama Kayıtları</span>
+                                                    <i class="fa fa-copyright visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 62).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a href="#tCustomerInstallmentCount" ng-click="getCustomerSpecialInstallment();" aria-controls="tCustomerInstallmentCount" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Banka Taksit Sayısı</span> <i class="fa fa-truck visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 63).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a href="#tCustomerAdditionalDiscount" aria-controls="tCustomerAdditionalDiscount" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Ek İskonto</span>
+                                                    <i class="fa fa-image visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 64).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a id="btnUsers" href="#tCustomerDownstreamUser" ng-click="getCustomerUserList()" aria-controls="tCustomerDownstreamUser" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Kullanıcılar</span>
+                                                    <i class="fa fa-file-text-o visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 65).Count() == 0)
+                                        {
+
+                                            <li role="presentation">
+                                                <a href="#tCustomerAuthority" ng-click="getAuthorityCustomer()" aria-controls="tCustomerAuthority" role="tab" data-toggle="tab">
+                                                    <span class="hidden-sm">Yetkilendirme</span>
+                                                    <i class="fa fa-file-text-o visible-sm"></i>
+                                                </a>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                    <!-- #endregion -->
+                                    <!-- #region Tab Panes -->
+                                    <div class="tab-content">
+                                        <div id="tCustomerGeneralInformation" role="tabpanel" class="tab-pane active">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Adres Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductManufacturer" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Adres</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductManufacturer" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Address" placeholder="Lütfen, Adres Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="1000" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductManufacturerCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">İlçe</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductManufacturerCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Town" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" placeholder="Lütfen, İlçe Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductUnit" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">İl</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductUnit" type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" ng-model="selectedCustomer.City" placeholder="Lütfen, İl Giriniz..." class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Ticari Bilgiler</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductGroup1" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Vergi Dairesi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductGroup1" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.TaxOffice" placeholder="Lütfen, Vergi Dairesi Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="30" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductGroup2" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Vergi No</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductGroup2" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.TaxNumber" placeholder="Lütfen, Vergi No Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">İletişim Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Tel 1</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Tel1" placeholder="Lütfen, Tel 1 Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Tel 2</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Tel2" placeholder="Lütfen, Tel 2 Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Gsm 1</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Gsm1" placeholder="Lütfen, Gsm 1 Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Gsm 2</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Gsm2" placeholder="Lütfen, Gsm 2 Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Fax </label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Fax1" placeholder="Lütfen, Fax  Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">E-Posta</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Mail" placeholder="Lütfen, E-Posta Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Entegrasyon Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">B2B Kodu</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.B2bCode" placeholder="Lütfen, B2B Kodu  Giriniz..." class="form-control" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Depo Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10" ng-repeat="warehouseItem in warehouseList">
+                                                            <div class="form-group mb-0">
+                                                                <label for="chckWarehouse{{warehouseItem.Id}}" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">{{warehouseItem.Name}}</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input type="checkbox" id="chckWarehouse{{warehouseItem.Id}}" ng-change="checkWarehouseUpdate(warehouseItem);" ng-model="warehouseItem.Checked" /><i></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tCustomerAdditionalInformation" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-8">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Ek Bilgiler</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Temsilci</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.Salesman.Name" placeholder="Lütfen, Temsilci Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="salesmanSelectOpen(0,'selectedCustomer.Salesman');" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Koşulu</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input id="iProductConditionCode" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.RuleCode" placeholder="Lütfen, Satış Koşulu Giriniz..." class="form-control" />
+                                                                        <span class="input-group-btn">
+                                                                            <button ng-disabled="lockUpdate" ng-click="customerRuleOpen(0);" class="btn btn-block btn-primary btn-rounded">
+                                                                                <i class="fa fa-search"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation1" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kullanıcı Sayısı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <select ng-model="selectedCustomer.NumberOfUser" style="width: 100%;" class="form-control" ng-options="item.Count as item.Count for item in userCountList"></select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation2" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kullanıcı Sayısı Android</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <select ng-model="selectedCustomer.NumberOfUserAndroid" style="width: 100%;" class="form-control" ng-options="item.Count as item.Count for item in userCountList"></select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductOtherInformation3" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kullanıcı Sayısı İos</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <select ng-model="selectedCustomer.NumberOfUserIos" style="width: 100%;" class="form-control" ng-options="item.Count as item.Count for item in userCountList"></select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductOtherInformation5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Cari Hareket Şifre</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <label class="input-group-addon checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                            <input type="checkbox" ng-click="" ng-model="selectedCustomer.IsCurrentAccountStatu" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i></i>
+                                                                        </label>
+                                                                        <input id="iProductOtherInformation5" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.CurrentAccountPassword" placeholder="Lütfen, Cari Hareket Şifre Giriniz..." class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-12 col-sm-12 col-md-5">
+                                                                    <input type="button" ng-disabled="lockUpdate" ng-click="showEmailSendScreenCustomer()" class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" value="Sıfırlama Gönder" />
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductOtherInformation5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Sözleşme Onayı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <select id="kvkkContract-select" ng-disabled="lockUpdate" ng-model="selectedCustomer.IsConfirmKvkk" style="width: 100%;" class="form-control">
+                                                                        <option value="0" ng-selected="selectedCustomer.IsConfirmKvkk == 0">Yapılmadı</option>
+                                                                        <option value="1" ng-selected="selectedCustomer.IsConfirmKvkk == 1">Onayı Bekleniyor</option>
+                                                                        <option value="2" ng-selected="selectedCustomer.IsConfirmKvkk == 2">Onay Alındı</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Limit Bilgileri</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductWidth" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kredi Limiti</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductWidth" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.CreditLimit" placeholder="Lütfen, Kredi Limiti Bilgisi Giriniz..." class="form-control eryaz-numeric-input" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <label for="iProductHeight" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Risk Bilgisi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iProductHeight" type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.RiskLimit" placeholder="Lütfen, Risk Bilgisi  Giriniz..." class="form-control eryaz-numeric-input" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Statü</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Aktif</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input type="checkbox" ng-click="" ng-model="selectedCustomer.Status"><i></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kampanya</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input type="checkbox" ng-click="" ng-model="selectedCustomer.CampaignStatu"><i></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">SanalPos Direk Ödeme</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input type="checkbox" ng-click="" ng-model="selectedCustomer.PaymentOnOrder"><i></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Döviz Tipi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <select id="bankName-select{{selectedCustomer.CurrencyType}}" ng-model="selectedCustomer.CurrencyType" style="width: 100%;" class="form-control" ng-options="item.Type as item.Type for item in currencyList"></select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductOtherInformation5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kdv Oranı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <label class="input-group-addon checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                            <input type="checkbox" ng-click="" ng-model="selectedCustomer.IsVatRateActive" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i></i>
+                                                                        </label>
+                                                                        <input type="text" ng-disabled="lockUpdate" ng-model="selectedCustomer.VatRate" placeholder="Lütfen, Cari Hareket Şifre Giriniz..." class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductOtherInformation5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kampanya Kodu</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <label class="input-group-addon checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                            <input type="checkbox" ng-click="" ng-model="selectedCustomer.IsCampaignCodeActive" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i></i>
+                                                                        </label>
+                                                                        <input type="text" ng-disabled="lockUpdate" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" ng-model="selectedCustomer.CampaignCode" placeholder="Lütfen, Cari Hareket Şifre Giriniz..." class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-0">
+                                                                <label for="iProductOtherInformation5" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Açılış Ekranı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <label class="input-group-addon checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                            <input type="checkbox" ng-click="" ng-model="selectedCustomer.IsStartScreen" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i></i>
+                                                                        </label>
+                                                                        <select ng-disabled="lockUpdate" id="bankName-select" ng-model="selectedCustomer.StartScreen" style="width: 100%;" class="form-control">
+                                                                            <option value="Home">Ana Sayfa</option>
+                                                                            <option value="Search">Ürün Arama Sayfası</option>
+                                                                            <option value="Dashboard">Dashboard Ekranı</option>
+                                                                            <option value="Cart">Sepet Sayfası</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Ödeme Şekli</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu1" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedCustomer.PaymentType" ng-change="selectedCustomer.PaymentType=0" ng-checked="selectedCustomer.PaymentType==0" value="0" type="radio"><i></i> Peşin
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group mb-5">
+                                                                <div class="col-sm-12">
+                                                                    <label class="checkbox checkbox-custom-alt">
+                                                                        <input id="iProductStockStatu2" name="iProductStockStatu" ng-disabled="lockUpdate" ng-model="selectedCustomer.PaymentType" ng-change="selectedCustomer.PaymentType=1" ng-checked="selectedCustomer.PaymentType==1" value="1" type="radio"><i></i> Vadeli
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tCustomerPassiveManufacturer" role="tabpanel" class="tab-pane">
+                                            <div class="col-md-12">
+                                                <div class="col-md-5">
+                                                    <div loading-container="tableActiveManufacturerParams.settings().$loading">
+                                                        <table ng-table="tableActiveManufacturerParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormAcitveManufacturer" disable-filter="isAddingActiveManufacturer" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="tableFormAcitveManufacturer" demo-tracked-table-row="row" class="m-0 p-0">
+                                                                <td title="'Aktif Üreticiler'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Name" demo-tracked-table-cell>
+                                                                    <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                                        <input id="ichkacitve" type="checkbox" ng-click="addActiveManufacturerList(row,chkacitve);" ng-model="chkacitve" /><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="mb-40"></div>
+
+                                                    <div class="form-group col-md-2 mb-0">
+                                                        <div class="mb-40"></div>
+                                                        <button class="btn btn-primary btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4b mb-10" ng-click="insertPassiveManufacturer()"> Ekle <i class="fa fa-arrow-right"></i></button>
+                                                        <button class="btn btn-warning btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4d" ng-click="deletePassiveManufacturer()"><i class="fa fa-arrow-left"></i> Çıkar</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-5">
+                                                    <div loading-container="tablePassiveManufacturerParams.settings().$loading">
+                                                        <table ng-table="tablePassiveManufacturerParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormPassiveManufacturer" disable-filter="isAddingPassiveManufacturer" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="rowFormPassiveManufacturer" demo-tracked-table-row="row" class="m-0 p-0">
+                                                                <td title="'Pasif Üreticiler'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Name" demo-tracked-table-cell>
+                                                                    <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                                        <input id="ichkpassive" type="checkbox" ng-click="addPassiveManufacturerList(row,chkpassive);" ng-model="chkpassive"><i class="ml-5"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tCustomerLicence" role="tabpanel" class="tab-pane">
+
+                                            <div loading-container="tableCustomerSpecialInstallmentParams.settings().$loading">
+                                                <table ng-table="tableCustomerLicenceParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormCustomerLicence" disable-filter="isAddingPassiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="rowFormCustomerLicence" demo-tracked-table-row="row">
+
+                                                        <td title="'Terminal'" filter="{TerminalNo: 'text'}" sortable="'TerminalNo'" ng-switch="row.isEditing" ng-class="TerminalNo.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="TerminalNo" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.TerminalNo}}</span>
+                                                        </td>
+
+                                                        <td title="'Kullanıcı Kodu'" filter="{UserCode: 'text'}" sortable="'UserCode'" ng-switch="row.isEditing" ng-class="UserCode.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="UserCode" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.UserCode}}</span>
+                                                        </td>
+                                                        <td title="'Tarih'" filter="{Date: 'text'}" sortable="'CreateDate'" ng-switch="row.isEditing" ng-class="Date.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Date" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Date | dateFilter  | date:'dd.MM.yyyy  hh:mm'}}</span>
+                                                        </td>
+                                                        <td title="'Ip Adresi'" filter="{IpAddress: 'text'}" sortable="'IpAddress'" ng-switch="row.isEditing" ng-class="IpAddress.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="IpAddress" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.IpAddress}}</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-danger btn-xs" ng-click="tableLicenceForDelete(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div id="tCustomerLogin" role="tabpanel" class="tab-pane">
+
+                                            <div loading-container="tableCustomerSpecialInstallmentParams.settings().$loading">
+                                                <table ng-table="tableCustomerLoginParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormCustomerLoginInstallment" disable-filter="isAddingPassiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="rowFormCustomerLoginInstallment" demo-tracked-table-row="row">
+
+                                                        <td title="'İşlem'" filter="{Process: 'text'}" sortable="'Process'" ng-switch="row.isEditing" ng-class="Process.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Process" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Process}}</span>
+                                                        </td>
+
+                                                        <td title="'Açıklama'" filter="{Explanation: 'text'}" sortable="'Explanation'" ng-switch="row.isEditing" ng-class="Explanation.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Explanation" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Explanation}}</span>
+                                                        </td>
+                                                        <td title="'Tarih'" filter="{CreateDate: 'text'}" sortable="'CreateDate'" ng-switch="row.isEditing" ng-class="CreateDate.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CreateDate" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.CreateDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'}}</span>
+                                                        </td>
+                                                        <td title="'Ip Adresi'" filter="{IpAddress: 'text'}" sortable="'IpAddress'" ng-switch="row.isEditing" ng-class="IpAddress.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="IpAddress" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.IpAddress}}</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                        <div id="tCustomerSearch" role="tabpanel" class="tab-pane">
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class='input-group input-criteria date'>
+                                                                <span class="input-group-addon no-minwidth-zero">
+                                                                    <span class="fa fa-calendar"></span> Başlangıç Tarihi
+                                                                </span>
+                                                                <input type='text' class="form-control detepicker" id="iSearchLogStartDate" ng-model="dateStart" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class='input-group input-criteria date'>
+                                                                <span class="input-group-addon no-minwidth-zero">
+                                                                    <span class="fa fa-calendar"></span> Bitiş Tarihi
+                                                                </span>
+                                                                <input type='text' class="form-control detepicker" id="iSearchLogEndDate" ng-model="dateEnd" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <a class="btn btn-success" ng-click="searchLogList()"><i class="fa fa-search" aria-hidden="true"></i><span class="hidden-xs"> Listele</span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-md-12">
+                                                    <div class="sm-margin"></div>
+                                                    <table id="pDataTable" class="table table-striped table-hover table-custom">
+                                                        <!---table-condensed table-striped table-hover-->
+                                                        <thead>
+                                                            <tr>
+
+                                                                <th>Tarih</th>
+                                                                <th>Arama</th>
+                                                                @*<th>Araç Marka</th>*@
+                                                                @*<th>Araç Model</th>*@
+                                                                <th>Kampanya</th>
+                                                                <th>Yeni Ürün</th>
+                                                                <th>Resmi Olan</th>
+                                                                <th>Detay</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="item in reportList">
+
+                                                                <td>{{item.Date | dateFilter2  |  date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                                                                <td>{{item.Parameters.T9Text}}</td>
+
+                                                                @*<td>{{item.Parameters.VehicleBrand}}</td>
+                                                                <td>{{item.Parameters.VehicleBrandModel}}</td>*@
+                                                                <td><input type="checkbox" ng-checked="{{item.Parameters.Campaign}}" disabled /></td>
+                                                                <td><input type="checkbox" ng-checked="{{item.Parameters.NewProduct}}" disabled /></td>
+                                                                <td><input type="checkbox" ng-checked="{{item.Parameters.Picture}}" disabled /></td>
+                                                                <td><input type="button" ng-if="item.Result==0" class="btn btn-success btn-block m-0" ng-click="searchLogDetail(item.Id)" value="Detay" /></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div id="tCustomerInstallmentCount" role="tabpanel" class="tab-pane">
+                                            <div class="col-md-12">
+                                                <label class="checkbox checkbox-custom-alt">
+                                                    <input id="chkCustomerSpecialInstallment" type="checkbox" ng-click="" ng-model="selectedCustomer.SpecialInstallment" /><i></i> Müşteriye Özel Taksiti Aktifleştir.
+                                                </label>
+
+                                                <div loading-container="tableCustomerSpecialInstallmentParams.settings().$loading">
+                                                    <table ng-table="tableCustomerSpecialInstallmentParams" class="table table-condensed table-bordered table-striped" ng-form="tableFormCustomerSpecialInstallment" disable-filter="isAddingPassiveManufacturer" demo-tracked-table="tableTracker">
+                                                        <tr ng-repeat="row in $data" ng-form="rowFormCustomerSpecialInstallment" demo-tracked-table-row="row">
+                                                            <td ng-switch="row.isEditing" ng-form="chk" demo-tracked-table-cell class="text-center">
+                                                                <label class="checkbox checkbox-custom-alt m-0">
+                                                                    <input id="chkInstallment" type="checkbox" ng-click="" ng-model="chkInstallment"><i></i>
+                                                                </label>
+                                                            </td>
+                                                            <td title="'Banka'" filter="{BankName: 'text'}" sortable="'BankName'" ng-switch="row.isEditing" ng-class="BankName.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="BankName" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.BankName}}</span>
+                                                            </td>
+                                                            <td title="'Taksit Sayısı'" filter="{Installment: 'text'}" sortable="'Installment'" ng-switch="row.isEditing" ng-class="Installment.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Installment" demo-tracked-table-cell>
+                                                                <span ng-switch-default class="editable-text">{{row.Installment}}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tCustomerAdditionalDiscount" role="tabpanel" class="tab-pane">
+
+
+                                            <div class="tile-body p-10">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <!-- #region Nav Tabs -->
+                                                        <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                                            <li role="presentation" ng-click="getCustomerRuleAdditionalList()"><a href="#tRuleAdditionalList" aria-controls="tUserGeneralInformation" role="tab" data-toggle="tab"><span class="hidden-sm">İskonto Listesi</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                                            <li role="presentation" class="active"><a href="#tRuleAdditionalManufacturer" aria-controls="tUserGeneralInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Üretici Ekle</span> <i class="fa fa-book visible-sm"></i></a></li>
+
+                                                            <li role="presentation"><a href="#tRuleAdditionalProduct" aria-controls="tUserGeneralInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Ürün Ekle</span> <i class="fa fa-book visible-sm"></i></a></li>
+
+                                                            <li role="presentation"><a href="#tRuleAdditionalProductGroup" aria-controls="tUserGeneralInformation" role="tab" data-toggle="tab"><span class="hidden-sm">Ürün Grubu Ekle</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                                        </ul>
+                                                        <div class="tab-content">
+                                                            <div id="tRuleAdditionalList" role="tabpanel" class="tab-pane ">
+                                                                <div class="row form-horizontal form-group-sm">
+                                                                    <div class="col-sm-12">
+
+                                                                        <div loading-container="tableRuleAdditionalParams.settings().$loading">
+                                                                            <table ng-table="tableRuleAdditionalParams" class="table table-condensed table-bordered table-striped" ng-form="tableRuleAdditional" demo-tracked-table="tableTracker">
+                                                                                <tr ng-repeat="row in $data" ng-form="rowRuleAdditionalList" demo-tracked-table-row="row">
+                                                                                    <td title="'Ürün Kodu'" filter="{ProductCode: 'text'}" sortable="'ProductCode'" ng-switch="row.isEditing" ng-class="ProductCode.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ProductCode" demo-tracked-table-cell>
+                                                                                        <span ng-switch-default class="editable-text">{{row.ProductCode}}</span>
+                                                                                    </td>
+                                                                                    <td title="'Ürün Adı'" filter="{ProductName: 'text'}" sortable="'ProductName'" ng-switch="row.isEditing" ng-class="ProductName.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="ProductName" demo-tracked-table-cell>
+                                                                                        <span ng-switch-default class="editable-text">{{row.ProductName}}</span>
+                                                                                    </td>
+                                                                                    <td title="'Üretici'" filter="{Manufacturer: 'text'}" sortable="'Manufacturer'" ng-switch="row.isEditing" ng-class="Manufacturer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Manufacturer" demo-tracked-table-cell>
+                                                                                        <span ng-switch-default class="editable-text">{{row.Manufacturer}}</span>
+                                                                                    </td>
+                                                                                    <td title="'Ürün Grubu 1'" filter="{ProductGroup1: 'text'}" sortable="'ProductGroup1'" ng-switch="row.isEditing" ng-class="ProductGroup1.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ProductGroup1" demo-tracked-table-cell>
+                                                                                        <span ng-switch-default class="editable-text">{{row.ProductGroup1}}</span>
+                                                                                    </td>
+                                                                                    <td title="'Ürün Grubu 2'" filter="{ProductGroup2: 'text'}" sortable="'ProductGroup2'" ng-switch="row.isEditing" ng-class="ProductGroup2.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ProductGroup2" demo-tracked-table-cell>
+                                                                                        <span ng-switch-default class="editable-text">{{row.ProductGroup2}}</span>
+                                                                                    </td>
+                                                                                    <td title="'Ürün Grubu 3'" filter="{ProductGroup3: 'text'}" sortable="'ProductGroup3'" ng-switch="row.isEditing" ng-class="ProductGroup3.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="ProductGroup3" demo-tracked-table-cell>
+                                                                                        <span ng-switch-default class="editable-text">{{row.ProductGroup3}}</span>
+                                                                                    </td>
+                                                                                    <td title="'Isk 1'" filter="{Disc1: 'text'}" sortable="'Disc1'" ng-switch="row.isEditing" ng-class="Disc1.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc1" demo-tracked-table-cell>
+                                                                                        @*<span ng-switch-default class="editable-text">{{row.Disc1}}</span>*@
+                                                                                        <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="row.Disc1" ng-keypress="changeRuleAdditionalValue($event,row.Id,'Disc1',row.Disc1)" />
+                                                                                    </td>
+
+                                                                                    <td title="'Isk 2'" filter="{Disc2: 'text'}" sortable="'Disc2'" ng-switch="row.isEditing" ng-class="Disc2.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc2" demo-tracked-table-cell>
+                                                                                        @*<span ng-switch-default class="editable-text">{{row.Disc2}}</span>*@
+                                                                                        <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="row.Disc2" ng-keypress="changeRuleAdditionalValue($event,row.Id,'Disc2',row.Disc2)" />
+                                                                                    </td>
+
+                                                                                    <td title="'Isk 3'" filter="{Disc3: 'text'}" sortable="'Disc3'" ng-switch="row.isEditing" ng-class="Disc3.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc3" demo-tracked-table-cell>
+                                                                                        @*<span ng-switch-default class="editable-text">{{row.Disc3}}</span>*@
+                                                                                        <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="row.Disc3" ng-keypress="changeRuleAdditionalValue($event,row.Id,'Disc3',row.Disc3)" />
+                                                                                    </td>
+
+                                                                                    <td title="'Isk 4'" filter="{Disc4: 'text'}" sortable="'Disc4'" ng-switch="row.isEditing" ng-class="Disc4.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc4" demo-tracked-table-cell>
+                                                                                        @*<span ng-switch-default class="editable-text">{{row.Disc4}}</span>*@
+                                                                                        <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="row.Disc4" ng-keypress="changeRuleAdditionalValue($event,row.Id,'Disc4',row.Disc4)" />
+                                                                                    </td>
+                                                                                    <td title="'Vade Günü'" filter="{DueDay: 'text'}" sortable="'DueDay'" ng-switch="row.isEditing" ng-class="DueDay.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="DueDay" demo-tracked-table-cell>
+                                                                                        @*<span ng-switch-default class="editable-text">{{row.DueDay}}</span>*@
+                                                                                        <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="row.DueDay" ng-keypress="changeRuleAdditionalValue($event,row.Id,'DueDay',row.DueDay)" />
+                                                                                    </td>
+
+                                                                                    <td title="'Bindirim Oranı'" filter="{Rate: 'text'}" sortable="'Rate'" ng-switch="row.isEditing" ng-class="Rate.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Rate" demo-tracked-table-cell>
+                                                                                        @*<span ng-switch-default class="editable-text">{{row.Rate}}</span>*@
+                                                                                        <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="row.Rate" ng-keypress="changeRuleAdditionalValue($event,row.Id,'Rate',row.Rate)" />
+
+                                                                                    </td>
+                                                                                    <td title="'Ana İskonto Pasif'" filter="{MainDiscountPassive: 'text'}" sortable="'MainDiscountPassive'" ng-switch="row.isEditing" ng-class="MainDiscountPassive.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="MainDiscountPassive" demo-tracked-table-cell>
+                                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                                            <input type="checkbox" disabled="disabled" ng-checked=row.MainDiscountPassive><i></i>
+                                                                                        </label>
+                                                                                    </td>
+
+
+                                                                                    <td title="'İşlemler'" demo-tracked-table-cell class="text-center">
+                                                                                        <div class="btn-group btn-group-xs mb-0">
+                                                                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                                                <i class="fa fa-gear"></i> <span class="caret"></span>
+                                                                                            </button>
+
+                                                                                            <ul class="dropdown-menu pull-right with-arrow animated littleFadeInUp" role="menu">
+
+                                                                                                <li ng-click="deleteRuleAdditional(row)">
+                                                                                                    <a role="button" tabindex="0">
+                                                                                                        <i class="fa fa-check"></i> Sil
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="tRuleAdditionalManufacturer" role="tabpanel" class="tab-pane active">
+                                                                <div class="row form-horizontal form-group-sm">
+                                                                    <div class="col-sm-12">
+
+                                                                        <div class="panel panel-default panel-filled">
+                                                                            <div class="panel-heading">
+                                                                                <h3 class="panel-title">Iskonto</h3>
+                                                                            </div>
+
+                                                                            <div class="panel-body p-10">
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Üretici</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <div class="input-group input-group-sm">
+                                                                                            <input id="iProductConditionCode" ng-model="selectedProduct.Manufacturer" type="text" placeholder="Üretici seciniz" class="form-control" />
+                                                                                            <span class="input-group-btn">
+                                                                                                <button ng-click="productManufacturerOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                                    <i class="fa fa-search"></i>
+                                                                                                </button>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 1</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalManufacturer.Disc1" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 2</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalManufacturer.Disc2" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 3</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalManufacturer.Disc3" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 4</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalManufacturer.Disc4" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bindirm Oranı </label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalManufacturer.Rate" placeholder="Lütfen, Bindirm Oranı Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Vade Günü </label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalManufacturer.DueDay" placeholder="Lütfen,Vade Günü  Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ana İskonto Pasif</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                                            <input type="checkbox" ng-click="" ng-model="RuleAdditionalManufacturer.MainDiscountPassive"><i></i>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                                            <input type="checkbox" ng-model="salesPriceIsActive"><i></i>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-7">
+                                                                                        <input type="text" ng-disabled="!salesPriceIsActive" ng-model="RuleAdditionalManufacturer.SalesPrice" placeholder="Satış Fiyatı" class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                                                                        <input type="button" class="btn btn-block btn-success" ng-click="saveAdditionalRuleManufacturer();" value="Kaydet" />
+                                                                                    </div>
+
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="tRuleAdditionalProduct" role="tabpanel" class="tab-pane ">
+                                                                <div class="row form-horizontal form-group-sm">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="row form-horizontal form-group-sm">
+                                                                            <div class="col-sm-12">
+
+                                                                                <div class="panel panel-default panel-filled">
+                                                                                    <div class="panel-heading">
+                                                                                        <h3 class="panel-title">Iskonto</h3>
+                                                                                    </div>
+
+                                                                                    <div class="panel-body p-10">
+
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Kodu</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <div class="input-group input-group-sm">
+                                                                                                    <input id="iProductConditionCode" ng-model="ruleAdditionalItemProduct.Code" type="text" placeholder="Ürün seciniz" class="form-control" />
+                                                                                                    <span class="input-group-btn">
+                                                                                                        <button ng-click="addRuleAdditionalOpenItem();" class="btn btn-block btn-primary btn-rounded">
+                                                                                                            <i class="fa fa-search"></i>
+                                                                                                        </button>
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 1</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProduct.Disc1" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 2</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProduct.Disc2" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 3</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProduct.Disc3" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 4</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProduct.Disc4" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bindirm Oranı </label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProduct.Rate" placeholder="Lütfen, Bindirm Oranı Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Vade Günü </label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProduct.DueDay" placeholder="Lütfen,Vade Günü  Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ana İskonto Pasif</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                                <label class="checkbox checkbox-custom-alt">
+                                                                                                    <input type="checkbox" ng-click="" ng-model="RuleAdditionalProduct.MainDiscountPassive"><i></i>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group mb-5">
+                                                                                            <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı</label>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                                                                                <label class="checkbox checkbox-custom-alt">
+                                                                                                    <input type="checkbox" ng-model="salesPriceIsActiveP"><i></i>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-7">
+                                                                                                <input type="text" ng-disabled="!salesPriceIsActiveP" ng-model="RuleAdditionalProduct.SalesPrice" placeholder="Satış Fiyatı" class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group mb-5">
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                                                                <input type="button" class="btn btn-block btn-success" ng-click="saveAdditionalRuleProduct();" value="Kaydet" />
+                                                                                            </div>
+
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="tRuleAdditionalProductGroup" role="tabpanel" class="tab-pane ">
+                                                                <div class="row form-horizontal form-group-sm">
+                                                                    <div class="col-sm-12">
+
+                                                                        <div class="panel panel-default panel-filled">
+                                                                            <div class="panel-heading">
+                                                                                <h3 class="panel-title">Iskonto</h3>
+                                                                            </div>
+
+                                                                            <div class="panel-body p-10">
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Grubu 1</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <div class="input-group input-group-sm">
+                                                                                            <input id="iProductConditionCode" ng-model="selectedProduct.ProductGroup1" type="text" placeholder="Ürün Grubu seciniz" class="form-control" />
+                                                                                            <span class="input-group-btn">
+                                                                                                <button ng-click="productGroupsOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                                    <i class="fa fa-search"></i>
+                                                                                                </button>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Grubu 2</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <div class="input-group input-group-sm">
+                                                                                            <input id="iProductConditionCode" ng-model="selectedProduct.ProductGroup2" type="text" placeholder="Ürün Grubu seciniz" class="form-control" />
+                                                                                            <span class="input-group-btn">
+                                                                                                <button ng-click="productGroupsOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                                    <i class="fa fa-search"></i>
+                                                                                                </button>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ürün Grubu 3</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <div class="input-group input-group-sm">
+                                                                                            <input id="iProductConditionCode" ng-model="selectedProduct.ProductGroup3" type="text" placeholder="Ürün Grubu seciniz" class="form-control" />
+                                                                                            <span class="input-group-btn">
+                                                                                                <button ng-click="productGroupsOpen();" class="btn btn-block btn-primary btn-rounded">
+                                                                                                    <i class="fa fa-search"></i>
+                                                                                                </button>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 1</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProductGroup.Disc1" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 2</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProductGroup.Disc2" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 3</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProductGroup.Disc3" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Isk 4</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProductGroup.Disc4" placeholder="Lütfen, İskonto Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bindirm Oranı </label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProductGroup.Rate" placeholder="Lütfen, Bindirm Oranı Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductConditionCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Vade Günü </label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <input id="iProductConditionCode" type="text" ng-model="RuleAdditionalProductGroup.DueDay" placeholder="Lütfen,Vade Günü  Giriniz..." class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ana İskonto Pasif</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                                            <input type="checkbox" ng-click="" ng-model="RuleAdditionalProductGroup.MainDiscountPassive"><i></i>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <label for="iProductSpecialDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Satış Fiyatı</label>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                                            <input type="checkbox" ng-model="salesPriceIsActivePg"><i></i>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-7">
+                                                                                        <input type="text" ng-disabled="!salesPriceIsActivePg" ng-model="RuleAdditionalProductGroup.SalesPrice" placeholder="Satış Fiyatı" class="form-control eryaz-numeric-input-onlynumber" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group mb-5">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                                                                        <input type="button" class="btn btn-block btn-success" ng-click="saveAdditionalRuleProductGroup();" value="Kaydet" />
+                                                                                    </div>
+
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+
+                                        </div>
+
+                                        <div id="tCustomerDownstreamUser" role="tabpanel" class="tab-pane">
+                                            <div class="brn-group pull-right">
+                                                <button class="btn btn-default" ng-click="newuserAddOpen()">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+
+                                            <div loading-container="tableCustomerUsersParams.settings().$loading">
+                                                <table ng-table="tableCustomerUsersParams" class="table table-condensed table-bordered table-striped" ng-form="tableCustomerUsers" disable-filter="isAddingPassiveManufacturer" demo-tracked-table="tableTracker">
+                                                    <tr ng-repeat="row in $data" ng-form="rowFormCustomerUsers" demo-tracked-table-row="row">
+                                                        <td title="'Kodu'" filter="{Code: 'text'}" sortable="'Code'" ng-switch="row.isEditing" ng-class="Code.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Code" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Code}}</span>
+                                                        </td>
+                                                        <td title="'Adı'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Name" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                        </td>
+                                                        <td title="'Şifre'" filter="{Password: 'text'}" sortable="'Password'" ng-switch="row.isEditing" ng-class="Password.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Password" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Password}}</span>
+                                                        </td>
+                                                        <td title="'Tel'" filter="{Tel: 'text'}" sortable="'Tel'" ng-switch="row.isEditing" ng-class="Tel.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Tel" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Tel}}</span>
+                                                        </td>
+                                                        <td title="'Gsm'" filter="{Gsm: 'text'}" sortable="'Gsm'" ng-switch="row.isEditing" ng-class="Gsm.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Gsm" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Gsm}}</span>
+                                                        </td>
+                                                        <td title="'Email'" filter="{Mail: 'text'}" sortable="'Mail'" ng-switch="row.isEditing" ng-class="Mail.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Mail" demo-tracked-table-cell>
+                                                            <span ng-switch-default class="editable-text">{{row.Mail}}</span>
+                                                        </td>
+                                                        <td title="'İşlemler'" demo-tracked-table-cell class="text-center">
+                                                            <div class="btn-group btn-group-xs mb-0">
+                                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                    <i class="fa fa-gear"></i> <span class="caret"></span>
+                                                                </button>
+
+                                                                <ul class="dropdown-menu pull-right with-arrow animated littleFadeInUp" role="menu">
+                                                                    <li ng-click="userDetailOpen(row)">
+                                                                        <a role="button" tabindex="0">
+                                                                            <i class="fa fa-edit"></i> Düzenle
+                                                                        </a>
+                                                                    </li>
+                                                                    <li class="divider m-0"></li>
+                                                                    <li ng-click="showDeleteModal(row)">
+                                                                        <a role="button" tabindex="0">
+                                                                            <i class="fa fa-remove"></i> Sil
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div id="tCustomerAuthority" role="tabpanel" class="tab-pane">
+                                            <div class="panel-body p-10" ng-repeat="fieldItem in fieldList">
+                                                <div class="form-group mb-0">
+                                                    <label for="chckAuthurityCustomer{{fieldItem.Field}}" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">{{fieldItem.Comment}}</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt">
+                                                            <input type="checkbox" id="chckAuthurityCustomer{{fieldItem.Field}}" ng-change="checkAuthorityCustomer(fieldItem.Field)" ng-model="authorityItem[0][fieldItem.Field]" /><i></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- #endregion -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+                        <!-- tile footer -->
+                        <div class="tile-footer dvd dvd-top">
+                            <div class="row">
+                                <div class="col-sm-2 hidden-xs">
+                                </div>
+
+                                <div class="col-sm-8 text-center">
+                                    <div class="btn-group btn-group-rounded btn-group-lg">
+                                        <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="changeLockUpdate()"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                        <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="cancelUpdate()"><i class="fa fa-close"></i> <span>İptal</span></button>
+                                        <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="addCustomer()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                        <button class="btn btn-success btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="newCustomer()"><i class="fa fa-plus-square"></i> <span>Yeni</span></button>
+                                        <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="deleteCustomer()"><i class="fa fa-close"></i> <span>Sil</span></button>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2 text-right">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile footer -->
+                    </section>
+                    <!-- /tile -->
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+    <div class="modal fade" id="modal-logdetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="sm-margin"></div>
+                            <table id="pDataTable" class="table table-striped table-hover table-custom">
+                                <!---table-condensed table-striped table-hover-->
+                                <thead>
+                                    <tr>
+
+                                        <th>Ürün Kodu</th>
+                                        <th>Ürün Adı</th>
+
+                                        <th>Üretici</th>
+                                        <th>Fiyat</th>
+                                        <th>Döviz Tipi</th>
+                                        <th>Miktar</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in reportDetailList">
+                                        <td>{{item.Product.Code}}</td>
+                                        <td>{{item.Product.Name}}</td>
+                                        <td>{{item.Product.Manufacturer}}</td>
+                                        <td>{{item.Product.Price}}</td>
+                                        <td>{{item.Product.CustomerCurrency}}</td>
+                                        <td>{{item.Product.TotalQuantity}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div><!-- End .modal-body -->
+
+            </div><!-- End .modal-content -->
+        </div><!-- End .modal-dialog -->
+    </div><!-- End .modal -->
+    <!-- #region Custom Html Dircetive Modals -->
+    <custom-customer-select></custom-customer-select>
+    <custom-user-detail></custom-user-detail>
+    <custom-product-rule-select></custom-product-rule-select>
+    <custom-salesman-select></custom-salesman-select>
+    <custom-product-groups-select></custom-product-groups-select>
+    <custom-product-manufacturer-select></custom-product-manufacturer-select>
+    <custom-item-product-select></custom-item-product-select>
+    <!-- #endregion -->
+    <!--MODAL DELETE-->
+    <div id="modal-delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title custom-font">Kullanıcı Sil</h3>
+                </div>
+                <div class="modal-body">
+
+                    <p><b>{{DeleteItem.Name}}</b> isimli kullanıcıyı silmek istediğinize emin misiniz ?</p>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">Hayır<i class="fa fa-arrow-right"></i> </button>
+                    <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="deleteCustomerUser(DeleteItem.Id)"> Evet<i class="fa fa-arrow-right"></i> </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--MODAL DELETE-->
+
+    <div id="modal-EmailShowCustomer" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title custom-font">Şifre Sıfırlama</h3>
+                </div>
+                <div class="modal-body">
+
+                    <p> İlgili mail adresine şifre sıfırlama linki gönderilecektir. Emin misiniz.</p>
+                    <input type="text" class="form-control" ng-model="customerEmail" placeholder="Mail Adresius" />
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">İptal<i class="fa fa-arrow-right"></i> </button>
+                    <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="sendPasswordResetMailCustomer()"> Gönder<i class="fa fa-arrow-right"></i> </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+@section cScriptLibrary{
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyChBkURRtUUIilTiefBydeAsRP8L6Lercw"></script>
+}
+
+@section cScriptCode{
+    <script src="@Url.ContentVersioned("/Scripts/Admin/customerRuleSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/customerSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/userDetail.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/salesmanSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/customers.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productManufacturerSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productGroupsSelect.js", HttpContext.Current.Request)"></script>
+    <script src="@Url.ContentVersioned("/Scripts/Admin/productItemSelect.js", HttpContext.Current.Request)"></script>
+
+}

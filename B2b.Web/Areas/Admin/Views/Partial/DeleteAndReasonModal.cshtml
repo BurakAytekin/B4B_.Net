@@ -1,0 +1,26 @@
+﻿
+
+<div id="modal-delete-reason" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" hidden>
+                <h3 class="modal-title custom-font">Silme Sebebi</h3>
+            </div>
+            <div class="modal-body">
+                <h4><strong>Silme Sebebi</strong></h4>
+                <div class="row">
+
+                    <div class="col-md-9">
+                        <textarea class="form-control" ng-model="globalItem.DeleteNote" placeholder="Siparişi silme nedenini yazınız..."></textarea>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" ng-disabled="globalItem.DeleteNote === undefined || globalItem.DeleteNote === ''" ng-click="globalItem.FunctionName()"><i class="fa fa-arrow-"></i> Sil</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" hidden>
+                @*<button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c"><i class="fa fa-arrow-right"></i> Submit</button>*@
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+﻿<table class="table table-bordered table-tooltip">
+    <tbody>
+        <tr>
+            <td>Liste Fiyatı</td>
+            <td class="text-right">@Html.Raw(@ViewBag.Product.PriceListCustomerStr)</td>
+        </tr>
+        <tr>
+            <td>Kdv'siz Net Fiyat</td>
+            <td class="text-right">@Html.Raw(@ViewBag.Product.PriceNetCustomerStr)</td>
+        </tr>
+        <tr>
+            <td>Kdv'li Net</td>
+            <td class="text-right">@Html.Raw(@ViewBag.Product.PriceNetWithVatCustomerStr)</td>
+        </tr>
+        @if (@ViewBag.Product.Campaign.Type > 0)
+        {
+            <tr>
+                <td>Kampanya Fiyatı</td>
+                <td class="text-right">@Html.Raw(@ViewBag.Product.CampaignStr)</td>
+            </tr>
+            <tr>
+                <td>Kampanya Fiyatı(Kdv)</td>
+                <td class="text-right">@Html.Raw(@ViewBag.Product.CampaignPriceWithVatCustomerStr)</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

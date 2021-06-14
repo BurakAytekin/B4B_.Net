@@ -1,0 +1,237 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode
+{
+    <style type="text/css">
+        .order-print {
+            background-color: #007400 !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+    </style>
+}
+
+<div class="page page-orders">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Collectings">Tahsilatlar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- #region Page Content -->
+    <div ng-controller="CollectingController" class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Tahsilat </strong>Ara</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a href="#" ng-click="exportToExcel()" aria-expanded="true"><i class="fa fa-file-excel-o"></i> <strong>Excel'e Kaydet</strong></a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="iCollectingCode" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Tarih Aralığı</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <div class="input-group">
+                                                <input id="iCollectStartDate" ng-model="collectingSearchCriteria.StartDate" type="text" placeholder="Başlangıç Tarihi" class="form-control" />
+                                                <span class="input-group-btn" style="width:0;"></span>
+                                                <input id="iCollectEndDate" type="text" ng-model="collectingSearchCriteria.EndDate" placeholder="Bitiş Tarihi" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="p-0">
+
+                                                <div class="form-group mb-5">
+                                                    <div class="col-sm-12">
+                                                        <label class="checkbox checkbox-custom-alt">
+                                                            <input id="iCollectStatu2" name="iCollectStatu" ng-model="collectSearchCriteria.CollectStatu" ng-change="collectSearchCriteria.CollectStatu=2" ng-checked="collectSearchCriteria.CollectStatu==2" type="radio"><i></i> Tümü
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <div class="col-sm-12">
+                                                        <label class="checkbox checkbox-custom-alt">
+                                                            <input id="iCollectingStatu1" name="iCollectStatu" ng-model="collectSearchCriteria.CollectStatu" ng-change="collectSearchCriteria.CollectStatu=1" ng-checked="collectSearchCriteria.CollectStatu==1" type="radio"><i></i> Onaylanmış
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-5">
+                                                    <div class="col-sm-12">
+                                                        <label class="checkbox checkbox-custom-alt">
+                                                            <input id="iCollectStatu0" name="iCollectStatu" ng-model="collectSearchCriteria.CollectStatu" ng-change="collectSearchCriteria.CollectStatu=0" ng-checked="collectSearchCriteria.CollectStatu==0" type="radio"><i></i> Beklemede
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4 text-center">
+                                    <div class="mb-20"></div>
+                                    <div class="btn-group btn-group-rounded btn-group-md">
+                                        <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="CollectSearch(collectSearchCriteria)"><i class="fa fa-search"></i> <span>Ara</span></button>
+                                        <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="CollectSearch(collectSearchCriteria)"><i class="fa fa-refresh"></i> <span>Yenile</span></button>
+                                        <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="clear();"><i class="fa fa-reply"></i> <span>Temizle</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal form-group-sm">
+                                    <div class="col-sm-12">
+                                        <div loading-container="tableCollectsParams.settings().$loading">
+                                            <table ng-table="tableCollectsParams" class="table table-condensed table-bordered table-striped" ng-form="tableCollectForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                <tr ng-repeat="row in $data" ng-form="rowCollectForm" demo-tracked-table-row="row" ng-class="row.PrintStatu ? 'order-print' : ''">
+                                                    
+                                                    <td title="'Durum'" filter="{StatusStr: 'text'}" sortable="'StatusStr'" ng-switch="row.isEditing" ng-class="StatusStr.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="StatusStr" demo-tracked-table-cell>
+                                                        <span ng-switch-default ng-class="row.Status=='1' : 'label bg-greensea' ? 'label bg-cyan'" ng-bind-html="row.StatusStr"></span>
+                                                    </td>
+                                                    
+                                                    
+                                                    <td title="'No'" filter="{Id: 'text'}" sortable="'Id'" ng-switch="row.isEditing" ng-class="Id.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Id" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text">{{row.Id}}</span>
+                                                    </td>
+                                                    <td title="'Tarih'" filter="{CreateDate: 'text'}" sortable="'CreateDate'" ng-switch="row.isEditing" ng-class="CreateDate.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CreateDate" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="ConvertDate(row.CreateDate)"></span>
+                                                    </td>
+
+
+                                                    <td title="'Cari İsim'" filter="{CustomerName: 'text'}" sortable="'CustomerName'" ng-switch="row.isEditing" ng-class="CustomerName.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="CustomerName" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="row.CustomerName"></span>
+                                                    </td>
+                                                    <td title="'Makbuz No'" filter="{DocumentNo: 'text'}" sortable="'DocumentNo'" ng-switch="row.isEditing" ng-class="DocumentNo.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="DocumentNo" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="row.DocumentNo"></span>
+                                                    </td>
+
+                                                    <td title="'Tutar'" filter="{Amount: 'text'}" sortable="'Amount'" ng-switch="row.isEditing" ng-class="Amount.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Amount" demo-tracked-table-cell>
+                                                        <span ng-switch-default class="editable-text" ng-bind-html="row.PriceTotalStr"></span>
+                                                    </td>
+
+                                                    <td class="text-center">
+                                                        <div class="btn-group btn-group-xs mb-0">
+                                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                                <i class="fa fa-gears"></i> <span class="caret"></span>
+                                                            </button>
+
+                                                            <ul role="menu" class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+                                                                <li ng-click="updateCollectStatus(row.Id)"><a href="javascript:;"><i class="fa fa-trash-o"></i> Onayla</a></li>
+                                                                <li ng-click="deleteCollectStatus(row.Id)"><a href="javascript:;"><i class="fa fa-trash-o"></i> Sil</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="javascript:;" class="btn btn-xs btn-primary" ng-click="openDetail(row.Id)"><i class="fa fa-delicious"></i> Detay</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="modal-text" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                                        <h4 class="modal-title" id="myModalLabel3">Tahsilat Detayı</h4>
+                                    </div><!-- End .modal-header -->
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div id="pnlUsersTable">
+                                                    <table id="pUsersDataTable" class="table table-condensed table-striped table-hover table-custom">
+                                                        <thead>
+                                                            <tr>
+                                                                <th data-field="No" data-sortable="false">No</th>
+                                                                <th data-field="İşlem Tarihi" data-sortable="true">İşlem Tarihi</th>
+                                                                <th data-field="Ödeme Tipi" data-sortable="true">Ödeme Tipi</th>
+                                                                <th data-field="Tutar" data-sortable="true">Miktar</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbUsersResult">
+                                                            <tr id="tbUsersTrresult" ng-repeat="detailItem in detailList" on-finish-render="ngRepeatDetailFinished">
+                                                                <td>{{detailItem.DocumentNo}}</td>
+                                                                <td>{{detailItem.CreateDate | convertDate:'dd/MM/yyyy'}}</td>
+                                                                <td>{{detailItem.CollectingTypeText}}</td>
+                                                                <td ng-bind-html="detailItem.PriceTotalStr"></td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div><!-- End .modal-body -->
+                                    <div class="modal-footer">
+                                        @*<button id="buttonmodalClose" type="button" class="btn btn-custom" data-dismiss="modal">Kapat</button>*@
+                                    </div><!-- End .modal-footer -->
+                                </div><!-- End .modal-content -->
+                            </div><!-- End .modal-dialog -->
+                        </div><!-- End .modal -->
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+    <!-- #endregion -->
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/collecting.js", HttpContext.Current.Request)"></script>
+}
+
+<script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/FileSaver.js" type="text/javascript"></script>

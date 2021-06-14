@@ -1,0 +1,48 @@
+﻿<style>
+    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td
+    {
+        padding: 5px !important;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="table-responsive compare-table">
+            <table class="table table-striped table-hover table-custom text-center">
+                <tr class="item-brand-col">
+
+                    @foreach (var item in @ViewBag.ComparisonList)
+                    {
+                        <td>
+                            <figure>
+                                <a href="javascript:;"><img src="@item.Product.PicturePath" onerror="this.onerror = null; this.src = 'Content/images/error.png'" alt="@item.Product.Name"></a>
+                            </figure>
+                            <p class="item-name"><a href="#">@item.Product.Name</a></p>
+                        </td>
+                    }
+
+                </tr>
+                <tr class="item-brand-col">
+
+                    @foreach (var item in @ViewBag.ComparisonList)
+                    {
+                        <td> @item.Product.Code </td>
+                    }
+
+                </tr>
+                <tr class="item-brand-col">
+
+                    @foreach (var item in @ViewBag.ComparisonList)
+                    {
+                        <td> @item.Product.Manufacturer </td>
+                    }
+                </tr>
+
+            </table>
+        </div><!-- End .col-md-12 -->
+
+
+    </div><!-- End .col-md-12 -->
+</div><!-- End .row -->

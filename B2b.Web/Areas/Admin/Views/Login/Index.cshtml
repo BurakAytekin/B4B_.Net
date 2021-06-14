@@ -1,0 +1,53 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@model Logon
+
+@{
+    ViewBag.Title = "Giriş";
+    Layout = "~/Areas/Admin/Views/Shared/_BlankLayout.cshtml";
+}
+
+<div id="wrap" class="animsition">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="page page-core page-login">
+            <div class="text-center">
+                <h3 class="text-light text-white">
+                    @{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; } @CompanyInformationItem.Title
+                </h3>
+            </div>
+
+            <div class="container w-420 p-15 bg-white mt-40 text-center">
+                <h2 class="text-light text-greensea">Giriş</h2>
+
+                <form name="form" novalidate="" class="form-validation mt-20">
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.UserCode, new { title = "Temsilci Kodu", placeholder = "Temsilci Kodu", @class = "form-control underline-input" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.PasswordFor(model => model.Password, new { title = "Parola", placeholder = "Parola", @class = "form-control underline-input" })
+                    </div>
+                   
+
+                    @if (TempData["Alert"] == "true")
+                    {
+                        <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Html.ValidationSummary(false, "")
+                        </div>
+                    }
+
+                    <div class="form-group text-left mt-20">
+                        <button id="btnLogin" type="submit" value="Giriş" class="btn btn-greensea b-0 br-2 mr-5"><i class="fa fa-sign-in"></i> Giriş </button>
+                        <label class="checkbox checkbox-custom-alt checkbox-custom-sm inline-block hidden">
+                            <input type="checkbox"><i></i> Beni Hatırla
+                        </label>
+
+                        <a href="javascript:void(0);" class="pull-right mt-10 hide">Şifremi Unuttum?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>

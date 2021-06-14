@@ -1,0 +1,27 @@
+﻿
+
+
+<section>
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Kullanım Koşulları</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 box">
+                @if (@ViewBag.FooterInformationItem != null)
+                {
+                    @Html.Raw(@ViewBag.FooterInformationItem.TermOfUse)
+                }
+            </div>
+        </div>
+
+    </div>
+
+</section>

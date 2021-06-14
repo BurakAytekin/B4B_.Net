@@ -1,0 +1,10 @@
+﻿<div class="widget tags">
+    <h3>ETİKETLER</h3>
+    <ul class="tags-list">
+        @foreach (var item in ViewBag.BlogTagList)
+        {
+            <li><a href="javascript:;" onclick='angular.element(document.getElementById("blogArea")).scope().setCategory("@item.Category")'>@item.Category</a></li>
+        }
+    </ul>
+</div><!-- End .widget -->
+

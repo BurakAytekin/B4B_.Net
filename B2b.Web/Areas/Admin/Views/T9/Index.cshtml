@@ -1,0 +1,188 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+<style>
+    .panel .panel-heading .custom-head-size {
+        font-size: 18px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+    }
+    .link-effect.btn-block span {
+        display: block;
+    }
+    .checkbox-t9 {
+        min-height: 1px !important;
+        padding-top: 0px !important;
+    }
+</style>
+
+<div class="page page-campaign">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">T9</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="addT9Controller">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>T9 </strong>Verileri</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal p-0">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="iT9name" class="col-xs-12 col-sm-2 col-md-2 control-label text-left hidden-xs hidden-sm">Arama</label>
+                                        <div class="col-xs-12 col-sm-10 col-md-10">
+                                            <div class="input-group">
+                                                <input id="iT9name" type="text" placeholder="Arama Verisi" ng-model="searchT9Text" ng-keypress="keypressEventSearchT9()" class="form-control" />
+                                                <div class="input-group-btn">
+                                                    <button class="btn  btn-primary btn-rounded" ng-click="searchT9()">
+                                                        <i class="fa fa-search"></i> <span class="hidden-sm">Ara</span>
+                                                    </button>
+
+                                                    <button class="btn  btn-danger btn-rounded" ng-click="clearT9()">
+                                                        <span class="hidden-sm">Temizle</span> <i class="fa fa-search visible-sm"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h5 class="custom-font custom-head-size"><strong>T9 </strong>Listesi</h5>
+                                            </div>
+
+                                            <div class="panel-body p-5 scrolling">
+                                                <div loading-container="tableT9KeyParams.settings().$loading">
+                                                    <table ng-table="tableT9KeyParams" class="table table-condensed table-bordered table-striped" ng-form="tableT9Key" disable-filter="istableT9DetailParams" demo-tracked-table="tableTracker">
+                                                        <tr ng-repeat="row in $data" ng-form="tableT9Key" demo-tracked-table-row="row" class="m-0 p-0">
+                                                            <td title="'T9 Listesi'" filter="{Key: 'text'}" sortable="'Key'" ng-switch="row.isEditing" ng-class="Key.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Key" demo-tracked-table-cell>
+                                                                <a ng-click="loadT9DataSplit(row);" class="link-effect link-effect-2 p-0 m-0 btn-block"><span data-hover="{{row.Key}}">{{row.Key}}</span></a>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-7">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="input-group">
+                                                            <label for="iT92" class="input-group-addon control-label text-right hidden-xs hidden-sm">T9</label>
+                                                            <input id="iT92" type="text" placeholder="Doğru Yazım" class="form-control" ng-model="_t9Name"/>
+                                                            <div class="input-group-addon">
+                                                                <label class="checkbox checkbox-custom-alt checkbox-t9">
+                                                                    <input type="checkbox" ng-checked="t9Type" ng-disabled="tmpT9List.length>0"  ng-model="t9Type"/><i></i>
+                                                                    Ara Değer
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-sm-6">
+                                                        <div class="input-group">
+                                                            <label for="iT9" class="input-group-addon control-label text-right hidden-xs hidden-sm">Veri</label>
+                                                            <input id="iT9" type="text" placeholder="Yanlış Yazım" ng-model="t9Data" class="form-control" />
+                                                            <div class="input-group-btn">
+                                                                <button class="btn btn-block btn-success btn-rounded" ng-click="addList()">
+                                                                    <span class="hidden-sm">Ekle</span> <i class="fa fa-floppy-o visible-sm"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="panel-body p-5">
+                                                <div loading-container="tableT9DetailParams.settings().$loading">
+                                                    <table ng-table="tableT9DetailParams" class="table table-condensed table-bordered table-striped" ng-form="tableT9Detail" disable-filter="istableT9DetailParams" demo-tracked-table="tableTracker">
+                                                        <tr ng-repeat="row in $data" ng-form="tableT9Detail" demo-tracked-table-row="row" class="m-0 p-0">
+                                                            <td title="'Hatalı Yazımlar'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Name" demo-tracked-table-cell>
+                                                                <a class="link-effect link-effect-2 p-0 m-0 btn-block"><span data-hover="{{row.Name}}">{{row.Name}}</span></a>
+                                                            </td>
+                                                            <td   ng-switch="row.isEditing" ng-if="!isListSelected" ng-class="Name.$dirty ? 'bg-warning m-0 p-0' : 'm-0 p-0'" ng-form="Name" demo-tracked-table-cell style="width: 7%;">
+                                                                <button class="btn  btn-danger btn-sm btn-rounded" ng-click="removeT9Data(row)">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="panel-footer">
+                                                <button class="btn btn-block btn-success btn-rounded" ng-if="!isListSelected &&tmpT9List.length>0" ng-click="addT9data()">
+                                                    <span class="hidden-sm">Kaydet</span> <i class="fa fa-search visible-sm"></i>
+                                                </button>
+                                                <button class="btn btn-block btn-danger btn-rounded" ng-if="isListSelected" ng-click="deletesekectedT9()">
+                                                    <span class="hidden-sm">Sil</span> <i class="fa fa-remove visible-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+
+</div>
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/addT9.js", HttpContext.Current.Request)"></script>
+}

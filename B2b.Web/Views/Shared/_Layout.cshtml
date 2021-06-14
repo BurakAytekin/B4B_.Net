@@ -1,0 +1,585 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@using B2b.Web.v4.Models.Helper
+@{
+
+    LoginType loginType = HttpContext.Current.Session["LoginType"] != null ? (LoginType)HttpContext.Current.Session["LoginType"] : LoginType.None;
+    Customer Customer = HttpContext.Current.Session["Customer"] != null ? (Customer)HttpContext.Current.Session["Customer"] : new Customer();
+    CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"] != null ? (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"] : new CompanyInformation();
+
+    List<Currency> currencyList = (List<Currency>)HttpContext.Current.Session["CurrencyList"] != null ? (List<Currency>)HttpContext.Current.Session["CurrencyList"] : new List<Currency>();
+    List<SalesmanOfCustomer> salesmanList = (List<SalesmanOfCustomer>)HttpContext.Current.Session["SalesmanOfCustomer"] != null ? (List<SalesmanOfCustomer>)HttpContext.Current.Session["SalesmanOfCustomer"] : new List<SalesmanOfCustomer>();
+    currencyList = currencyList.Where(x => x.Type != "TL").ToList();
+
+    List<Product> suggestionProductList = (List<Product>)HttpContext.Current.Session["SuggestionProductList"] != null ? (List<Product>)HttpContext.Current.Session["SuggestionProductList"] : new List<Product>();
+
+}
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="ie8"> <![endif]-->
+<!--Buralar önceden dudluktu-->
+<!--[if !IE]><!-->
+<html>
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        @CompanyInformationItem.Title
+    </title>
+    <link href='//fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic%7CPT+Gudea:400,700,400italic%7CPT+Oswald:400,700,300' rel='stylesheet' id="googlefont">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/bundles/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/jsAdminApp")
+    <script type="text/javascript" src="~/Scripts/angularServices.js"></script>
+    <script src="~/Scripts/jquery.cookie.js"></script>
+    <link rel="stylesheet/less" type="text/css" href="~/Content/css/colors.less" />
+    <link href="~/Content/Admin/vendor/font-awesome-animation.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script type="text/javascript" src="signalr/hubs"></script>
+    <script src="~/Scripts/Pages/jsActiveUser.js"></script>
+    <script src="~/Scripts/pages/angular-base64-upload.js"></script>
+    <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <style id="custom-style" type="text/css">
+        .dropdown-menu {
+            z-index: 10000 !important;
+        }
+    </style>
+
+    @*<link href="~/Content/Pages/customStylesB2B.css" rel="stylesheet" />*@
+
+
+</head>
+<body ng-app="b2bApp" ng-cloak>
+    <div ng-controller="LayoutController">
+        <div class="action-button bottom-right">
+            <p class="ab-link"><i class="fa fa-bell faa-ring animated fa-1x"></i></p>
+            <ul class="action-list">
+                <li ng-click="showRightPanel(0)">
+                    <i class="fa fa-bullhorn" aria-hidden="true"></i>
+                    <span>Bildirimler</span>
+                </li>
+                <li ng-click="showLeftPanel(1)">
+                    <i class="fa fa-cube" aria-hidden="true"></i>
+                    <span>Fırsat Ürünleri</span>
+                </li>
+            </ul>
+        </div>
+        <div id="fadeLeft" class="fade"></div>
+        <div id="leftContainer" class="menu_container_left">
+            <div class="product-of-day-header">
+                <h2>Günün Ürünü</h2>
+            </div>
+            <div class="product-day-full">
+                <div class="product-day-main" ng-repeat="row in productOfDayList" on-finish-render="ngRepeatProductOfDayFinished">
+                    <div class="product-day-cols">
+                        <div class="product-day-image">
+                            <img src="{{row.PicturePathShow}}" />
+                        </div>
+                        <div class="product-day-content">
+                            <div class="product-col">
+                                <span>{{row.Product.Code}}</span>
+                            </div>
+                            <div class="product-col price">
+                                <span>{{row.PriceStr}}</span>
+                            </div>
+                            <div class="product-col">
+                                <span>{{row.FinishDate | dateFilter  | date:'dd.MM.yyyy hh:mm' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-day-cols product-name">
+                        <span>{{row.Product.Name}}</span>
+                    </div>
+                    <div class="product-day-cols product-qty">
+                        <div class="qty">
+                            <input type="text" placeholder="Min : {{row.MinOrder}}" ng-blur="changControl(row)" ng-model="row.Quantity" class="eryaz-numeric-input-onlynumber" />
+                        </div>
+                        <div class="add-btn">
+                            <a class="" ng-disabled="!row.SendDisabled" ng-click="sendOrder(row)">Sipariş Ver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fadeRight" class="fade"></div>
+        <div id="rightContainer" class="menu_container-right">
+            <div class="notification-header">
+                <div class="notification-header-text">
+                    <h2>Bildirimler</h2>
+                </div>
+                <div class="notification-header-close-icon" id="RightMenuClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="notification-full">
+                <!-- end ngRepeat: row in notificationList -->
+                <div class="notification-main" ng-repeat="row in notificationList" on-finish-render="ngRepeatProductOfDayFinished2">
+                    <span class="close-icon" ng-click="closeNoti(row)"><i class="fa fa-times"></i></span>
+                    <div class="notification-content">
+                        <div class="notification-content-icon">
+                            <i class="fa fa-bell" aria-hidden="true"></i>
+                        </div>
+                        <div class="notification-content-scroll">
+                            <p><span style="font-weight:bold">{{row.Header}}</span></p>
+                            <p>{{row.Message}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="searchbox-full">
+        <div class="searchbox-main">
+            <span class="close-icons" id="CloseIcon"></span>
+            <div class="search-box-col">
+                <div class="searchboxs">
+                    <span class="searchbox-head">Size Nasıl Yardımcı Olabiliriz ?</span>
+                    <form class="searchboxs-form" role="form" action="Search" method="GET">
+                        <div class="searchbox-input">
+                            <input type="text" name="text" placeholder="Hızlı Arama">
+                            <span class="focus-border"></span>
+                        </div>
+                        <div class="searchbox-btn">
+                            <button type="submit" class="search-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        </div>
+                        @*</div>*@
+                    </form>
+                </div>
+            </div>
+            <div class="search-box-col">
+                <h3 class="searchbox-new-product-head">Sizin İçin Seçtiklerimiz</h3>
+
+                <div class="searchbox-new-product-main">
+
+                    @foreach (var item in suggestionProductList.Take(6))
+                    {
+                        <a class="searchbox-new-product-cols" href="#">
+                            <div class="searchbox-new-product-bg">
+                                <div class="product-image">
+                                    <img ng-src="@item.PicturePath" alt="@item.Code" />
+                                </div>
+                                <div class="product-details">
+                                    <span>@item.Name</span>
+                                    <span class="item-price">
+                                        @Html.Raw(item.PriceListStr)
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--HIDDEN VALUES -->
+    <div hidden="hidden">
+        <input type="text" ng-init="Customer.Id = '@Customer.Id'" />
+        <input type="text" ng-init="Customer.Code = '@Customer.Code'" />
+    </div>
+
+
+    <div class="wrapper-outer">
+        <div id="wrapper">
+            <header id="header" style="background-color:white;">
+                <div id="header-top">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="header-top-left">
+                                        <ul id="top-links" class="clearfix">
+                                            <li><a href="@Url.Action("Index", "Dashboard")"><i class="fa fa-external-link"></i>&nbsp;<span class="hide-for-xs">Dashboard</span></a></li>
+                                            <li><a href="@Url.Action("Index", "Blog")"><i class="fa fa-pencil-square-o"></i>&nbsp;<span class="hide-for-xs">Blog</span></a></li>
+                                            @*<li><a href="@Url.Action("Index", "Cart")"><i class="fa fa-shopping-cart"></i>&nbsp;<span class="hide-for-xs">Sepetim</span></a></li>*@
+                                            <li><a href="@Url.Action("Index", "Comparison")"><i class="fa fa-compress"></i>&nbsp;<span class="hide-for-xs">Karşılaştırma</span></a></li>
+                                        </ul>
+                                    </div><!-- End .header-top-left -->
+                                    <div class="header-top-right">
+                                        <div class="header-top-dropdowns pull-right">
+                                            <div class="btn-group dropdown-money">
+                                                <button type="button" class="btn btn-custom dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-money" aria-hidden="true"></i>
+                                                </button>
+                                                <ul class="dropdown-menu pull-right" role="menu">
+                                                    @foreach (Currency item in currencyList)
+                                                    {
+                                                        <li><a href="javascript:;"><i class="@item.Icon" aria-hidden="true"></i><span class="ng-binding">@item.Rate</span></a></li>
+                                                    }
+                                                </ul>
+                                            </div><!-- End .btn-group -->
+                                            <div class="btn-group dropdown-language hidden">
+                                                <button type="button" class="btn btn-custom dropdown-toggle" data-toggle="dropdown">
+                                                    <span class="flag-icon flag-icon-tr"></span>
+                                                </button>
+                                            </div><!-- End .btn-group -->
+                                        </div><!-- End .header-top-dropdowns -->
+
+                                        <div class="header-text-container pull-right">
+                                            <div class="dropdown dropdown-customer">
+                                                <button id="ddCustomer" type="button" class="btn btn-custom dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="dropdown-customer-icon">
+                                                        <img src="@Customer.Users.AvatarPath" class="dropdown-customer-icon-img" />
+                                                    </span>
+                                                    <span>&nbsp;@Customer.Code &nbsp;</span>
+                                                    <span><i class="fa fa-caret-down" aria-hidden="true"></i></span>
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="ddCustomer">
+                                                    <li>
+                                                        <div class="dropdown-customer-icon-big">
+                                                            <img src="@Customer.Users.AvatarPath" class="dropdown-customer-icon-img-big" />
+                                                        </div>
+                                                        <div>@Customer.Name</div>
+                                                    </li>
+                                                    <li><a href="@Url.Action("Index", "Account")"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;<span>Hesabım</span></a></li>
+                                                    @*<li><a href="@Url.Action("Index", "Message")"><i class="fa fa-envelope"></i>&nbsp;<span>Mesaj</span></a></li>*@
+                                                    <li><a href="@Url.Action("Logout", "Login")" class="bg-danger"><i class="fa fa-sign-out" aria-hidden="true">&nbsp;</i><span>Çıkış</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div><!-- End .pull-right -->
+                                        @if (loginType == LoginType.Salesman)
+                                        {
+                                            <div class="header-text-container pull-right mr-0"><a href="@Url.Action("CustomerSelect", "Login")" class="btn btn-custom-3"><i class="fa fa-dedent fa-lg" aria-hidden="true"></i></a></div>
+                                        }
+                                    </div><!-- End .header-top-right -->
+                                </div><!-- End .row -->
+                            </div><!-- End .col-md-12 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .container -->
+                </div><!-- End #header-top -->
+
+                <div id="inner-header" ng-controller="LayoutController">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-5 col-sm-12 col-xs-12 logo-container">
+                                <div class="row">
+                                    <h1 class="logo clearfix">
+                                        <span>Eryaz B2B v4</span>
+                                        <a href="@Url.Action("Index", "Home")" title="Logo"><img src="/Content/images/logo.png" alt="logo" height="76"></a>
+                                    </h1>
+                                </div>
+                            </div><!-- End .col-md-5 -->
+                            <div class="col-md-7 col-sm-4 col-xs-12 header-inner-right">
+                                <div class="row">
+                                    <div class="header-box contact-phones pull-right clearfix">
+                                        <div class="header-box-only">
+                                            <div class="header-box-icon">
+                                                @if (salesmanList.Count > 0)
+                                                {
+                                                    <img src="@salesmanList.FirstOrDefault().Salesman.PicturePath" />
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-user fa-4x"></i>
+                                                }
+                                            </div>
+                                            <ul class="pull-left">
+                                                @if (salesmanList.Count > 0)
+                                                {
+                                                    <li><i class="fa fa-user"></i> <span>@salesmanList.FirstOrDefault().Salesman.Name</span></li>
+                                                    <li><i class="fa fa-phone"></i> <span>@salesmanList.FirstOrDefault().Salesman.Tel1</span></li>
+                                                    <li><i class="fa fa-envelope"></i> <span><a href="mailto:@salesmanList.FirstOrDefault().Salesman.Email">@salesmanList.FirstOrDefault().Salesman.EmailShort</a></span></li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-user"></i> <span>&nbsp;</span></li>
+                                                    <li><i class="fa fa-phone"></i> <span>&nbsp;</span></li>
+                                                    <li><i class="fa fa-envelope"></i> <span><a href="mailto:">&nbsp;</a></span></li>
+
+                                                }
+                                            </ul>
+                                        </div>
+                                        @if (salesmanList.Count > 1)
+                                        {
+                                            <div class="header-box-multi">
+                                                <ul class="clearfix">
+                                                    @foreach (var salesman in salesmanList.Skip(1))
+                                                    {
+                                                        <li>
+                                                            <div class="header-box-icon">
+                                                                <img src="@salesman.Salesman.PicturePath" />
+                                                            </div>
+                                                            <ul>
+                                                                <li><i class="fa fa-user"></i> <span>@salesman.Salesman.Name</span></li>
+                                                                <li><i class="fa fa-phone"></i> <span>@salesman.Salesman.Tel1</span></li>
+                                                                <li><i class="fa fa-envelope"></i> <span><a href="mailto:@salesman.Salesman.Email">@salesman.Salesman.EmailShort</a></span></li>
+                                                            </ul>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+                                    <!-- End .contact-phones -->
+                                    <div class="header-basket pull-right clearfix" onclick="BasketBoxs()">
+                                        <div class="header-basket-main">
+                                            <div class="header-basket-row">
+                                                <div class="header-box-icon">
+                                                    <i class="fa fa-shopping-basket"></i>
+                                                    <div class="header-box-piece" id="layaoutBasketCountTotal">
+                                                        <span>0</span>
+                                                    </div>
+                                                </div>
+                                                <div class="header-box-baskets" id="layoutBasketCountHead">
+                                                    <span>[0] - [0]</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="header-searchbox pull-right" id="SearchBox">
+                                        <div class="header-search-main">
+                                            <div class="header-search-icon">
+                                                <span><i class="fa fa-search" aria-hidden="true"></i></span>
+                                            </div>
+                                            <div class="header-search-text">
+                                                <span>Arama</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- End .row -->
+                            </div><!-- End .col-md-7 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .container -->
+
+                    <div id="main-nav-container" class="small-menu">
+                        <div class="container">
+                            <div class="row">
+                                <div class="menubar-full">
+                                    <div class="menubar">
+                                        <nav id="main-nav">
+                                            <div id="responsive-nav">
+                                                <div id="responsive-nav-button">
+                                                    Menu <span id="responsive-nav-button-icon"></span>
+                                                </div><!-- responsive-nav-button -->
+                                            </div>
+                                            <ul class="menu clearfix">
+                                                <li>
+                                                    <a href="@Url.Action("Index", "Home")"><span>Ana Sayfa</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("Index", "Search")"><i class="fa fa-search fa-2x"></i><span>Ürünler</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("Index", "Order")"><i class="fa fa-file-text-o fa-2x"></i><span>Siparişler</span></a>
+                                                    <ul>
+                                                        <li>@Html.ActionLink("Sipariş Durumları", "Index", "Order")</li>
+                                                        <li>@Html.ActionLink("Bakiye Siparişler", "BackOrder", "Order")</li>
+                                                        <li>@Html.ActionLink("Yeni Sipariş Ver", "Index", "Search")</li>
+
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("Index", "Finance")"><i class="fa fa-vcard-o fa-2x"></i><span>Finans</span></a>
+                                                    <ul>
+                                                        <li>
+                                                            @Html.ActionLink("Cari Hesap", "Index", "Finance")
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("Kapatılmamış Faturalar", "UnClosedInvoice", "Finance")
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("Index", "Payment")"><i class="fa fa-credit-card fa-2x"></i><span>ÖDEME</span></a>
+                                                    <ul>
+                                                        <li>
+                                                            @Html.ActionLink("Online Ödeme", "Index", "Payment")
+                                                            <ul>
+                                                                <li>@Html.ActionLink("Yeni Ödeme", "Index", "Payment")</li>
+                                                                <li>@Html.ActionLink("İşlem Listesi", "PaymentList", "Payment")</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li ng-if="@loginType === @LoginType.Salesman">
+                                                            @Html.ActionLink("Tahsilat", "Index", "Collecting")
+                                                            <ul>
+                                                                <li>@Html.ActionLink("Yeni Tahsilat", "Index", "Collecting")</li>
+                                                                <li>@Html.ActionLink("Tahsilat Listesi", "CollectingList", "Collecting")</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("Index", "Contact")"><i class="fa fa-phone fa-2x"></i><span>İLETİŞİM</span></a>
+                                                    <ul>
+                                                        <li>
+                                                            @Html.ActionLink("Sık Sorulan Sorular", "Faq", "Contact")
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("Bize Ulaşın", "Index", "Contact")
+                                                        </li>
+
+                                                    </ul>
+                                                </li>
+                                                <li class="mega-menu-container">
+                                                    <a href="javascript:;"><i class="fa fa-caret-down fa-2x"></i><span>DİĞER</span></a>
+                                                    <div class="mega-menu clearfix">
+                                                        <div class="col-5">
+                                                            @Html.ActionLink("İade", "Index", "ReturnProduct", new { @class = "mega-menu-title" })
+                                                            <ul class="mega-menu-list clearfix">
+                                                                <li>@Html.ActionLink("İade Formu", "Index", "ReturnProduct")</li>
+                                                                <li>@Html.ActionLink("İade Takip", "ReturnProductList", "ReturnProduct")</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            @Html.ActionLink("Dosyalar", "FileList", "Home", new { @class = "mega-menu-title" })
+                                                            <ul class="mega-menu-list clearfix">
+                                                                <li>@Html.ActionLink("Dosya Listesi", "FileList", "Home")</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="mega-menu-container">
+                                                    @Html.ActionLink("KATALOG", "Index", "Catalog")
+                                                </li>
+                                                <li ng-show="@loginType === @LoginType.Salesman">
+                                                    <a href="@Url.Action("Index", "B2bReport")"><i class="fa fa-phone fa-2x"></i><span>RAPORLAR</span></a>
+                                                    <ul>
+                                                        <li>
+                                                            @Html.ActionLink("Dinamik Raporlar", "Index", "B2bReport")
+                                                        </li>
+
+                                                        <li>
+                                                            @Html.ActionLink("Statik Raporlar", "OrderReport", "B2bReport")
+                                                            <ul>
+                                                                <li>@Html.ActionLink("Sipariş Raporu", "OrderReport", "B2bReport")</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                        <!-- End .row -->
+                                    </div><!-- End .col-md-8 -->
+                                    <div class="menubar-customer-name">
+                                        <div class="customer-name-main">
+                                            <span>@Customer.Name</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- End .row -->
+                        </div><!-- End .container -->
+
+                    </div><!-- End #nav -->
+                </div><!-- End #inner-header -->
+            </header>
+
+            @RenderBody()
+
+        </div>
+        <footer id="footer">
+
+            <div id="inner-footer">
+
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 footer-social-links-container">
+                                    <ul class="social-links clearfix">
+                                        @if (@ViewBag.FooterInformationItem != null)
+                                        {
+                                            <li><a href="@ViewBag.FooterInformationItem.Facebook" target="_blank" class=""><i class="fa fa-facebook-square fa-lg" aria-hidden="true"></i></a></li>
+                                            <li><a href="@ViewBag.FooterInformationItem.Twitter" target="_blank" class=""><i class="fa fa-twitter-square fa-lg" aria-hidden="true"></i></a></li>
+                                            <li><a href="@ViewBag.FooterInformationItem.Google" target="_blank" class=""><i class="fa fa-google-plus-square fa-lg" aria-hidden="true"></i></a></li>
+                                            <li><a href="@ViewBag.FooterInformationItem.Skype" target="_blank" class=""><i class="fa fa-skype fa-lg" aria-hidden="true"></i></a></li>
+                                            <li><a href="mailto:@ViewBag.FooterInformationItem.Email" class=""><i class="fa fa-envelope-square fa-lg" aria-hidden="true"></i></a></li>
+                                            <li><a href="@ViewBag.FooterInformationItem.Linkedin" target="_blank" class=""><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+                                            <li><a href="@ViewBag.FooterInformationItem.Instagram" target="_blank" class=""><i class="fa fa-instagram fa-lg" aria-hidden="true"></i></a></li>
+                                        }
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 footer-social-links-container text-right">
+                                    <ul class="social-links clearfix">
+                                        <li><a href="#" class=""><i class="fa fa-cc-visa fa-2x" aria-hidden="true"></i></a></li>
+                                        <li><a href="#" class=""><i class="fa fa-cc-mastercard fa-2x" aria-hidden="true"></i></a></li>
+                                        <li><a href="#" class=""><i class="fa fa-cc-amex fa-2x" aria-hidden="true"></i></a></li>
+                                        <li><a href="#" class=""><i class="fa fa-cc-paypal fa-2x" aria-hidden="true"></i></a></li>
+                                        <li><a href="#" class=""><img class="troy" src="~/Content/images/footer-troy.png" /></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div><!-- End .widget -->
+
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+
+            </div><!-- End #inner-footer -->
+
+            <div id="footer-bottom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-5 col-sm-5 col-xs-12 text-left">
+                            <p>
+                                &copy; @{
+                                    @DateTime.Now.Year.ToString();
+                                }<a href="@CompanyInformationItem.WebSite" target="_blank"> @CompanyInformationItem.Title</a>&trade;. All Rights Reserved.
+                            </p>
+                        </div><!-- End .col-md-5 -->
+
+                        <div class="col-md-7 col-sm-7 col-xs-12 footer-text-container text-right">
+                            <p class="other-link">
+                                <a href="/Footer/ConditionsForReturn" target="_blank">İade ve Teslimat</a>
+                                <a href="/Footer/PrivacyPolicy" target="_blank">Gizlilik Politikamız</a>
+                                <a href="/Footer/TermOfUse" target="_blank">Kullanım Koşulları</a>
+                                <a href="/Footer/DistanceSalesContract" target="_blank">Satış Sözleşmesi</a>
+                            </p>
+                            <p class="signature text-right">
+                                <span class="signature-content">
+                                    <span>&nbsp;</span><a href="#"></a>
+                                </span>
+                            </p>
+                        </div><!-- End .col-md-5 -->
+
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End #footer-bottom -->
+        </footer>
+    </div>
+
+    <div class="custom-loading-wrapper">
+        <div class="custom-loading">
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" id="scroll-top" title="Scroll to Top"><i class="fa fa-angle-up"></i></a><!-- End #scroll-top -->
+
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        $(window).load(function () {
+            less.refresh();
+        });
+    </script>
+</body>
+</html>

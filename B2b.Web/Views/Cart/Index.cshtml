@@ -1,0 +1,953 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    LoginType loginType = HttpContext.Current.Session["LoginType"] != null ? (LoginType)HttpContext.Current.Session["LoginType"] : LoginType.None;
+}
+
+<style>
+    .radioBtn .notActive {
+        color: #3276b1;
+        background-color: #fff;
+    }
+
+    .priceDisable {
+        text-decoration: line-through;
+    }
+
+    table {
+        background-color: white;
+    }
+
+    .input-group {
+        margin-bottom: 0px !important;
+    }
+
+
+    .vertical-text {
+        -ms-writing-mode: tb-rl;
+        writing-mode: tb-rl;
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        white-space: nowrap;
+        display: block;
+        bottom: 0;
+        width: 15px;
+        font-size: 15px;
+        position: relative;
+        left: 3px;
+        color: #444645;
+        border-left: 2px solid;
+        padding-left: 20px;
+    }
+
+        .vertical-text:after {
+            content: '\f178';
+            font: normal normal normal 14px/1 FontAwesome;
+            position: relative;
+            left: -3px;
+            bottom: -6px;
+        }
+
+        .vertical-text:before {
+            content: '\f178';
+            font: normal normal normal 14px/1 FontAwesome;
+            position: relative;
+            left: -3px;
+            top: -6px;
+        }
+
+
+
+    .campaign > td {
+        background-color: #FFF176 !important;
+    }
+
+    .new-product > td {
+        background-color: #A5D6A7 !important;
+    }
+
+    .coupon > td {
+        background-color: #ffd699 !important;
+    }
+
+    .promotion > td {
+        background-color: #cce6ff !important;
+    }
+
+    .fixed-price > td {
+        background-color: #f2d9d9 !important;
+    }
+
+    .jconfirm-none-overflow .jconfirm-box,
+    .jconfirm-none-overflow .jconfirm-box .jconfirm-content-pane {
+        overflow: visible !important;
+    }
+</style>
+
+@*@Styles.Render("~/Content/coupon.css")*@
+
+<section id="divSearch" ng-controller="indexController">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div style="float:right;margin-top:10px;margin-bottom:10px;">
+                    <div class="dropdown">
+                        <button class="btn btn-default btn-md btn-custom-2 dropdown-toggle transparent pull-right cart-btn" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-cog fa-lg"></i> İşlemler
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                            <li><a href="javascript:;" ng-click="openUploadModal()"><i class="fa fa-file-excel-o fa-fw"></i> Excel İle Yükle</a></li>
+                            <li><a href="javascript:;" ng-click="ExportExcelbasket()"><i class="fa fa-file-excel-o fa-fw"></i> Excele Aktar</a></li>
+                            <li><a href="javascript:;" ng-click="askDeleteSelected()"><i class="fa fa-trash-o fa-fw"></i> Seçilenleri Sil</a></li>
+                            <li><a href="javascript:;" ng-click="askDeleteAll()"><i class="fa fa-trash fa-fw"></i> Tümünü Sil</a></li>
+                            <li><a href="javascript:;" ng-click="openColorInformation()"><i class="fa fa-paint-brush fa-fw"></i> Renk Bilgisi</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 mt-15 mb-15 pull-right">
+                    <div class="row">
+                        @if (loginType == LoginType.Salesman)
+                        {
+                            <div class="onoffswitch3 swtich-custom">
+                                <input type="checkbox" name="onoffswitch3" class="onoffswitch3-checkbox" id="basketTypeControlSwitch" checked ng-click="loadBasketData(false)">
+                                <label class="onoffswitch3-label" for="basketTypeControlSwitch">
+                                    <span class="onoffswitch3-inner">
+                                        <span class="onoffswitch3-active"><span class="onoffswitch3-switch">Müşteri Sepetine Geç</span></span>
+                                        <span class="onoffswitch3-inactive"><span class="onoffswitch3-switch">Plasiyer Sepetine Geç</span></span>
+                                    </span>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-if="basketList.length>0">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table class="table table-hover table-custom table-bordered table-striped shadowed">
+                            <thead>
+                                <tr>
+                                    <th class="table-title"></th>
+                                    <th class="table-title">
+                                        @if (@ViewBag.CurrentCustomer.AuthorityCustomer._CheckBasket)
+                                        {
+                                            <input id="chckallCheck" type="checkbox" class="checkbox-new" ng-model="basketAllCheck" ng-checked="{{basketAllCheck}}" ng-click="basketAllCheckControl($event)" />
+                                        }
+                                    </th>
+                                    <th class="table-title text-center">Depo</th>
+                                    <th class="table-title text-center">TKM</th>
+                                    <th class="table-title">Kod</th>
+                                    <th class="table-title">Adı</th>
+                                    @*<th class="table-title">Üretici</th>*@
+                                    <th class="table-title text-center">Miktar</th>
+                                    <th class="table-title text-center">Birim</th>
+                                    <th class="table-title text-right">Fiyat</th>
+                                    <th class="table-title text-center">İsk</th>
+                                    @*
+                                        <th class="table-title">Cep. İsk</th>*@
+                                    <th class="table-title text-right">Net Fiyat</th>
+                                    <th class="table-title text-right">Tutar</th>
+                                    <th class="table-title text-right">Net Fiyat Kdv Dahil</th>
+                                    <th class="table-title" ng-if="@loginType === @LoginType.Salesman"></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-basket">
+                                <tr id="tr{{basketItem.Id}}" ng-repeat="basketItem in basketList" ng-init='rowDisabled=basketItem.IsPromotion || basketItem.IsCmpExtra == true' on-finish-render="ngRepeatBasketListFinished" ng-class="basketItem.RowCss">
+                                    <td rowspan="{{basketItem.PromotionProductCount}}" ng-if="basketItem.LineInBasket" style="background-color:orange !important; vertical-align:middle;">
+                                        <div class="vertical-text">{{basketItem.RowCmpText}}</div>
+                                    </td>
+                                    <td ng-if="!basketItem.LineInBasket && (!basketItem.IsPromotion && !basketItem.IsCmpExtra) "></td>
+                                    <td class="item-price-col">
+                                        @if (@ViewBag.CurrentCustomer.AuthorityCustomer._CheckBasket)
+                                        {
+                                            <input ng-disabled="rowDisabled" id="chc_{{(basketItem.IsPromotion || basketItem.IsCmpExtra) ? basketItem.PromotionId : basketItem.Id}}" type="checkbox" class="checkbox-new" ng-checked="{{basketItem.Checked}}" ng-click="basketItemChecked($event,basketItem.Id)" />
+                                        }
+                                    </td>
+                                    <td class="text-center" ng-mouseover="titleWarehouseValue($event,basketItem.Product)">
+                                        @*ng-mouseover="titleWarehouseValue($event,searchItem.Id)"*@
+                                        <span class="fa-stack fa-sm">
+                                            <i class="fa calendar-text"></i>
+                                            <i class="{{basketItem.Product.AvailabilityCss}}"></i>
+                                        </span>
+                                        <span>
+                                            {{basketItem.Product.AvailabilityText}}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <i class="fa fa-archive fa-2x" ng-if="basketItem.Product.IsKitMain" ng-mouseover="openKitDetail($event,basketItem.Product)" />
+                                    </td>
+                                    <td class="item-price-col">{{basketItem.Product.Code}}</td>
+                                    <td class="item-price-col" title="{{basketItem.Product.Name}}">{{basketItem.Product.Name}}</td>
+                                    @*<td class="item-price-col">{{basketItem.Product.Manufacturer}}</td>*@
+                                    <td class="text-center">
+                                        <div class="input-group input-group-sm input-criteria input-criteria-quantity width-xs">
+                                            <span class="input-group-addon no-minwidth-zero" ng-disabled="!rowDisabled" ng-if="basketItem.CampaignLineInBasket">
+                                                {{basketItem.Quantity}}
+                                            </span>
+                                            @*ng-change="minOrderControl(basketItem.Id,basketItem.Product.MinOrder)"*@
+                                            <input ng-disabled="rowDisabled" type="text" id="quantity_{{basketItem.Id}}" name="quantity" ng-init="Quantity= basketItem.CampaignLineInBasket ? basketItem.QuantityOrj:basketItem.Quantity" ng-model="Quantity" class="form-control text-center">
+                                            <span class="input-group-btn input-quantity-btn" ng-if="!rowDisabled">
+                                                <a href="javascript:;" ng-if="!rowDisabled" onclick="return false;" ng-click="arrowUp(basketItem.Id,basketItem.Product.MinOrder)" class="btn btn-custom-2"><i class="fa fa-angle-up"></i></a>
+                                                <a href="javascript:;" ng-if="!rowDisabled" onclick="return false;" ng-click="arrowDown(basketItem.Id,basketItem.Product.MinOrder)" class="btn btn-custom-2"><i class="fa fa-angle-down"></i></a>
+                                            </span>
+                                            <span class="input-group-btn input-group-btn-quantity" ng-if="!rowDisabled">
+                                                <a href="javascript:;" ng-if="!rowDisabled" onclick="return false;" ng-click="checkUpdateQuantity(basketItem.Id,basketItem.Product.Campaign.TotalQuantity,basketItem.Product.Campaign.SaledQuantity)" class="btn btn-custom">
+                                                    <i id="updateIcon_{{basketItem.Id}}" class="fa fa-refresh fa-lg fa-fw"></i>
+                                                </a>
+                                            </span>
+
+                                        </div>
+                                    </td>
+                                    <td class="item-price-col text-center">{{basketItem.Product.Unit}}</td>
+                                    <td class="item-price-col text-nowrap text-right" ng-bind-html="basketItem.Product.PriceListCustomerStr"></td>
+                                    <td class="item-price-col text-center">{{basketItem.Product.DiscountStr}}</td>
+                                    @*
+                                        <td>
+                                            <div class="input-group input-group-sm input-criteria">
+                                                <input ng-disabled="rowDisabled" id="discSpecial_{{basketItem.Id}}" type="text" name="discSpecial" ng-model="basketItem.DiscSpecial" value="1" class="form-control text-center">
+                                                <span class="input-group-btn input-quantity-btn" ng-if="!rowDisabled">
+                                                    <a ng-if="!rowDisabled" href="javascript:;" onclick="return false;" class="btn btn-custom-2"><i class="fa fa-angle-up"></i></a>
+                                                    <a ng-if="!rowDisabled" href="javascript:;" onclick="return false;" class="btn btn-custom-2"><i class="fa fa-angle-down"></i></a>
+                                                </span>
+                                                <span class="input-group-btn" ng-if="!rowDisabled">
+                                                    <a href="javascript:;" ng-if="!rowDisabled" onclick="return false;" ng-click="updateDiscSpecialValue(basketItem.Id)" class="btn btn-custom">
+                                                        <i id="updateIconDiscSpecial_{{basketItem.Id}}" class="fa fa-refresh fa-lg fa-fw"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </td>*@
+                                    <td class="item-price-col text-nowrap text-right" ng-bind-html="basketItem.Product.PriceNetCustomerStr"></td>
+                                    @*
+                                        <td class="item-price-col">{{basketItem.Product.PriceNetCustomerStr.replace(' ','&nbsp;')}}</td>*@
+                                    <td class="item-price-col text-nowrap text-right" ng-bind-html="basketItem.TotalCostStr"></td>
+                                    <td class="item-price-col text-nowrap text-right">
+                                        <span class="tooltip-box" ng-class="basketItem.Checked == false ? 'priceDisable' : '' " ng-bind-html="basketItem.PriceCostWithVatStr" ng-mouseover="titleValue($event,basketItem)"></span>
+
+                                        <div price-card ng-model="basketItem"></div>
+                                    </td>
+
+
+                                    <td class="text-center" ng-if="@loginType === @LoginType.Salesman">
+                                        <div class="dropdown">
+                                            <button ng-if="!rowDisabled" class="btn btn-default btn-sm btn-custom-2 dropdown-toggle transparent" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-cog fa-lg"></i>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                                                <li ng-if="@loginType === @LoginType.Salesman"><a href="javascript:;" ng-click="askItemFixedPrice(basketItem.Id,basketItem.FixedPriceValue,basketItem.FixedPriceDecimal)"><i class="fa fa-refresh fa-fw"></i> Net Fiyat Güncelle</a></li>
+                                                <li><a href="javascript:;" ng-click="askItemNotes(basketItem)"><i class="fa fa-pencil-square-o fa-fw"></i> Satır Notu Ekle</a></li>
+                                                <li><a href="javascript:;" ng-click="addDeliveryDate(basketItem)"><i class="fa fa-user-times fa-fw"></i> Teslim Tarihi Ekle</a></li>
+                                                <li ng-if="@loginType === @LoginType.Salesman"><a href="javascript:;" ng-click="askItemDiscSpecial(basketItem)"><i class="fa fa-percent fa-fw"></i> Özel İskonto Ekle</a></li>
+                                                <li><a href="javascript:;" ng-click="basketTransfer(basketItem)"><i class="fa fa-exchange fa-fw"></i> Transfer</a></li>
+                                                <li><a href="javascript:;" ng-click="showInformationModal(basketItem)"><i class="fa fa-info-circle fa-fw"></i> Kalem Bilgisi</a></li>
+                                                <li><a href="javascript:;" ng-click="showProductDetailModal(basketItem)"><i class="fa fa-plus fa-fw"></i> Ürün Detay</a></li>
+                                                <li ng-show="(basketItem.Product.Campaign.Type > 0  || basketItem.ItemAvailableCoupon == true) && basketItem.IsCancelCampaign == false " class="bg-danger"><a href="javascript:;" ng-click="cancelCampaign(basketItem,true)"><i class="fa fa-thumbs-o-down"></i> Kampanya İstemiyorum</a></li>
+                                                <li ng-show="(basketItem.Product.Campaign.Type > 0 || basketItem.ItemAvailableCoupon == true) && basketItem.IsCancelCampaign == true" class="bg-success"><a href="javascript:;" ng-click="cancelCampaign(basketItem,false)"><i class="fa fa-thumbs-o-up"></i> Kampanya İstiyorum</a></li>
+
+                                                @*
+                                                    <li><a href="javascript:;"><i class="fa fa-trash-o fa-fw"></i> Delete</a></li>
+                                                    <li role="separator" class="divider"></li>
+                                                    <li><a href="javascript:;"><i class="fa fa-unlock"></i> Make admin</a></li>*@
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:;" ng-if="!rowDisabled" class="btn btn-danger btn-sm" ng-click="askForDelete(basketItem.Id)"><i class="fa fa-trash-o fa-lg" aria-hidden="true"></i></a>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div><!-- End .col-md-12 -->
+
+                </div><!-- End .row -->
+                <div class="lg-margin"></div>
+
+                <div class="row">
+                    <div class="col-md-8 col-sm-12 col-xs-12 lg-margin">
+
+                        <div class="tab-container reverse clearfix">
+
+                            <div class="tab-content clearfix">
+                                <div class="tab-pane active" id="shipping">
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Gönderme Şekli</span></span>
+                                                <div class="normal-selectbox clearfix">
+                                                    <select id="shipmentType-select" name="shipmentType-select" ng-model="SelectedShipmentType" class="customselect selectbox-shipmentType ">
+                                                        <option ng-repeat="shipmentType in shipmentTypeList" on-finish-render="ngRepeatShipmentTypeFinished" value="{{shipmentType.Id}}">{{shipmentType.Name}}</option>
+                                                    </select>
+                                                </div><!-- End .large-selectbox-->
+                                            </div><!-- End .input-group -->
+                                        </div>
+
+
+                                        <div class="xs-margin clearfix"></div>
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevkiyat Notları</span></span>
+                                                <div class="normal-selectbox clearfix">
+                                                    <select id="basketNotes-select" name="basketNotes-select" ng-model="SelectedBasketNotes" ng-change="basketNoteChange(SelectedBasketNotes)" class="customselect selectbox-basketNotes ">
+
+                                                        <option ng-repeat="basketNotes in basketNotesList" on-finish-render="ngRepeatBasketNotesFinished" value="{{basketNotes.Id}}">{{basketNotes.Header}}</option>
+                                                    </select>
+                                                </div><!-- End .large-selectbox-->
+                                                <div class="input-group-btn basket-notes">
+                                                    <a class="btn btn-danger" ng-click="deleteBasketNote()"><i class="fa fa-trash-o" aria-hidden="true"></i> Sil</a>
+                                                    <a class="btn btn-success" ng-click="saveAndUpdateBasketNote()"><i class="fa fa-check" aria-hidden="true"></i> Kaydet</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria input-criteria-only-input">
+                                                <textarea id="txtOrderNote" rows="2" cols="20" tabindex="4" class="form-control" placeholder="Sevkiyat Notunuzu Giriniz..." required></textarea>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Ödeme Notları</span></span>
+
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <textarea id="txtOrderPaymentNote" rows="2" cols="20" tabindex="4" class="form-control" placeholder="Ödeme Notunuzu Giriniz..." required></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12" ng-show="showFreeShipping">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Ücretsiz Hammaliye</span></span>
+
+                                                <div class="input-group input-criteria input-criteria-only-input">
+
+                                                    <select id="freeShipping" class="customselect selectbox-basketNotes ">
+                                                        <option value="0" selected="selected">İstemiyorum</option>
+                                                        <option value="1">İstiyorum</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Teslimattan Önce</span></span>
+
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <select id="shipmentInformation" class="customselect selectbox-basketNotes ">
+                                                        <option value="Aramaya Gerek Yok" selected="selected">Aramaya Gerek Yok</option>
+                                                        <option value="1 Saat Önce Arayınız">1 Saat Önce Arayınız</option>
+                                                        <option value="2 Saat Önce Arayınız">2 Saat Önce Arayınız</option>
+                                                        <option value="3 Saat Önce Arayınız">3 Saat Önce Arayınız</option>
+                                                        <option value="4 Saat Önce Arayınız">4 Saat Önce Arayınız</option>
+                                                        <option value="5 Saat Önce Arayınız">5 Saat Önce Arayınız</option>
+                                                        <option value="6 Saat Önce Arayınız">6 Saat Önce Arayınız</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevk Adresi</span></span>
+                                                <div class="normal-selectbox clearfix">
+                                                    <select id="shipmentDifferent-select" name="shipmentDifferent-select" ng-model="SelectedShipmentDifferent" class="customselect selectbox-shipmentType ">
+                                                        @*<option value="0" ng-click="SelectedShipmentDifferent='0'">Cari adresime sevk</option>
+                                                            <option value="1" ng-click="SelectedShipmentDifferent='1'">Farklı adrese sevk</option>*@
+                                                        <option value="0">Cari adresime sevk (@ViewBag.CurrentCustomer.Address)</option>
+                                                        <option value="1">Farklı adrese sevk</option>
+                                                    </select>
+                                                </div><!-- End .large-selectbox-->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevk Ünvan</span></span>
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <textarea id="txtShipmentPerson" rows="1" cols="20" tabindex="4" class="form-control" placeholder="Sevk yeri ünvanını giriniz..." required maxlength="30"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevk Telefon</span></span>
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <textarea id="txtShipmentTel" rows="1" cols="20" tabindex="4" class="form-control" placeholder="Sevk yeri telefon giriniz..." required maxlength="30"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12" ng-show="SelectedShipmentDifferent=='1'">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevk Adresi</span></span>
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <textarea id="txtShipmentAddress" rows="2" cols="20" tabindex="4" class="form-control" placeholder="Sevk yeri adresini giriniz..." required maxlength="90"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12" ng-show="SelectedShipmentDifferent=='1'">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevk İl</span></span>
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <textarea id="txtShipmentCity" rows="1" cols="20" tabindex="4" class="form-control" placeholder="İl giriniz..." required maxlength="30"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12" ng-show="SelectedShipmentDifferent=='1'">
+                                            <div class="input-group input-criteria">
+                                                <span class="input-group-addon"><span>Sevk İlçe</span></span>
+                                                <div class="input-group input-criteria input-criteria-only-input">
+                                                    <textarea id="txtShipmentTown" rows="1" cols="20" tabindex="4" class="form-control" placeholder="İlçe giriniz..." required maxlength="30"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="tab-pane" id="discount">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <header class="content-title">
+                                                <div class="title-bg">
+                                                    <h2 class="title font-size-25">Lütfen kupon kodunuzu giriniz.</h2>
+                                                </div><!-- End .title-bg -->
+                                            </header>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="input-group input-criteria">
+                                                <input type="text" required class="form-control" ng-disabled="manuelCopunUse" ng-model="couponCodeManuel" placeholder="Kupon Kodu">
+                                                <div class="input-group-btn">
+                                                    <a ng-disabled="manuelCopunUse" ng-click="checkCouponForCustomer(couponCodeManuel)" class="btn btn-custom-2"><i class="fa fa-ticket" aria-hidden="true"></i> Kodu Uygula</a>
+                                                </div>
+                                                <div class="input-group-btn">
+                                                    <a class="btn btn-custom-2" ng-click="showCustomerCoupon()"><i class="fa fa-ticket" aria-hidden="true"></i> Kupon Seç</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="nav-tabs">
+                                    <li class="active"><a href="#shipping" class="shadowed" data-toggle="tab">BİLGİLERİ GÜNCELLE</a></li>
+                                    <li><a href="#discount" class="shadowed" data-toggle="tab">İNDİRİM KUPONU</a></li>
+
+                                </ul>
+                                <div class="sm-margin"></div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <table class="table total-table shadowed">
+                            <tbody>
+                                <tr>
+                                    <td class="total-table-title">Toplam Tutar</td>
+                                    <td class="text-right"><span ng-bind-html="basketListTotals.TotalPriceCustomerCurrency"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">İskonto</td>
+                                    <td class="text-right"><span ng-bind-html="basketListTotals.TotalDiscountCustomerCurrency"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">Net Tutar</td>
+                                    <td class="text-right"><span ng-bind-html="basketListTotals.TotalCostCustomerCurrency"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">KDV</td>
+                                    <td class="text-right"><span ng-bind-html="basketListTotals.TotalVATCustomerCurrency"></span></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>Genel Toplam</td>
+                                    <td class="text-right"><span ng-bind-html="basketListTotals.GeneralTotal"></span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <a id="btnSend" href="javascript:;" class="btn btn-block btn-custom" ng-click="checkPaymentTypeModelOpen(0)"><i class="fa fa-shipping-fast" aria-hidden="true"></i> GÖNDER</a>
+                        <i id="spinnerBasket" class="fa fa-spinner fa-spin fa-3x fa-fw hidden"></i>
+                    </div><!-- End .col-md-4 -->
+                </div>
+                <div class="lg-margin"></div>
+
+            </div><!-- End .col-md-12 -->
+        </div><!-- End .row -->
+
+        <div class="row" ng-if="basketList.length<=0">
+            <div class="col-md-12">
+                <div class="alert alert-warning text-center">
+                    <p>
+                        Sepetinizde Ürün Bulunmamaktadır.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-reason" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                        <h4 class="modal-title" id="modal-header">Karşılanamayan Siparişler</h4>
+                        <p>Sepetinizde stoktan karşılayamadığımız kalemler var. Lütfen seçiminizi yapınız.</p>
+                    </div><!-- End .modal-header -->
+                    <div class="modal-body">
+                        <table class="table table-striped table-hover table-custom">
+                            <thead>
+                                <tr>
+                                    <th class="table-title">Kod</th>
+                                    <th class="table-title">Adı</th>
+                                    @if (loginType == LoginType.Salesman)
+                                    {
+                                        <th class="table-title text-center">İstenilen</th>
+                                        <th class="table-title text-center">Karşılanan</th>
+                                    }
+                                    <th class="table-title">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="reasonItem in reasonList" on-finish-render="ngRepeatReasonListFinished" ng-class="{'campaign': reasonItem.IsCampaign } ">
+
+                                    <td class="item-price-col">{{reasonItem.Code}}</td>
+                                    <td class="item-price-col">{{reasonItem.Name}}</td>
+                                    @if (loginType == LoginType.Salesman)
+                                    {
+                                        <td class="item-price-col text-center">{{reasonItem.QtyReqStr}}</td>
+                                        <td class="item-price-col text-center">{{reasonItem.QtyAvblStr}}</td>
+                                    }
+                                    <td class="text-left">
+                                        <div class="input-group input-criteria">
+                                            @*input-criteria-only-input*@
+                                            <div class="normal-selectbox clearfix">
+                                                <select id="reasonItem-proccess" name="reasonItem-proccess" ng-disabled="reasonItem.IsCampaign" ng-init="SelectedReasonItem=0" ng-model="SelectedReasonItem" ng-change="reasonItemChange(SelectedReasonItem,reasonItem.BasketId)" class="customselect selectbox-reasonItem">
+                                                    <option value="0" title="Kalanı Bakiyeye Al">Kalanı Bakiyeye Al</option>
+                                                    <option value="1" title="Sadece Karşılanabileni Al">Sadece Karşılanabileni Al</option>
+                                                    <option value="2" title="Kalemi İptal Et">Kalemi İptal Et</option>
+                                                </select>
+                                            </div><!-- End .large-selectbox-->
+                                        </div><!-- End .input-group -->
+                                        @*<div class="input-container normal-selectbox">
+
+                                            </div>*@
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div><!-- End .modal-body -->
+                    <div id="modal-footer" class="modal-footer">
+                        <button id="buttonmodalClose" type="button" class="btn btn-danger" data-dismiss="modal">İptal</button>
+                        <button id="buttonmodalSend" type="button" class="btn btn-custom" data-dismiss="modal" ng-click="sendOrder()">Siparişi Bitir</button>
+                    </div><!-- End .modal-footer -->
+                </div><!-- End .modal-content -->
+            </div><!-- End .modal-dialog -->
+        </div><!-- End .modal -->
+
+        <div class="modal fade" id="modal-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                        <h4 class="modal-title" id="modal-header">Kalem Bilgisi</h4>
+                    </div><!-- End .modal-header -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-6 col-xs-6">
+                                <ul class="list-style list-circle">
+                                    <li ng-repeat="row in informationList">{{row.Note}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div><!-- End .modal-body -->
+                    <div id="modal-footer" class="modal-footer">
+                    </div><!-- End .modal-footer -->
+                </div><!-- End .modal-content -->
+            </div><!-- End .modal-dialog -->
+        </div><!-- End .modal -->
+
+        <div class="modal fade" id="modal-productDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                        <h4 class="modal-title" id="modal-header">Ürün Detay</h4>
+                    </div><!-- End .modal-header -->
+                    <div class="modal-body productDetailValue">
+
+                    </div><!-- End .modal-body -->
+                    <div id="modal-footer" class="modal-footer">
+                    </div><!-- End .modal-footer -->
+                </div><!-- End .modal-content -->
+            </div><!-- End .modal-dialog -->
+        </div><!-- End .modal -->
+
+        <div class="modal fade" id="modal-color-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                        <h4 class="modal-title" id="modal-header">Renk Bilgilendirmesi</h4>
+                    </div><!-- End .modal-header -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <ul class="list-group">
+                                    <li style="background-color:#A5D6A7" class="list-group-item">Yeni ürün</li>
+                                    <li style="background-color:#FFF176" class="list-group-item">Kampanya</li>
+                                    <li style="background-color:#ffd699" class="list-group-item">Kupon Kampanyası</li>
+                                    <li style="background-color:#cce6ff" class="list-group-item">Promosyon Ürün</li>
+                                    <li style="background-color:#f2d9d9" class="list-group-item">Özel Fiyatlı Ürün</li>
+                                    <li class="list-group-item">Normal</li>
+                                </ul>
+
+                            </div><!-- End .col-md-6 -->
+
+                        </div>
+                    </div><!-- End .modal-body -->
+                    <div id="modal-footer" class="modal-footer">
+                    </div><!-- End .modal-footer -->
+                </div><!-- End .modal-content -->
+            </div><!-- End .modal-dialog -->
+        </div><!-- End .modal -->
+
+        <div class="modal fade" id="modal-coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                        <h4 class="modal-title" id="modal-header">Kuponlarınız</h4>
+                    </div><!-- End .modal-header -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12" ng-repeat="row in couponList">
+                                <div class="panel coupon" ng-class="'panel-'+row.CssClassAdmin">
+                                    <div class="panel-heading" id="head">
+                                        <div class="panel-title cupon-title" id="title">
+                                            <i class="fa fa-tags fa-2x"></i>
+                                            <span class="hidden-xs">{{row.Header}}</span>
+                                            <span class="visible-xs">{{row.Header}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <img src="" class="coupon-img img-rounded">
+                                        <div class="col-md-12 well well-sm" ng-if="row.IsAutoUse == true">
+                                            <div id="business-info">
+                                                Bu kupon otomatik uygulanmaktadır
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="offer text-center" ng-class="'text-'+row.CssClassAdmin">
+                                                <span class="usd" ng-if="row.Type == 0"><sup>%</sup></span>
+                                                <span class="usd" ng-if="row.Type == 1"><sup>₺</sup></span>
+                                                <span class="number" ng-if="row.Type == 0">{{row.Discount}}</span>
+                                                <span class="number" ng-if="row.Type == 1">{{row.PriceLeft}}</span>
+                                                <span class="cents" ng-if="row.Type == 1"><sup>{{row.PriceRight}}</sup></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading" role="tab" id="headingOne">
+                                                            <h4 class="panel-title text-center">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{row.Id}}" aria-expanded="true" aria-controls="collapseOne{{row.Id}}" class="">
+                                                                    Detay
+                                                                </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapseOne{{row.Id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+
+                                                                    <div class="col-md-12">
+                                                                        <p>
+                                                                            {{row.Explanation1}}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <p class="disclosure">
+                                                                            {{row.Explanation2}}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <div class="coupon-code">
+                                            Kupon Kodu: {{row.Code}}
+                                            <div class="print btn-group">
+                                                <button class="btn btn-block btn-custom" ng-click="checkCouponForCustomer(row.Code)" ng-if="row.IsAutoUse == false && manuelCopunUse == false">SEÇ</button>
+                                            </div>
+                                        </div>
+                                        <div class="exp">Tarih Aralığı: {{row.StartDate  | dateFilter  | date:'dd.MM.yyyy'}}-{{row.EndDate  | dateFilter  | date:'dd.MM.yyyy'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End .modal-body -->
+                    <div id="modal-footer" class="modal-footer">
+                    </div><!-- End .modal-footer -->
+                </div><!-- End .modal-content -->
+            </div><!-- End .modal-dialog -->
+        </div><!-- End .modal -->
+
+    </div><!-- End .container -->
+    <div class="modal fade" id="modal_upload_cartfromexcel" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Dosya Yükleme</h4>
+                </div>
+                <div class="modal-body">
+                    @*@using (Html.BeginForm("UploadExcel", "Cart", FormMethod.Post, new { id = "formUpload" }))
+                        {*@
+                    @using (Html.BeginForm("UploadExcel", "Cart", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div>
+                            <label class="btn btn-default">
+                                <a href="~/files/download/toplu_siparis_dosyasi.xlsx" target="_self" download="toplu_siparis_dosyasi.xlsx"><i class="fa fa-download fa-fw"></i> Örnek Dosya İndir</a>
+                            </label>
+                            <label class="btn btn-default">
+                                <input id="cart-excel-selector" type="file" style="display: none;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                <i class="fa fa-folder-open-o fa-fw"></i> Gözat
+                            </label>
+
+                            <a href="javascript:;" ng-click="uploadCartExcelFile()" class="btn btn-success"><i class="fa fa-upload"></i> Dosya Yükle</a>
+                        </div>
+                        <br />
+                        <div>
+                            <div class="alert alert-success" ng-if="excelSuccessMessage!=''">{{excelSuccessMessage}}</div>
+                            <div class="alert alert-error" ng-if="excelErrorMessage!=''">{{excelErrorMessage}}</div>
+
+
+                            <div class="alert alert-success" ng-if="excelSuccessList.length  > 0">
+                                <h5>Başarılı Listesi</h5>
+
+
+                                <ul>
+                                    <li ng-repeat="item in excelSuccessList">{{item}}</li>
+                                </ul>
+                            </div>
+
+                            <div class="alert alert-danger " ng-if="excelErrorList.length  > 0">
+                                <h5>Başarısız Listesi</h5>
+                                <label class="btn btn-default btn-block">
+                                    <a href="javascript:;" ng-click="exportExcelFile();"><i class="fa fa-download fa-fw"></i>Başarısız Kodları İndir</a>
+                                </label>
+                                <ul>
+                                    <li ng-repeat="item in excelErrorList">{{item}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modal-orderPayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
+                    <h4 class="modal-title">Ödeme Taahhüt Bilgisi</h4>
+                </div><!-- End .modal-header -->
+                <div class="modal-body">
+                    <div class="row">
+                        <form name="addPaymentTypeForm">
+
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Ödeme Tipi</span>
+                                    </div>
+                                    <select class="form-control" ng-model="OrderPaymentType.Type" ng-init="OrderPaymentType.Type='1'" ng-change="drpChange()">
+                                        <option value="1" selected="selected">Nakit / Havale</option>
+                                        <option value="5">Kredi Kartı</option>
+
+                                        <option value="2">Çek</option>
+                                        <option value="3">Senet</option>
+                                        <option value="4">Dbs</option>
+
+
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Genel Toplam</span>
+                                    </div>
+                                    <span style="margin-left:15px" ng-bind-html="basketListTotals.GeneralTotal"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12" ng-hide="OrderPaymentType.Type==4">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Ödenecek Tutar &nbsp;<a ng-click="addNextPrice()"><i class="fa fa-exchange"></i></a></span>
+                                    </div>
+                                    <div class="col-xs-12 m-0 p-0" style="margin:0px; padding:0px;">
+                                        <div class="col-xs-2 m-0 p-0" style="margin:0px; padding:0px;">
+                                            <input type="text" class="form-control col-xs-5 text-right" ng-model="OrderPaymentType.Total" placeholder="100.000" />
+                                        </div>
+                                        <div class="col-xs-1 m-0 p-0" style="width:15px; margin:0px; padding:0px; ">
+                                            <p style="line-height:28px; font-size:28px; padding-left:2px; padding-right:2px;">,</p>
+                                        </div>
+                                        <div class="col-xs-1 m-0 p-0" style="margin:0px; padding:0px;">
+                                            <input type="text" class="form-control col-xs-2" ng-model="OrderPaymentType.TotalDouble" placeholder="00" />
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12" ng-hide="OrderPaymentType.Type==4">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Ödeme Tarihi</span>
+                                    </div>
+                                    <input type="text" id='datetimepicker1' class="form-control datetime" ng-model="OrderPaymentType.PaymentDate" placeholder="Ödeme tarihi Giriniz" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12" ng-hide="OrderPaymentType.Type==4 || OrderPaymentType.Type==1 || OrderPaymentType.Type==5">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Evrak No</span>
+                                    </div>
+                                    <input type="text" class="form-control" ng-model="OrderPaymentType.ReceiptNo" placeholder="Evrak No Giriniz" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12" ng-hide="OrderPaymentType.Type==4 || OrderPaymentType.Type==1 || OrderPaymentType.Type==5">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Banka Adı</span>
+                                    </div>
+                                    <input type="text" class="form-control" ng-model="OrderPaymentType.BankName" placeholder="Banka Adı Giriniz" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="input-group-text">Görsel</span>
+                                    </div>
+                                    <input type="file" ng-model="OrderPaymentType.Base64" ng-required="OrderPaymentType.Type==3" accept="image/*" base-sixty-four-input />
+                                    <div class="row" ng-if="OrderPaymentType.Base64">
+                                        <img src="data:{{OrderPaymentType.Base64.filetype}};base64,{{OrderPaymentType.Base64.base64}}" style="width:250px" />
+                                        <a ng-click="removeImage()" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <button class="btn btn-success btn-block m-5" ng-click="AddOrderPaymentType(addPaymentTypeForm.$valid);"><i class="fa fa-plus"></i>&nbsp;Ekle</button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <table class="table table-striped table-hover table-custom">
+                                <thead>
+                                    <tr>
+                                        <th class="table-title">Ödeme Türü</th>
+                                        <th class="table-title">Tutar</th>
+                                        <th class="table-title">Ödeme Tarihi</th>
+                                        <th class="table-title">Evrak No</th>
+                                        <th class="table-title">Banka Adı</th>
+                                        <th class="table-title">Sil</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="OrderPaymentTypeItem in OrderPaymentTypeList">
+
+                                        <td class="item-price-col">{{OrderPaymentTypeItem.TypeStr}}</td>
+                                        <td class="item-price-col">{{OrderPaymentTypeItem.Total | number : 2}}  ₺</td>
+                                        <td class="item-price-col">{{OrderPaymentTypeItem.PaymentDate | dateFilter | date:'dd.MM.yyyy'}}</td>
+                                        <td class="item-price-col">{{OrderPaymentTypeItem.ReceiptNo}}</td>
+                                        <td class="item-price-col">{{OrderPaymentTypeItem.BankName}}</td>
+                                        <td class="item-price-col"><a class="btn btn-danger btn-xs" ng-click="RemoveOrderPaymentType($index)"><i class="fa fa-trash"></i></a></td>
+
+                                    </tr>
+                                    <tr>
+
+                                        <td class="item-price-col">Toplam</td>
+                                        <td class="item-price-col">{{Gtotal | number : 2}} ₺</td>
+                                        <td class="item-price-col"></td>
+                                        <td class="item-price-col"></td>
+                                        <td class="item-price-col"></td>
+                                        <td class="item-price-col"></td>
+
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td>{{PaymentTotal | number:2}}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- End .modal-body -->
+                <div id="modal-footer" class="modal-footer">
+                    <a href="javascript:;" class="btn btn-success btn-block" ng-click="saveOrderPaymentType();"><i class="fa fa-send"></i>&nbsp;Siparişi Bitir</a>
+                </div><!-- End .modal-footer -->
+            </div><!-- End .modal-content -->
+        </div><!-- End .modal-dialog -->
+    </div><!-- End .modal -->
+
+</section><!-- End #content -->
+@Scripts.Render("~/Scripts/js/bootstrap-switch.min.js")
+<script src="@Url.ContentVersioned("/Scripts/Pages/cart.js", HttpContext.Current.Request)"></script>
+<script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/FileSaver.js" type="text/javascript"></script>
+<script src="~/Scripts/Pages/angular-base64-upload.js"></script>
+
+

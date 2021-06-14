@@ -1,0 +1,126 @@
+﻿@*<style type="text/css">
+        .ul-scroll ul.list-group {
+            height: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+            .ul-scroll ul.list-group li.list-group-item {
+                line-height: 20px;
+            }
+    </style>*@
+
+<style type="text/css">
+    .t-scroll table thead {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .t-scroll table tbody {
+        /*display: block;*/
+        height: 300px;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        /*clear: both;*/
+    }
+
+        /*.t-scroll table tbody:before {
+            display: table;
+            content: "";
+            clear: both;
+        }
+
+        .t-scroll table tbody:after {
+            display: table;
+            content: "";
+            clear: both;
+        }*/
+
+        .t-scroll table tbody tr {
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+    .table-wrapper {
+        /*padding: 10px;*/
+        height: 300px;
+        overflow-y: scroll;
+    }
+</style>
+
+<div id="mVehicleSelect" tabindex="-1" role="dialog" aria-labelledby="mVehicleSelectLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Araç Ekleme</h3>
+            </div>
+
+            <div class="modal-body">
+                <div class="row t-scroll">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div loading-container="tableVehicleBrandParams.settings().$loading">
+                                    <div class="table-wrapper">
+                                        <table ng-table="tableVehicleBrandParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                <td title="'Araç Marka'" filter="{Brand: 'text'}" sortable="'Brand'" ng-dblclick="getVehicleModelList(row.Brand)" ng-switch="row.isEditing" ng-class="Brand.$dirty ? 'bg-warning' : ''" ng-form="Brand" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Brand}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div loading-container="tableVehicleBrandModelParams.settings().$loading">
+                                    <div class="table-wrapper">
+                                        <table ng-table="tableVehicleBrandModelParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                <td title="'Araç Model'" filter="{Model: 'text'}" sortable="'Model'" ng-dblclick="getVehicleModelTypeList(row.Model)" ng-switch="row.isEditing" ng-class="Model.$dirty ? 'bg-warning' : ''" ng-form="Model" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Model}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div loading-container="tableVehicleBrandModelTypeParams.settings().$loading">
+                                    <div class="table-wrapper">
+                                        <table ng-table="tableVehicleBrandModelTypeParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                            <tr ng-repeat="row in $data" ng-form="rowForm" ng-dblclick="insertSelectedVehicle(row)" demo-tracked-table-row="row">
+                                                <td title="'Tip'" filter="{Type: 'text'}" sortable="'Type'" ng-switch="row.isEditing" ng-class="Type.$dirty ? 'bg-warning' : ''" ng-form="Type" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Type}}</span>
+                                                </td>
+                                                <td title="'Tarih'" filter="{Date: 'text'}" sortable="'Date'" ng-switch="row.isEditing" ng-class="Date.$dirty ? 'bg-warning' : ''" ng-form="Date" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Date}}</span>
+                                                </td>
+                                                <td title="'Motor Kodu'" filter="{EngineCode: 'text'}" sortable="'EngineCode'" ng-switch="row.isEditing" ng-class="EngineCode.$dirty ? 'bg-warning' : ''" ng-form="EngineCode" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.EngineCode}}</span>
+                                                </td>
+                                                <td title="'Hp'" filter="{Hp: 'text'}" sortable="'Hp'" ng-switch="row.isEditing" ng-class="Hp.$dirty ? 'bg-warning' : ''" ng-form="Hp" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Hp}}</span>
+                                                </td>
+                                                <td title="'Kw'" filter="{Kw: 'text'}" sortable="'Kw'" ng-switch="row.isEditing" ng-class="Kw.$dirty ? 'bg-warning' : ''" ng-form="Kw" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Kw}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+﻿
+<div id="slider-rev-container" style="margin-top:0;">
+    <div id="slider-rev" style="height:200px !important;">
+        <ul>
+            @foreach (var item in @ViewBag.SearchAnnouncementsPicture)
+            {
+                <li data-transition="random-premium" data-slotamount="15" data-masterspeed="400" data-saveperformance="on" data-title="@item.Header" onclick="angular.element(document.getElementById('divSearch')).scope().fireSliderBannerSearch('@{ @item.Query }');">
+
+                    <img src="/Content/images/revslider/dummy.png" alt="@item.Header" data-lazyload="@item.PicturePathShow" data-bgposition="center center" data-bgfit="cover" data-bgrepeat="no-repeat" onerror="" this.onerror=null; this.src='Content/images/error.png' ;" />
+                </li>
+    }
+        </ul>
+    </div><!-- End #slider-rev -->
+</div><!-- End #slider-rev-container -->
+<script>
+    $(document).ready(function () {
+
+        //if (!$('#slider-rev-container .slider-rev ul li').length > 0)
+        //$('#slider-rev-container').remove();
+
+        // Slider Revolution
+        jQuery('#slider-rev').revolution({
+            delay: 8000,
+            startwidth: 1170,
+            startheight: 425,
+            hideThumbs: 250,
+            navigationHAlign: "center",
+            navigationVAlign: "bottom",
+            navigationHOffset: 0,
+            navigationVOffset: 20,
+            soloArrowLeftHalign: "left",
+            soloArrowLeftValign: "center",
+            soloArrowLeftHOffset: 0,
+            soloArrowLeftVOffset: 0,
+            soloArrowRightHalign: "right",
+            soloArrowRightValign: "center",
+            soloArrowRightHOffset: 0,
+            soloArrowRightVOffset: 0,
+            touchenabled: "on",
+            stopAtSlide: -1,
+            stopAfterLoops: -1,
+            dottedOverlay: "none",
+            fullWidth: "on",
+            spinned: "spinner5",
+            shadow: 0,
+            hideTimerBar: "on"//,
+            //navigationStyle:"preview4"
+        });
+    });
+</script>

@@ -1,0 +1,80 @@
+﻿
+<style>
+    .paymentClass {
+        color: red;
+    }
+</style>
+
+<section>
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Ödeme</a></li>
+                <li><a href="#">Online Ödeme</a></li>
+                <li><a href="#">İşlem Listesi</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container" ng-app="PaymentApp" ng-controller="PaymentListController">
+        <div class="col-md-12 box">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="pDataTable" class="table table-striped table-hover table-custom shadowed">
+                        <thead>
+                            <tr>
+                                <th>KartNo</th>
+                                <th>Ad Soyad</th>
+                                <th>Banka Adı</th>
+                                <th>İşlem Zamanı</th>
+                                <th class="text-right">Tutar</th>
+                                <th>Taksit</th>
+                                <th>Sonuç</th>
+                                <th>Provizyon No</th>
+                                <th>Kullanılan SanalPos</th>
+                                <th>Kullanılan Bonus</th>
+                                <th>Açıklama</th>
+                                <th class="text-right"></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbResult" class="context">
+                            <tr ng-class="{'paymentClass': paymnetAllItem.ProcReturnCode!='00'}" ng-repeat="paymnetAllItem in paymnetAllList">
+                                <td>{{paymnetAllItem.CardNumber}}</td>
+                                <td>{{paymnetAllItem.NameSurname}}</td>
+                                <td>{{paymnetAllItem.BankName}}</td>
+                                <td>{{paymnetAllItem.ProcessingDate | convertDate:'dd/MM/yyyy'}}</td>
+                                <td class="text-right">{{paymnetAllItem.Amount}}</td>
+                                <td>{{paymnetAllItem.Installment}}</td>
+                                <td>{{paymnetAllItem.Result}}</td>
+                                <td>{{paymnetAllItem.AuthCode}}</td>
+                                <td>{{paymnetAllItem.UseEPaymentType}}</td>
+                                <td>{{paymnetAllItem.ExpendableBonus}}</td>
+                                <td>{{paymnetAllItem.Note}}</td>
+                                <td class="text-right">
+                                    <a class="btn btn-custom-2 btn-sm" ng-click="showPdf(paymnetAllItem)" ng-show="paymnetAllItem.ProcReturnCode=='00'"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="mPdfShow" tabindex="-1" role="dialog" aria-labelledby="mPdfShowLabel" aria-hidden="true" class="modal fade" style="min-height:800px;width:100%">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <iframe style="min-height:600px;width:100%" src="{{frameUrl}}"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section scripts{
+    @Scripts.Render("~/Scripts/Pages/paymentList.js")
+}
+

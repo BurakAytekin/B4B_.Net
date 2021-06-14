@@ -1,0 +1,18 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; } @CompanyInformationItem.Title</title>
+</head>
+<body>
+    <div> 
+    </div>
+</body>
+</html>

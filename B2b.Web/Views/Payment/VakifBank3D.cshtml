@@ -1,0 +1,140 @@
+﻿@using System.Text
+@using System.Xml
+@using B2b.Web.v4.Models.EntityLayer
+@using B2b.Web.v4.Models.Log.Entites
+@using B2b.Web.v4.Models.Log.EPayment
+@Styles.Render("~/bundles/css")
+<div style="display: flex; justify-content: center; align-items: center;">
+    <div class="loader" style="margin: 5px;"></div>
+    <h2>İşleminiz Yapılıyor Lütfen Bekleyiniz.</h2>
+
+</div>
+@using B2b.Web.v4.Models.EntityLayer
+@using B2b.Web.v4.Models.Helper
+@{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+@{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+@{
+
+    string pan = PosPaymentValue.CardNumber;
+    string expiryDate = PosPaymentValue.ExpYear.Replace(" ", "") + PosPaymentValue.ExpMounth.Replace(" ", "");
+    string amount = PosPaymentValue.TotalPrice.ToString("N2").Replace(".", "").Replace(",", ".");
+    string VerifyEnrollmentRequestId = Guid.NewGuid().ToString("N");
+    string merchantId = PosBankDetails.StoreNumber;
+    string password = PosBankDetails.Password;
+    string failUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Error?paymentId=" + PosPaymentValue.PaymentId;
+    string okUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Vakifbank3DP";
+    int brandName = 100;
+    if (PosPaymentValue.CardType == PosCardType.Master)
+    {
+        brandName = 200;
+    }
+
+    string data = "&Pan=" + pan + "&ExpiryDate=" + expiryDate + "&PurchaseAmount=" + amount + "&Currency=949&BrandName=" + brandName + "&VerifyEnrollmentRequestId=" + VerifyEnrollmentRequestId + "&SessionInfo=&MerchantID=" + merchantId + "&MerchantPassword=" + password + "&SuccessUrl=" + okUrl + "&FailureUrl=" + failUrl + "&InstallmentCount="; //replace <value>
+
+    byte[] dataStream = Encoding.UTF8.GetBytes(data);
+    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(PosBankDetails.PosBank.PostUrl); //Mpi Enrollment Adresi
+    webRequest.Method = "POST";
+    webRequest.ContentType = "application/x-www-form-urlencoded";
+    webRequest.ContentLength = dataStream.Length;
+    webRequest.KeepAlive = false;
+    string responseFromServer = "";
+
+    using (Stream newStream = webRequest.GetRequestStream())
+    {
+        newStream.Write(dataStream, 0, dataStream.Length);
+        newStream.Close();
+    }
+
+    using (WebResponse webResponse = webRequest.GetResponse())
+    {
+        using (StreamReader reader = new StreamReader(webResponse.GetResponseStream()))
+        {
+            responseFromServer = reader.ReadToEnd();
+            reader.Close();
+        }
+
+        webResponse.Close();
+    }
+
+    if (string.IsNullOrEmpty(responseFromServer))
+    {
+        //  return Error(PosPaymentValue.PaymentId);
+    }
+
+    var xmlDocument = new XmlDocument();
+    xmlDocument.LoadXml(responseFromServer);
+
+
+    var statusNode = xmlDocument.SelectSingleNode("IPaySecure/Message/VERes/Status");
+    var pareqNode = xmlDocument.SelectSingleNode("IPaySecure/Message/VERes/PaReq");
+    var acsUrlNode = xmlDocument.SelectSingleNode("IPaySecure/Message/VERes/ACSUrl");
+    var termUrlNode = xmlDocument.SelectSingleNode("IPaySecure/Message/VERes/TermUrl");
+    var mdNode = xmlDocument.SelectSingleNode("IPaySecure/Message/VERes/MD");
+    var messageErrorCodeNode = xmlDocument.SelectSingleNode("IPaySecure/MessageErrorCode");
+    var messageErrorMsg = xmlDocument.SelectSingleNode("IPaySecure/ErrorMessage");
+
+
+    string statusText = "";
+
+    if (statusNode != null)
+    {
+        statusText = statusNode.InnerText;
+    }
+    Logger.LogPayment(LogPaymentType.Information, "Vakıfbank Islem Sonucu",
+                  " XML Response : " + xmlDocument.InnerXml, PosPaymentValue.PaymentId,
+                "VAKIFBANK");
+    EPaymentLog log = new EPaymentLog(PosPaymentValue, xmlDocument.InnerXml, xmlDocument.InnerXml, string.Empty, string.Empty, string.Empty, string.Empty, 98);//98 işlemin bankaya gittiğini gösterir
+    EPaymentLogger.LogDB(log, "/api/payment/updatestatus");
+    //3d secure programına dahil
+    if (statusText == "Y")
+    {
+        string postBackForm =
+           @"<html>
+                          <head>
+                            <meta name=""viewport"" content=""width=device-width"" />
+                            <title>MpiForm</title>
+                            <script>
+                              function postPage() {
+                              document.forms[""frmMpiForm""].submit();
+                              }
+                            </script>
+                          </head>
+                          <body onload=""javascript:postPage();"">
+                            <form action=""@ACSUrl"" method=""post"" id=""frmMpiForm"" name=""frmMpiForm"">
+                              <input type=""hidden"" name=""PaReq"" value=""@PAReq"" />
+                              <input type=""hidden"" name=""TermUrl"" value=""@TermUrl"" />
+                              <input type=""hidden"" name=""MD"" value=""@MD "" />
+                              <noscript>
+                                <input type=""submit"" id=""btnSubmit"" value=""Gönder"" />
+                              </noscript>
+                            </form>
+                          </body>
+                        </html>";
+
+        postBackForm = postBackForm.Replace("@ACSUrl", acsUrlNode.InnerText);
+        postBackForm = postBackForm.Replace("@PAReq", pareqNode.InnerText);
+        postBackForm = postBackForm.Replace("@TermUrl", termUrlNode.InnerText);
+        postBackForm = postBackForm.Replace("@MD", mdNode.InnerText);
+
+        Response.ContentType = "text/html";
+        Response.Write(postBackForm);
+    }
+    else if (statusText == "E")
+    {
+        string errorMessage = "";
+        string errorCode = messageErrorCodeNode.InnerText;
+
+        if (messageErrorMsg != null)
+        {
+            errorMessage = messageErrorMsg.InnerText;
+        }
+
+        HttpContext.Current.Session["VakifBankErrorMessage"] = errorMessage;
+        HttpContext.Current.Session["VakifBankErrorCode"] = errorCode;
+
+        Response.Redirect(Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Error/?paymentId=" + PosPaymentValue.PaymentId, false);
+
+        Response.End();
+    }
+}

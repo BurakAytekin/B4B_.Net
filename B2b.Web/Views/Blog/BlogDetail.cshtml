@@ -1,0 +1,173 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "BlogDetail";
+}
+<style type="text/css">
+    .line {
+        text-decoration: line-through;
+    }
+</style>
+
+<section ng-controller="BlogDetailController">
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Blog</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-8 col-sm-8 col-xs-12 articles-container single-post">
+                <div class="box">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <article class="article">
+                                <div class="article-meta-date">
+                                    <span>@ViewBag.BlogItem.DateDay</span>
+                                    @ViewBag.BlogItem.DateMonth
+                                </div>
+
+                                <figure class="article-media-container">
+                                    @if (@ViewBag.BlogItem.Type == 0)
+                                    {
+                                        <img src="@ViewBag.BlogItem.Path" alt="blog post">
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(@ViewBag.BlogItem.Path)
+                                    }
+                                </figure>
+
+
+
+                                <h2>@ViewBag.BlogItem.Header</h2>
+
+                                <div class="article-meta-container clearfix">
+                                    <div class="article-meta-more">
+                                        <a href="javascript:;"><span class="separator"><i class="fa fa-user"></i></span>@ViewBag.BlogItem.Salesman.Name</a>
+                                        <a href="javascript:;"><span class="separator"><i class="fa fa-comments "></i></span>@ViewBag.BlogItem.CommentCount Yorum</a>
+                                        @if (@ViewBag.BlogItem.Category != "")
+                                        {
+                                            <a href="javascript:;"><span class="separator"><i class="fa fa-tag"></i></span>@ViewBag.BlogItem.Category</a>
+                                        }
+
+                                    </div><!-- End. pull-left -->
+
+                                    <div class="article-meta-view">
+                                        <a href="javascript:;"><span class="separator"><i class="fa fa-eye "></i></span>@ViewBag.BlogItem.SeeCount</a>
+                                        <a href="javascript:;"><span class="separator"><i class="fa fa-heart"></i></span>@ViewBag.BlogItem.LikeCount</a>
+                                    </div><!-- End. pull-right -->
+                                </div><!-- End .article-meta-container -->
+
+                                <div class="article-content-container">
+                                    <p>
+                                        @Html.Raw(@ViewBag.BlogItem.Content)
+                                    </p>
+                                </div><!-- End .article-content-container -->
+                                @if (@ViewBag.BlogItem.IsLockComment == false)
+                                {
+                                    <div class="comments">
+                                        <header class="title-bg">
+                                            <h3>YORUMLAR</h3>
+                                        </header>
+                                        <ul class="comments-list">
+                                            <li>
+                                                <div class="comment clearfix" ng-repeat="blogCommentItem in blogCommentList">
+                                                    <figure>
+                                                        <img ng-if="blogCommentItem.Salesman.Id = -1" src="{{blogCommentItem.Customer.Users.AvatarPath}}" alt="Comment Author" style="width:60px">
+                                                        <img ng-if="blogCommentItem.Salesman.Id != -1" src="{{blogCommentItem.Salesman.AvatarPath}}" alt="Comment Author" style="width:60px">
+                                                    </figure>
+                                                    <div class="comment-details">
+                                                        <div ng-class="blogCommentItem.IsApproval ? '' : 'line'" class="comment-title">
+                                                            {{blogCommentItem.Header}}
+                                                        </div><!-- End .comment-title -->
+                                                        <div class="comment-meta-container">
+                                                            @if (@ViewBag.BlogItem.IsShowCommentUser)
+                                                            {
+                                                                <a href="javascript:;">{{blogCommentItem.UserName}}</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="javascript:;" ng-if="blogCommentItem.SalesmanId == -1">-</a>
+                                                                <a href="javascript:;" ng-if="blogCommentItem.SalesmanId != -1">{{blogCommentItem.UserName}}</a>
+                                                            }
+
+
+                                                            <span>{{blogCommentItem.CreateDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'}}</span>
+                                                            <a href="javascript:;" class="replay-button" ng-if="blogCommentItem.Customer.Users.Id == @ViewBag.CurrentCustomer.Users.Id" ng-click="deleteBlogComment(blogCommentItem)">Sil</a>
+                                                        </div><!-- End .comment-meta-container -->
+                                                        <p ng-class="blogCommentItem.IsApproval ? '' : 'line'">{{blogCommentItem.Content}}</p>
+                                                    </div><!-- End .comment-details -->
+                                                </div><!-- End .comment -->
+
+                                            </li>
+                                        </ul>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><span class="input-icon input-icon-user"></span><span class="input-text">Kod&#42;</span></span>
+                                                    <input type="text" name="comment-name" id="comment-name" required class="form-control input-lg" disabled placeholder="Kod" value="@ViewBag.CurrentCustomer.Users.Code">
+                                                </div><!-- End .input-group -->
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><span class="input-icon input-icon-email"></span><span class="input-text">Email&#42;</span></span>
+                                                    <input type="email" name="comment-email" id="comment-email" required class="form-control input-lg" placeholder="Email" value="@ViewBag.CurrentCustomer.Users.Mail">
+                                                </div><!-- End .input-group -->
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><span class="input-icon input-icon-subject"></span><span class="input-text">Başlık&#42;</span></span>
+                                                    <input type="text" name="comment-subject" id="comment-subject" required class="form-control input-lg" placeholder="Başlık">
+                                                </div><!-- End .input-group -->
+                                                <p class="item-desc">
+                                                    Yorumlarınız bizim için önemlidir
+                                                </p>
+                                            </div><!-- End .col-md-6 -->
+
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="input-group textarea-container">
+                                                    <span class="input-group-addon"><span class="input-icon input-icon-message"></span><span class="input-text">Yorumunuz&#42;</span></span>
+                                                    <textarea name="comment-message" id="comment-message" class="form-control" cols="30" rows="6" placeholder="Yorumunuz..."></textarea>
+                                                </div><!-- End .input-group -->
+                                                <input type="button" value="GÖNDER" class="btn btn-custom-2" ng-click="addComment()">
+                                            </div><!-- End .col-md-6 -->
+
+                                        </div><!-- End .row -->
+                                    </div><!-- End .comments -->
+                                }
+                            </article>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-xs-12 sidebar">
+                <div class="box">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @{
+                                Html.RenderAction("BlogLastView", "Partial");
+                                <!--   Yeni Ürünler-->
+                                Html.RenderAction("NewProductView", "Partial");
+                                Html.RenderAction("BlogCommentView", "Partial");
+                            }
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/blogDetail.js", HttpContext.Current.Request)"></script>
+

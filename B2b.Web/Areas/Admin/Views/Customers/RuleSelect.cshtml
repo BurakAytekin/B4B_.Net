@@ -1,0 +1,31 @@
+﻿<div id="mRuleSelect" tabindex="-1" role="dialog" aria-labelledby="mRuleLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Koşullar</h3>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="row form-horizontal form-group-sm">
+                        <div class="col-md-12">
+                            <table id="tProductRuleTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>İşlem</th>
+                                        <th>Koşul Kodu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr on-finish-render="ngProductRuleFinished" ng-repeat="prodcutRule in productRuleList">
+                                        <td><button class="btn btn-xs btn-rounded btn-primary" ng-click="ruleSelect(prodcutRule);">Seçiniz</button></td>
+                                        <td class="text-center ws-nowrap">{{prodcutRule.Customer}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

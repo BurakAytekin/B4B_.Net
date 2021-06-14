@@ -1,0 +1,537 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.EntityLayer
+@{ Salesman AdminCurrentSalesman = (Salesman)HttpContext.Current.Session["AdminSalesman"]; }
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>@{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; } @CompanyInformationItem.Title - @ViewBag.Title</title>
+    @* Eryaz Bilgi Teknolojileri - Yönetim Paneli *@
+    <link rel="icon" type="image/ico" href="@Url.Content("~/Content/Admin/images/favicon.ico")" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @RenderSection("cMetas", required: false)
+    @Styles.Render("~/bundles/Admin/cssPlugins")
+    @RenderSection("cStyleLibrary", required: false)
+
+    @Styles.Render("~/bundles/Admin/cssMain")
+    @RenderSection("cStyleCode", required: false)
+    @Scripts.Render("~/bundles/Admin/jsModernizr")
+    @Scripts.Render("~/bundles/angular")
+
+    @Scripts.Render("~/bundles/jsAdminApp")
+    @Scripts.Render("~/bundles/Reports/layout")
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/AdminMaster.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/buttons.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/jquery.dataTables.min.css" />
+</head>
+<body id="minovate" ng-app="reportApp" class="appWrapper">
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">Tarayıcı sürümünüz çok eski olduğu için web sitesini görüntüleyemiyorsunuz. Lütfen <a href="http://browsehappy.com/">buraya tıklayarak</a> tarayıcınızı yükseltin.</p>
+    <![endif]-->
+
+    <div id="wrap" class="animsition">
+        <!-- #region Header -->
+        <section id="header">
+            <header class="clearfix">
+                <!-- #region Branding -->
+                <div class="branding">
+                    <a class="brand" href="/">
+                        <span><strong>RE</strong>PORT</span>
+                    </a>
+                    <a role="button" tabindex="0" class="offcanvas-toggle visible-xs-inline"><i class="fa fa-bars"></i></a>
+                </div>
+
+                <ul class="nav-right pull-right list-inline">
+                    <li class="dropdown notifications">
+                        <a href="/Admin">
+                            <i class="fa fa-reports"></i><span>Admin</span>
+                        </a>
+                    </li>
+
+                    <li class="dropdown nav-profile">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="@Url.Content(@AdminCurrentSalesman.PicturePath)" alt="" class="img-circle size-30x30">
+                            <span> @AdminCurrentSalesman.Code<i class="fa fa-angle-down"></i></span>
+                        </a>
+                        <ul role="menu" class="dropdown-menu dropdown-menu-customer animated littleFadeInRight">
+                            <li class="dropdown-menu-customer-row">
+                                <div class="dropdown-menu-customer-img-wrapper">
+                                    <img src="@Url.Content(@AdminCurrentSalesman.PicturePath)" class="dropdown-menu-customer-img" />
+                                </div>
+                                <div class="dropdown-menu-customer-text">@AdminCurrentSalesman.Name</div>
+                            </li>
+                            <li>
+                                <a role="button" tabindex="0">
+                                    <i class="fa fa-user"></i>Profil
+                                </a>
+                            </li>
+                            <li>
+                                <a role="button" tabindex="0">
+                                    <i class="fa fa-check"></i>Görevler
+                                </a>
+                            </li>
+                            <li>
+                                <a role="button" tabindex="0">
+                                    <i class="fa fa-cog"></i>Ayarlar
+                                </a>
+                            </li>
+                            <li class="divider m-0"></li>
+                            <li>
+                                <a href="@Url.Action("Locked","Login")" role="button" tabindex="0">
+                                    <i class="fa fa-lock"></i>Kilitle
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Logout","Login")" role="button" tabindex="0">
+                                    <i class="fa fa-sign-out"></i>Çıkış
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @*<li class="toggle-right-sidebar">
+                            <a role="button" tabindex="0">
+                                <i class="fa fa-comments"></i>
+                            </a>
+                        </li>*@
+                </ul>
+                <!-- #endregion -->
+                <!-- #region Search -->
+                <!-- #endregion -->
+                <!-- #region Right-Side Navigation -->
+                <!-- End .pull-right -->
+                <!-- #endregion -->
+            </header>
+        </section>
+        <!-- #endregion -->
+        <!-- #region Controls -->
+        <div id="controls">
+            <!-- #region Sidebar Content -->
+            <aside id="sidebar">
+                <div id="sidebar-wrap">
+                    <div role="tablist" class="panel-group slim-scroll">
+                        <div class="panel panel-default">
+                            <div role="tab" class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#sidebarNav">
+                                        Dinamik Raporlar <i class="fa fa-angle-up"></i>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="sidebarNav" class="panel-collapse collapse in" role="tabpanel">
+                                <div class="panel-body" ng-controller="layoutController">
+                                    <!-- #region Navigation Content -->
+                                    <ul id="navigation">
+                                        <li ng-repeat="menuItem in menuList"><a href="/Report/Home/ViewReport/{{menuItem.Id}}"><i class="fa fa-dashboard"></i> <span>{{menuItem.Header}}</span></a></li>
+                                    </ul>
+                                    <!-- #endregion -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div role="tab" class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#systemSettings">
+                                        Manuel Raporlar <i class="fa fa-angle-up"></i>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="systemSettings" class="panel-collapse collapse in" role="tabpanel">
+                                <div class="panel-body">
+                                    <!-- #region Navigation Content -->
+                                    <ul id="navigation">
+                                        <li><a href="/Admin/CompanySettings"><i class="fa fa-th"></i> <span>Otomatik gelen raporlar</span></a></li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <!-- #endregion -->
+            <!-- #region Rightbar Content -->
+            <aside id="rightbar">
+                <div role="tabpanel">
+                    <!-- #region Nav Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#users" aria-controls="users" role="tab" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+                        <li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab"><i class="fa fa-clock-o"></i></a></li>
+                        <li role="presentation"><a href="#friends" aria-controls="friends" role="tab" data-toggle="tab"><i class="fa fa-heart"></i></a></li>
+                        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab"><i class="fa fa-cog"></i></a></li>
+                    </ul>
+                    <!-- #endregion -->
+                    <!-- #region Tab Panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="users">
+                            <h6><strong>Çevrimiçi</strong> Kullanıcılar</h6>
+                            <ul>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/ici-avatar.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> İstanbul, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/arnold-avatar.jpg")" alt="">
+                                        </a>
+                                        <span class="badge bg-lightred unread">3</span>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Trabzon, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/peter-avatar.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Artvin, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/george-avatar.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Kastamonu, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="busy">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar1.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Mersin, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="busy">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar2.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Balıkesir, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <h6><strong>Çevrimdışı</strong> Kullanıcılar</h6>
+                            <ul>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar4.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Kocaeli, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar5.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Diyarbakır, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar6.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Adana, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar7.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Giresun, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar8.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Kırşehir, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="history">
+                            <h6><strong>Sohbet</strong> Geçmişi</h6>
+                            <ul>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/ici-avatar.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small>Beyaz burun bardak. Olmaz termometre tuzlu bay imza elma demir fanatik.</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="busy">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/arnold-avatar.jpg")" alt="">
+                                        </a>
+                                        <span class="badge bg-lightred unread">3</span>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small>Düz belirti fısıltı ehliyet biz izle seksen saçma küre.</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/peter-avatar.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small>Yapılmaz aperatif yakışıklı üç gökkuşağı abes abajur koyu bariz sağ silgi dinle.</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="friends">
+                            <h6><strong>Arkadaş</strong> Listem</h6>
+                            <ul>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/arnold-avatar.jpg")" alt="">
+                                        </a>
+                                        <span class="badge bg-lightred unread">3</span>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Ankara, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="offline">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar8.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> İzmit, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="busy">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/random-avatar1.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> Çorum, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="online">
+                                    <div class="media">
+                                        <a role="button" tabindex="0" class="pull-left thumb thumb-sm">
+                                            <img class="media-object img-circle" src="@Url.Content("~/Content/Admin/images/ici-avatar.jpg")" alt="">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="media-heading">Adı <strong>Soyadı</strong></span>
+                                            <small><i class="fa fa-map-marker"></i> İstanbul, Türkiye</small>
+                                            <span class="badge badge-outline status"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="settings">
+                            <h6><strong>Sohbet</strong> Ayarları</h6>
+                            <ul class="settings">
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Çevrimdışı Kul. Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-offline" checked="">
+                                                <label class="onoffswitch-label" for="show-offline">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Tam Adı Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-fullname">
+                                                <label class="onoffswitch-label" for="show-fullname">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Geçmiş Aktif</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-history" checked="">
+                                                <label class="onoffswitch-label" for="show-history">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Lokasyonları Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-location" checked="">
+                                                <label class="onoffswitch-label" for="show-location">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Bildirimler</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-notifications">
+                                                <label class="onoffswitch-label" for="show-notifications">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Okunmamış Sayısını Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-unread" checked="">
+                                                <label class="onoffswitch-label" for="show-unread">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- #endregion -->
+                </div>
+            </aside>
+            <!-- #endregion -->
+        </div>
+        <!-- #endregion -->
+        <!-- #region Content -->
+        <section id="content">
+            <div class="page page-reports">
+                @RenderBody()
+            </div>
+        </section>
+        <!-- #endregion -->
+    </div>
+
+    <div class="custom-loading-wrapper">
+        <div class="custom-loading">
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/Admin/jQuery")
+    @Scripts.Render("~/bundles/Admin/jsBootstrap")
+    @Scripts.Render("~/bundles/Admin/jsPlugins")
+    @RenderSection("cScriptLibrary", required: false)
+    @Scripts.Render("~/bundles/Admin/jsMain")
+    @RenderSection("cScriptCode", required: false)
+    @RenderSection("cModals", required: false)
+
+
+</body>
+</html>

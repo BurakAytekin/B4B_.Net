@@ -1,0 +1,236 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@using B2b.Web.v4.Models.EntityLayer
+@{ List<AuthorityGroup> AuthoritySalesman = (List<AuthorityGroup>)HttpContext.Current.Session["AuthoritySalesman"]; }
+@{
+    ViewBag.Title = "Temsilciler";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{
+    <style type="text/css">
+        .ws-nowrap {
+            max-width: 100px;
+            white-space: nowrap;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .ellipsis {
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+        }
+
+        .alternativeProdcut {
+            background-color: #C9302C !important;
+            color: white !important;
+        }
+
+        #trigger-upload {
+            color: white;
+            background-color: #00ABC7;
+            font-size: 14px;
+            padding: 7px 20px;
+            background-image: none;
+        }
+
+        #fine-uploader-manual-trigger .qq-upload-button {
+            margin-right: 15px;
+        }
+
+        #fine-uploader-manual-trigger .buttons {
+            width: 36%;
+        }
+
+        #fine-uploader-manual-trigger .qq-uploader .qq-total-progress-bar-container {
+            width: 60%;
+        }
+
+        #mainTable tr td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+}
+
+<div>
+    <div ng-controller="EmailSettingsController" class="page page-salesman">
+        <div class="pageheader">
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/EmailSettings">Mail Ayarları</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- page content -->
+        <div class="pagecontent">
+            <div class="row">
+                <!-- col -->
+                <div class="col-sm-12">
+                    <!-- tile -->
+                    <section class="tile">
+                        <!-- tile header -->
+                        <div class="tile-header bg-blue dvd dvd-btm">
+                            <h1 class="custom-font"><strong>Mail </strong>Ayarları</h1>
+                        </div>
+                        <!-- /tile header -->
+
+
+                        <hr class="m-0" />
+
+                        <!-- tile body -->
+                        <div class="tile-body p-10">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <!-- #region Nav Tabs -->
+                                    <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                        <li role="presentation" class="active"><a href="#tEmailSettingsEryaz" id="aEmailSettingsEryaz" aria-controls="tEmailSettingsEryaz" role="tab" ng-click="getMailSettings(0)" data-toggle="tab"><span class="hidden-sm">Eryaz Sunucu</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                        <li role="presentation"><a href="#tEmailSettingsFirma" id="aEmailSettingsFirma" aria-controls="tEmailSettingsFirma" role="tab" ng-click="getMailSettings(1)" data-toggle="tab"><span class="hidden-sm">Firma Sunucu</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+
+                                    </ul>
+                                    <!-- #endregion -->
+                                    <!-- #region Tab Panes -->
+                                    <div class="tab-content">
+
+
+                                        <div id="tEmailSettingsEryaz" role="tabpanel" class="tab-pane active">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-6">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Eryaz Mail Ayarları</h3>
+                                                        </div>
+
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kullanıcı Adı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="text" ng-model="selectedSettings.UserName" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Şifre</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="text" ng-model="selectedSettings.Password" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Varsayılan Yap</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom m-0 p-5">
+                                                                        <input type="checkbox" ng-model="selectedSettings.IsEryaz"><i class="ml-5"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tEmailSettingsFirma" role="tabpanel" class="tab-pane">
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-6">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Firma Mail Ayarları</h3>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Mail Host</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="text" ng-model="selectedSettings.Host" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Host Port</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="number" ng-model="selectedSettings.HostPort" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Gönderici Mail Adresi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="text" ng-model="selectedSettings.FromAddress" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kullanıcı Adı</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="text" ng-model="selectedSettings.UserName" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label for="iSalesmanSerial" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Şifre</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input type="text" ng-model="selectedSettings.Password" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Ssl Kullan</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                                        <input type="checkbox" ng-model="selectedSettings.UseSsl"><i class="ml-5"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Varsayılan Yap</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                                        <input type="checkbox" ng-model="selectedSettings.IsEryaz"><i class="ml-5"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- #endregion -->
+                                </div>
+                            </div>
+                            <div class="panel-footer text-center">
+                                <div class="btn-group btn-group-rounded">
+                                    <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="sendTestMail()"><i class="fa fa-edit"></i> <span>Test Mail Gönder</span></button>
+                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="updateMailSettings()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+                        <!-- tile footer -->
+                        <!-- /tile footer -->
+                    </section>
+                    <!-- /tile -->
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+
+</div>
+
+
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/emailSettings.js", HttpContext.Current.Request)"></script>
+
+
+}

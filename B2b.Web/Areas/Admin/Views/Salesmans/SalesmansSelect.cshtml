@@ -1,0 +1,48 @@
+﻿<div id="mSalesmanSearch" tabindex="-1" role="dialog" aria-labelledby="mSalesmanSearchLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Temsilci Ara</h3>
+            </div>
+            <div class="modal-body">
+                <form id="mSalesmanSearchForm" role="form" method="post" class="form-horizontal form-modal">
+                    <div class="row row-fixed">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="iSalesmanName" class="col-xs-4 col-sm-3 control-label">Ünvan</label>
+
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iSalesmanName" type="text" ng-model="searchCriteriaSalesman.Name" ng-keypress="keypressEventSearchSalesman($event,searchCriteriaSalesman,'selectedSalesman')" placeholder="Lütfen, Ünvan Giriniz..." class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row row-fixed">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6">
+                                    <button type="button" ng-click="clearSalesman()" class="btn btn-danger btn-block">Temizle</button>
+                                </div>
+
+                                <div class="col-xs-6 col-sm-6">
+                                    <button type="button" ng-click="generalSearchSalesman(searchCriteriaSalesman)" class="btn btn-success btn-block">Ara</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="" />
+
+                    <div class="row row-overflow">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table id="mSalesmanSearchTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

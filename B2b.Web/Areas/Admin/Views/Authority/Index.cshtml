@@ -1,0 +1,257 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@section cStyleCode{
+    <style type="text/css">
+        .list-group-wrapper,
+        .list-group-wrapper * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .list-group-wrapper {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+            list-style: none;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .list-group {
+            display: table;
+            position: relative;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            clear: both;
+        }
+
+            .list-group .list-group-item {
+                border-bottom: none;
+            }
+
+                .list-group .list-group-item:last-child {
+                    border-bottom: 1px solid #ddd;
+                }
+
+            .list-group .dd-placeholder:first-child {
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder:last-child {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder + .list-group-item {
+                border-top: none;
+            }
+
+        .list-group-item,
+        .dd-empty,
+        .dd-placeholder {
+            display: block;
+            position: relative;
+            margin: 0;
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .dd-placeholder,
+        .dd-empty {
+            padding: 0;
+            min-height: 30px;
+            background: #f2fbff;
+            border: 1px dashed #b6bcbf;
+        }
+
+        .dd-empty {
+            min-height: 100px;
+            background-color: #e5e5e5;
+            background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 1px dashed #bbbbbb;
+        }
+
+        .dd-dragel {
+            position: absolute;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .list-group.dd-dragel {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+            .list-group.dd-dragel .list-group-item {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+        .dd-dragel > .list-group-item {
+            margin: 0;
+            padding: 0 !important;
+        }
+
+            .dd-dragel > .list-group-item .checkbox.checkbox-custom {
+                margin: 0;
+            }
+    </style>
+}
+
+<div class="page page-campaign" id="div1">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">Yetkilendirme Ayarları</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="authorityController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Yetki </strong>Tipi</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="iProductCampaignType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Yetki Tipi</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="comboTransferType" style="width: 100%;" class="form-control" ng-model="selectedType" ng-change="loadSettingsItem(-1,selectedType)">
+                                                <option value disabled>Seçiniz</option>
+                                                <option value="{{row.Id}}" ng-repeat="row in trasnferTypeList">{{row.Name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-right">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <button type="button" class="btn btn-success" ng-click="addTransferType()">Yeni Tip Tanımla</button>
+                                            <button type="button" class="btn btn-lightred" ng-click="deleteTransferType(false)">Yetki Tipi Sil</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-6">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title"> Yetki Detayları</h3>
+                                            </div>
+
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                <div class="panel panel-default" ng-repeat="row in stepGroupList" on-finish-render="ngRepeatStepFinished">
+                                                    <div class="panel-heading" role="tab" id="stGroup{{row.GroupId}}" ng-click="loadStepList(row)">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{row.GroupId}}" aria-expanded="true" aria-controls="collapseOne" class="">
+                                                                {{row.GroupName}}
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseOne{{row.GroupId}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
+                                                        <div class="panel-body">
+                                                            <ul class="list-group list-group-flush">
+                                                                <li class="list-group-item" ng-repeat="item in stepList">
+                                                                    <div class="view" ng-class="{'ml-20': item.HeaderId != item.Id }">
+                                                                        <label class="checkbox checkbox-custom-alt m-0 text-muted inline">
+                                                                            <input type="checkbox" ng-disabled="item.Disabled" ng-model="item.IsChecked" ng-click="checkedItem(item)"><i></i>
+                                                                        </label>
+                                                                        <span>{{item.Content}}</span>
+                                                                        @*<a role="button" tabindex="0" class="text-danger remove-todo pull-right">
+                                                                                <i class="fa fa-times"></i>
+                                                                            </a>*@
+                                                                    </div>
+                                                                </li>
+
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        @*<div class="panel-footer text-right">
+                                                <div class="btn-group btn-group-rounded">
+                                                    <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5a"><i class="fa fa-close"></i> <span>İptal</span></button>
+
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="SaveSettings()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                                </div>
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <!-- /tile body -->
+            </section>
+            <!-- /tile -->
+            <!-- /col -->
+        </div>
+        <!-- /row -->
+    </div>
+</div>
+</div>
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/authority.js", HttpContext.Current.Request)"></script>
+}
+
+
+
+
+
+

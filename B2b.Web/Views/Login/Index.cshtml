@@ -1,0 +1,260 @@
+﻿@using System.Collections.Generic
+@using System.Web
+@using B2b.Web.v4.Models.EntityLayer
+@model Logon
+@{
+    Layout = null;
+    List<Announcements> annList = new List<Announcements>();
+    if (Session["LoginAnnouncements"] != null)
+    {
+        annList = (List<Announcements>)Session["LoginAnnouncements"];
+    }
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; } @CompanyInformationItem.Title</title>
+
+    <link href='//fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic%7CPT+Gudea:400,700,400italic%7CPT+Oswald:400,700,300' rel='stylesheet' id="googlefont">
+    @Styles.Render("~/bundles/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+
+    <link rel="stylesheet/less" type="text/css" href="~/Content/css/colors.less" />
+    @* <script src="@Url.ContentVersioned("/Content/css/colors.less", HttpContext.Current.Request)"></script>*@
+    @*<script>window.jQuery || document.write('<script src="js/jquery-1.11.1.min.js"><\/script>')</script>*@
+
+    <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        #wrapper {
+            min-height: 100%;
+        }
+
+        .logo {
+            margin: auto;
+            text-align: center;
+        }
+
+            .logo img {
+                height: 70px;
+            }
+
+        /*for logintemplate blue*/
+
+        .loginbox {
+            margin-top: 5%;
+            margin-bottom: 5%;
+            background-color: #fff;
+            padding: 20px 0px;
+            box-shadow: 0 10px 10px -2px rgba(0,0,0,0.12),0 -2px 10px -2px rgba(0,0,0,0.12);
+        }
+
+            .loginbox .textbox-wrap {
+                padding: 10px 15px 10px 10px;
+                margin: 0px -15px 0px -15px;
+                border-left: 5px solid transparent;
+            }
+
+                .loginbox .textbox-wrap .input-group {
+                    margin-bottom: 0px;
+                }
+
+                    .loginbox .textbox-wrap .input-group .form-control {
+                        border-radius: 0px;
+                    }
+
+                        .loginbox .textbox-wrap .input-group .form-control:focus, .loginbox .textbox-wrap .input-group .form-control:active, .loginbox .textbox-wrap .input-group .form-control:hover {
+                            border-radius: 0px;
+                            -moz-box-shadow: none;
+                            -webkit-box-shadow: none;
+                            box-shadow: none;
+                        }
+
+                    .loginbox .textbox-wrap .input-group .input-group-addon {
+                        min-width: auto;
+                        border-radius: 0px;
+                    }
+
+                    .loginbox .textbox-wrap.focused .input-group .input-group-addon {
+                        background-color: #ffffff;
+                    }
+
+            .loginbox hr {
+                margin: 10px auto 10px;
+                width: 100%;
+                border-top: 1px solid #dddbda;
+                border-bottom: 1px solid #FFF;
+            }
+
+        body {
+            font-family: Helvetica,Roboto,Arial,sans-serif;
+            background-color: #eeeeee !important;
+        }
+
+        #wrapper {
+            background-color: #eeeeee !important;
+        }
+    </style>
+
+
+
+</head>
+<body>
+    <div id="wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="col-lg-4 col-md-6 col-sm-8 col-lg-offset-0 col-md-offset-0 col-sm-offset-2">
+
+                            <div class="row loginbox">
+                                <div class="col-lg-12">
+                                    <div class="logo">
+                                        <img src="/Content/images/logo.png" alt="Logo">
+                                    </div>
+                                    <hr />
+                                </div>
+
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="textbox-wrap">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                            @Html.TextBoxFor(model => model.CustomerCode, new { title = "Müşteri Kodu veya Email", placeholder = "Müşteri Kodu veya Email", @Value = @ViewBag.CustomerCode, @class = "form-control" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="textbox-wrap">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                            @Html.TextBoxFor(model => model.UserCode, new { title = "Kullanıcı Kodu veya Email", placeholder = "Kullanıcı Kodu veya Email", @Value = @ViewBag.UserCode, @class = "form-control" })
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="textbox-wrap">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                            @Html.PasswordFor(model => model.Password, new { title = "Parola", placeholder = "Parola", @Value = @ViewBag.Password, @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (TempData["Alert"] == "true")
+                                {
+                                    <div class="col-md-12 col-sm-12">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img src="@Url.Action("CaptchaCreate")" title="Doğrulama Kodu" />
+                                        </div>
+                                        <div class="col-md-6 col-sm-6"></div>
+                                        <div class="textbox-wrap">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.Captcha, new { title = "Doğrulama Kodu", placeholder = "Doğrulama Kodu", @Value = @ViewBag.Password, @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="col-md-12 col-sm-12">
+                                    <hr />
+                                    <button id="btnLogin" type="submit" value="Giriş" class="btn btn-block btn-custom"><i class="fa fa-sign-in"></i> Giriş </button>
+                                </div>
+                                @if (TempData["Alert"] == "true")
+                                {
+                                    <div class="alert alert-danger">@Html.ValidationSummary(false, "")</div>
+                                }
+
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-lg-8 col-md-6 col-sm-8 hidden-sm hidden-xs">
+
+                        <!-- Login Banner -->
+                        <div class="widget banner-slider-container">
+                            <div class="banner-slider flexslider">
+                                <ul class="banner-slider-list clearfix">
+                                    @foreach (var item in annList)
+                                    {
+                                        <li><a href="#"><img src="@item.PicturePathShow"   style="max-width:500px;max-height: 800px; min-width: 500px; min-height: 465px;"></a></li>
+                                    }
+
+                                    @*<li><a href="#"><img src="/Content/images/banner2.jpg" alt="Banner 2"></a></li>
+                                        <li><a href="#"><img src="/Content/images/banner3.jpg" alt="Banner 3"></a></li>*@
+                                </ul>
+                            </div>
+                        </div><!-- End .widget -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <a href="#" id="scroll-top" title="Scroll to Top"><i class="fa fa-angle-up"></i></a><!-- End #scroll-top -->
+
+
+
+    <div class="custom-loading-wrapper">
+        <div class="custom-loading">
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @*@RenderSection("scripts", required: false)*@
+
+    <script type="text/javascript">
+
+        $(".form-control").focus(function () {
+            $(this).closest(".textbox-wrap").addClass("focused");
+        }).blur(function () {
+            $(this).closest(".textbox-wrap").removeClass("focused");
+        });
+
+        $(document).ready(function () {
+            setTimeout(function () {
+                var h = (($('#wrapper').height() - $('.container').height()) / 2) + "px";
+                $('.container').css("padding-top", h);
+            }, 1000);
+        });
+
+        $(window).load(function () {
+            less.refresh();
+        });
+
+    </script>
+
+
+
+    <script src="/Scripts/Js/main.js"></script>
+
+    <script>
+        $('#btnLogin').click(function () {
+            fireCustomLoading(true);
+        });
+    </script>
+
+</body>
+</html>

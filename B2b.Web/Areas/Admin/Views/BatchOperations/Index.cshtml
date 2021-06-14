@@ -1,0 +1,364 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Toplu Değişiklikler";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-batch-operations">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/BatchOperations">Toplu Değişiklikler</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Toplu </strong>Değişiklikler</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div id="divBatch" ng-controller="batchOperationController" class="col-sm-12">
+                                <div id="rootwizard" class="tab-container tab-wizard">
+                                    <ul class="nav nav-tabs nav-justified">
+                                        <li><a href="#tab1" data-toggle="tab">Tablo Seçimi <span class="badge badge-default pull-right wizard-step">1</span></a></li>
+                                        <li><a href="#tab2" data-toggle="tab">Aralık / Maske<span class="badge badge-default pull-right wizard-step">2</span></a></li>
+                                        <li><a href="#tab3" data-toggle="tab">Değiştir<span class="badge badge-default pull-right wizard-step">3</span></a></li>
+                                        <li><a href="#tab4" data-toggle="tab">Sorgu Cümlesi<span class="badge badge-default pull-right wizard-step">4</span></a></li>
+                                    </ul>
+
+                                    <div class="tab-content">
+                                        <div id="tab1" class="tab-pane">
+                                            <form name="step1" role="form">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Değişiklik Yapılacak Tablo</h3>
+                                                    </div>
+
+                                                    <div class="panel-body">
+                                                        <label class="checkbox checkbox-custom-alt checkbox-custom-lg">
+                                                            <input name="customRadioAlt" type="radio" value="product" checked><i></i> Stok Tablosu
+                                                        </label>
+
+                                                        <label class="checkbox checkbox-custom-alt checkbox-custom-lg">
+                                                            <input name="customRadioAlt" type="radio" value="customer"><i></i> Cari Tablosu
+                                                        </label>
+
+                                                        <label class="checkbox checkbox-custom-alt checkbox-custom-lg">
+                                                            <input name="customRadioAlt" type="radio" value="rule"><i></i> Koşul Tablosu
+                                                        </label>
+
+                                                        <label class="checkbox checkbox-custom-alt checkbox-custom-lg">
+                                                            <input name="customRadioAlt" type="radio" value="campaign"><i></i> Kampanya Tablosu
+                                                        </label>
+
+                                                        <label class="checkbox checkbox-custom-alt checkbox-custom-lg">
+                                                            <input name="customRadioAlt" type="radio" value="salesman"><i></i> Temsilci Tablosu
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div id="tab2" class="tab-pane">
+                                            <form name="step2" role="form">
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <div class="form-group text-center">
+                                                            <label for="street">Tablo Sahaları: </label>
+                                                            <select name="sometext" size="10" class="form-control">
+                                                                <option value="{{fieldItem.FieldName}}" ng-repeat="fieldItem in fieldList | orderBy:'Priority'" ng-click="setSelectedField(fieldItem)">{{fieldItem.FieldText}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-2">
+                                                        <div class="form-group text-center">
+                                                            <div class="mb-40"></div>
+                                                            <button class="btn btn-warning btn-rounded-20 btn-ef btn-ef-6 btn-ef-6d mb-10" ng-click="addBrackets('(')">(...</button>
+                                                            <button class="btn btn-warning btn-rounded-20 btn-ef btn-ef-6 btn-ef-6d mb-10" ng-click="addBrackets(')')">...)</button>
+                                                            <button class="btn btn-primary btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4b mb-10" ng-click="addSelectedField()"> Ekle <i class="fa fa-arrow-right"></i></button>
+                                                            <button class="btn btn-warning btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4d mb-10" ng-click="removeSelectedField()"><i class="fa fa-arrow-left"></i> Çıkar</button>
+                                                            <button class="btn btn-info btn-rounded-20 btn-ef btn-ef-5 btn-ef-5b" ng-disabled="selectedCustomizeItem == null || (isAllActive && isAllActiveRight)" ng-click="setFieldValues()"><i class="fa fa-arrow-down"></i> <span>Uygula</span></button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group text-center">
+                                                            <label for="dnumber">Kısıt Verilecek Sahalar: </label>
+                                                            <select name="sometext" size="10" class="form-control">
+                                                                <option ng-style="fieldItem.IsSave  && {'background-color':'yellow'}" value="{{fieldItem.FieldName}}" ng-repeat="fieldItem in selectedFieldList | orderBy:'PrioritySelected'" ng-click="selectedFieldCustomize(fieldItem)">{{fieldItem.FieldText}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-1">
+                                                        <div class="form-group text-center">
+                                                            <div class="mb-40"></div>
+                                                            <a href="" class="myIcon icon-success icon-ef-3 icon-ef-3a hover-color" ng-click="upOrDownItem(-1)"><i class="fa fa-arrow-up"></i></a>
+                                                            <a href="" class="myIcon icon-success icon-ef-3 icon-ef-3a hover-color" ng-click="upOrDownItem(1)"><i class="fa fa-arrow-down"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="dnumber">Alan: </label>
+                                                                    <select name="processSelection" ng-disabled="isAllActive" class="form-control">
+                                                                        <option selected value="=">Eşit</option>
+                                                                        <option value="<">Küçük</option>
+                                                                        <option value="<=">Küçük Ve Eşit</option>
+                                                                        <option value=">">Büyük</option>
+                                                                        <option value=">=">Büyük Ve Eşit</option>
+                                                                        <option value="BETWEEN">Arasında</option>
+                                                                        <option value="LIKE '%{0}%'" ng-disabled="isNumericSelected || dateActive">İçerir</option>
+                                                                        <option value="LIKE '{0}%'" ng-disabled="isNumericSelected || dateActive">İle Başlar</option>
+                                                                        <option value="LIKE '%{0}'" ng-disabled="isNumericSelected || dateActive">İle Biter</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="dnumber">Değer: </label>
+                                                                    <input type="text" name="stateValue" ng-disabled="dateActive || isAllActive" class="form-control eryaz-numeric-input" placeholder="Değer Giriniz" ng-model="fieldValue">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                        <input name="isEqual" type="radio" checked value="true" ng-disabled="isAllActive"><i></i> İse
+                                                                    </label>
+
+                                                                    <label class="checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                        <input name="isEqual" type="radio" value="false" ng-disabled="isAllActive"><i></i> Değil İse
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                        <input name="processType" type="radio" value="AND" checked ng-disabled="isAllActive && isAllActiveRight"><i></i> Ve
+                                                                    </label>
+
+                                                                    <label class="checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                        <input name="processType" type="radio" value="OR" ng-disabled="isAllActive && isAllActiveRight"><i></i> Veya
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="dnumber">Başlangıç Tarihi: </label>
+                                                            <div class="input-group datepicker">
+                                                                <input type="text" id="dateStartValue" ng-disabled="!dateActive || isAllActive" class="form-control">
+                                                                <span class="input-group-addon">
+                                                                    <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="dnumber">Bitiş Tarihi: </label>
+                                                            <div class="input-group datepicker">
+                                                                <input type="text" id="dateEndValue" ng-disabled="!dateActive || isAllActive" class="form-control">
+                                                                <span class="input-group-addon">
+                                                                    <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <blockquote class="filled bg-default lter mb-0">
+                                                            <p><i class="fa fa-quote-left pull-left">{{selectedCustomizeItem.Explanation}}</i></p>
+                                                        </blockquote>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div id="tab3" class="tab-pane">
+                                            <form name="step3" role="form">
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <div class="form-group text-center">
+                                                            <label for="street">Tablo Sahaları: </label>
+                                                            <select class="form-control" name="sometext" size="10">
+                                                                <option value="{{changeFieldItem.FieldName}}" ng-repeat="changeFieldItem in changeFieldList | orderBy:'Priority'" ng-click="setChangeSelectedField(changeFieldItem)">{{changeFieldItem.FieldText}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-2">
+                                                        <div class="form-group text-center">
+                                                            <div class="mb-40"></div>
+                                                            <button class="btn btn-primary btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4b mb-10" ng-click="addSelectedChangeField()"> Ekle <i class="fa fa-arrow-right"></i></button>
+                                                            <button class="btn btn-warning btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4d mb-10" ng-click="removeSelectedChangeField()"><i class="fa fa-arrow-left"></i> Çıkar</button>
+                                                            <button class="btn btn-info btn-rounded-20 btn-ef btn-ef-5 btn-ef-5b" ng-disabled="selectedChangeCustomizeItem == null" ng-click="setChangeFieldValues()"><i class="fa fa-arrow-down"></i> <span>Uygula</span></button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-5">
+                                                        <div class="form-group text-center">
+                                                            <label for="dnumber">Kısıt Verilecek Sahalar: </label>
+                                                            <select class="form-control" name="sometext" size="10">
+                                                                <option ng-style="changeFieldItem.IsSave  && {'background-color':'yellow'}" value="{{changeFieldItem.FieldName}}" ng-repeat="changeFieldItem in selectedChangeFieldList | orderBy:'PrioritySelected'" ng-click="selectedChangeFieldCustomize(changeFieldItem)"><i class="fa fa-check" aria-hidden="true"></i>{{changeFieldItem.FieldText}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-9">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="dnumber">Alan: </label>
+                                                                    <select class="form-control" ng-disabled="IsValueOnly == 0" name="fieldSelection">
+                                                                        <option value="{{changeFieldItem.FieldName}}" ng-repeat="changeFieldItem in changeFieldList2 | orderBy:'PrioritySelected'">{{changeFieldItem.FieldText}}</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="dnumber">Değer: </label>
+                                                                    <input type="text" name="stateValue" ng-disabled="dateActiveChange || IsValueOnly == 1" class="form-control eryaz-numeric-input" placeholder="Değer Giriniz" ng-model="fieldValueChange">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label class="checkbox checkbox-custom-alt checkbox-custom-sm">
+                                                                <input name="changeType" type="radio" checked ng-click="IsValueOnly= 0" value="0"><i></i> Değer Ata
+                                                            </label>
+
+                                                            <label class="checkbox checkbox-custom-alt checkbox-custom-sm" ng-click="IsValueOnly= 1">
+                                                                <input name="changeType" type="radio" value="1"><i></i> Alan Ata
+                                                            </label>
+
+                                                            <label class="checkbox checkbox-custom-alt checkbox-custom-sm" ng-click="IsValueOnly= 2">
+                                                                <input name="changeType" type="radio" value="2"><i></i> Alan ile Değeri Birleştir
+                                                            </label>
+
+                                                            <label class="checkbox checkbox-custom-alt checkbox-custom-sm" ng-click="IsValueOnly= 2">
+                                                                <input name="changeType" type="radio" value="3"><i></i> Değer ile Alanı Birleştir
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="dnumber">Başlangıç Tarihi: </label>
+                                                            <div class="input-group datepicker">
+                                                                <input type="text" class="form-control" id="dateStartValueChange" ng-disabled="!dateActiveChange">
+                                                                <span class="input-group-addon">
+                                                                    <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="dnumber">Bitiş Tarihi: </label>
+                                                            <div class="input-group datepicker">
+                                                                <input type="text" class="form-control" id="dateEndValueChange" ng-disabled="!dateActiveChange">
+                                                                <span class="input-group-addon">
+                                                                    <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <blockquote class="filled bg-default lter mb-0">
+                                                            <p><i class="fa fa-quote-left pull-left">{{selectedChangeCustomizeItem.Explanation}}</i></p>
+                                                        </blockquote>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div id="tab4" class="tab-pane">
+                                            <form name="step4" role="form">
+                                                <div class="form-group">
+                                                    <h4><strong>Sorgu</strong> Cümlesi</h4>
+                                                    <pre class="prettyprint lang-sql">{{QueryText}}</pre>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <ul class="pager wizard">
+                                            <li class="previous"><button class="btn btn-default">Geri</button></li>
+                                            <li class="next"><button class="btn btn-default">İleri</button></li>
+                                            <li class="next finish" style="display:none;"><button class="btn btn-success">Çalıştır</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/parsley/parsley.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/form-wizard/jquery.bootstrap.wizard.js")
+}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/batchOperation.js", HttpContext.Current.Request)"></script>
+   
+}

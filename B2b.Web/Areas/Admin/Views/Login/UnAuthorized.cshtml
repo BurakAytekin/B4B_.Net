@@ -1,0 +1,42 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@{
+    ViewBag.Title = "Yetkisiz";
+    Layout = "~/Areas/Admin/Views/Shared/_BlankLayout.cshtml";
+}
+
+@{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; }
+<div id="wrap" class="animsition">
+    <div class="page page-core page-locked">
+        <div class="text-center"><h3 class="text-light text-white">@CompanyInformationItem.Title</h3></div>
+
+        <div class="container w-420 p-15 bg-white mt-40">
+            <div class="bg-slategray lt wrap-reset mb-20 text-center">
+                <h2 class="text-light text-greensea m-0">Yetkisiz Erişim</h2>
+            </div>
+
+            <div class="media p-15">
+                <div class="pull-left thumb thumb-lg mr-20">
+                    <img class="media-object img-circle" src="@ViewBag.AdminCurrentSalesman.PicturePath" alt="">
+                </div>
+                <div class="media-body">
+
+                    <form name="form" class="form-validation">
+                        <h4 class="media-heading mb-0"><strong>@ViewBag.AdminCurrentSalesman.Name</strong></h4>
+
+                        <div class="form-group text-left">
+                            <a href="/Admin/Login/Logout" value="Çıkış" class="btn btn-greensea b-0 br-2 mr-5 block"><i class="fa fa-sign-in"></i> Çıkış </a>
+                        </div>
+                        <span class="text-lightred">Yetkisiz erişim algılandı </span>
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="bg-slategray lt wrap-reset mt-0 text-center">
+                <p class="m-0">
+                    <span>@DateTime.Now.ToString()</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

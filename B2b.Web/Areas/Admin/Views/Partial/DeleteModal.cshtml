@@ -1,0 +1,23 @@
+﻿ <!--MODAL DELETE-->
+<div id="modal-delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title custom-font"><strong>{{deleteItem.Name}} - Sil</strong></h3>
+            </div>
+            <div class="modal-body">
+
+                <p><b>{{deleteItem.Description}}</b> silmek istediğinize emin misiniz ?</p>
+
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">Hayır<i class="fa fa-arrow-right"></i> </button>
+                <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="deleteItem.FunctionName()"> Evet<i class="fa fa-arrow-right"></i> </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--MODAL DELETE-->

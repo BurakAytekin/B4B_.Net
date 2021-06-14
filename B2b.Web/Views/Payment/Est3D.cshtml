@@ -1,0 +1,57 @@
+﻿@Styles.Render("~/bundles/css")
+@using B2b.Web.v4.Models.EntityLayer
+@using B2b.Web.v4.Models.Helper
+@{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+@{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+@{
+    String v_failUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Error?paymentId=" + PosPaymentValue.PaymentId;
+    String v_okUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/EST3DP";
+
+
+    String v_amount = PosPaymentValue.TotalPrice.ToString().Replace(".", ",");
+    String v_rnd = DateTime.Now.ToString();
+    String hashstr = PosBankDetails.StoreNumber + PosPaymentValue.PaymentId + v_amount + v_okUrl + v_failUrl + v_rnd + PosBankDetails._3dSecureKey;
+    System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+    byte[] hashbytes = System.Text.Encoding.GetEncoding("ISO-8859-9").GetBytes(hashstr);
+    byte[] inputbytes = sha.ComputeHash(hashbytes);
+    String v_hash = Convert.ToBase64String(inputbytes);
+    String v_cardType = PosPaymentValue.CardType.ToString();
+    switch (v_cardType)
+    {
+        case "Visa": v_cardType = "1"; break;
+        case "Master": v_cardType = "2"; break;
+        default: break;
+    }
+}
+<div style="display: flex; justify-content: center; align-items: center;">
+    <div class="loader" style="margin: 5px;"></div>
+    <h2>İşleminiz Yapılıyor Lütfen Bekleyiniz.</h2>
+
+</div>
+
+<form id="sanalposform" action="@PosBankDetails.PosBank.XmlUrl" method="post">
+    <input type="hidden" id="clientid" value="@PosBankDetails.StoreNumber" name="clientid" />
+    <input type="hidden" id="amount" value="@v_amount" name="amount" />
+    <input type="hidden" id="oid" value="@PosPaymentValue.PaymentId" name="oid" />
+    <input type="hidden" id="okUrl" value="@v_okUrl" name="okUrl" />
+    <input type="hidden" id="failUrl" value="@v_failUrl" name="failUrl" />
+    <input type="hidden" id="rnd" value="@v_rnd" name="rnd" />
+    <input type="hidden" id="hash" value="@v_hash" name="hash" />
+    <input type="hidden" id="storetype" value="3d" name="storetype" />
+    <input type="hidden" id="lang" value="tr" name="lang" />
+    <input type="hidden" id="currency" value="949" name="currency" />
+    <input type="hidden" id="pan" value="@PosPaymentValue.CardNumber.Replace(" ", "").Trim()" name="pan" />
+    <input type="hidden" id="cv2" value="@PosPaymentValue.Cvc" name="cv2" />
+    <input type="hidden" id="Ecom_Payment_Card_ExpDate_Year" value="@PosPaymentValue.ExpYear.Replace(" ", "")" name="Ecom_Payment_Card_ExpDate_Year" />
+    <input type="hidden" id="Ecom_Payment_Card_ExpDate_Month" value="@PosPaymentValue.ExpMounth.Replace(" ", "")" name="Ecom_Payment_Card_ExpDate_Month" />
+    <input type="hidden" id="cardType" value="@v_cardType" name="cardType" />
+   
+</form>
+<script type="text/javascript">
+    function hideformfunc() {
+        var frm = document.getElementById("sanalposform");
+        frm.submit();
+    }
+    window.onload = hideformfunc;
+</script>
+

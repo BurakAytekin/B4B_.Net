@@ -1,0 +1,372 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@section cStyleLibrary{
+    @Styles.Render("~/Scripts/Admin/vendor/summernote/summernote.css")
+}
+
+@section cStyleCode{}
+
+<div class="page page-blog" ng-controller="documentDraft">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/DocumentDraft">Şablonlar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Sanal Pos </strong>Şablon</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <div class="form-horizontal">
+
+
+                                        <div class="form-group">
+                                            <label for="input01" class="col-sm-2 control-label">Şablon Adı</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" value="{{documentDraft.Header}}" ng-model="documentDraft.Header"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="input01" class="col-sm-2 control-label">Üst Bilgi Yükseklik(px):</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" value="{{documentDraft.HeaderHeight}}" ng-model="documentDraft.HeaderHeight">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="input01" class="col-sm-2 control-label">Alt Bilgi Yükseklik(px):</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" value="{{documentDraft.FooterHeight}}" ng-model="documentDraft.FooterHeight">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="input01" class="col-sm-2 control-label">Email Adresleri:</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" value="{{documentDraft.EmailAddress}}" ng-model="documentDraft.EmailAddress"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255">
+                                                    <label class="input-group-addon">
+                                                        <span data-toggle="tooltip" data-placement="bottom" title="Birden fazla mail adresi kullanmanız durumunda ayrımlarını noktalı virgül (;) ile sağlayınız" class="badge bg-info"><i class="fa fa-info"></i></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Email Gönderilsin</label>
+                                            <div class="col-sm-10">
+                                                <div class="onoffswitch greensea inline-block">
+                                                    <input type="checkbox" name="isSendEmail" class="onoffswitch-checkbox"  id="isSendEmail">
+                                                    <label class="onoffswitch-label" for="isSendEmail">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Müşteri Temsilcilerine Mail Gönderilsin</label>
+                                            <div class="col-sm-10">
+                                                <div class="onoffswitch greensea inline-block">
+                                                    <input type="checkbox" name="isSendSalesman" class="onoffswitch-checkbox" checked id="isSendSalesman">
+                                                    <label class="onoffswitch-label" for="isSendSalesman">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Müşterilere Mail Gönderilsin</label>
+                                            <div class="col-sm-10">
+                                                <div class="onoffswitch greensea inline-block">
+                                                    <input type="checkbox" name="isSendCustomer" class="onoffswitch-checkbox" checked id="isSendCustomer">
+                                                    <label class="onoffswitch-label" for="isSendCustomer">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Üst Bilgi İlk Sayfada Görünsün</label>
+                                            <div class="col-sm-10">
+                                                <div class="onoffswitch greensea inline-block">
+                                                    <input type="checkbox" name="isDisplayHeader" class="onoffswitch-checkbox" checked id="isDisplayHeader">
+                                                    <label class="onoffswitch-label" for="isDisplayHeader">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Alt Bilgi İlk Sayfada Görünsün</label>
+                                            <div class="col-sm-10">
+                                                <div class="onoffswitch greensea inline-block">
+                                                    <input type="checkbox" name="isDisplayFooter" class="onoffswitch-checkbox" checked id="isDisplayFooter">
+                                                    <label class="onoffswitch-label" for="isDisplayFooter">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Sayfa Numaralarını Göster</label>
+                                            <div class="col-sm-10">
+                                                <div class="onoffswitch greensea inline-block">
+                                                    <input type="checkbox" name="isPageNumber" class="onoffswitch-checkbox" checked id="isPageNumber">
+                                                    <label class="onoffswitch-label" for="isPageNumber">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">E-posta Gövdesi</label>
+                                            <div class="col-sm-8" ondrop="drop(event)">
+                                                
+                                                <textarea name="content-Email" id="content-Email" placeholder="Metin Giriniz.."></textarea>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button class="btn btn-warning btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4d mb-10" ng-click="setDefault(0)"><i class="fa fa-arrow-left"></i>Default Veriye Dön</button>
+                                                <div class="list-group no-radius no-border" style="max-height:310px;overflow:scroll">
+                                                    <a href="" class="list-group-item" value="{|PaymentId|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> İşlem No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|PaymentNumber|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Tahsilat No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CustomerCode|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Bayi Kodu
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CustomerName|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Bayi Adı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|UserCode|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i>Alt Bayi Kodu
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CustomerCode|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i>Alt Bayi Adı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|3DSecure|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Ödeme Şekli
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|BankName|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Banka Adı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Amount|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Çekilen Tutar
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Installment|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Taksit Sayısı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|InstallmentAmount|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Taksit Tutarı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CreateDate|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> İşlem Tarihi
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|ExpendableBonus|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Kullanılan Bonus
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|AuthCode|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Provizyon No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Note|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Çekim Notu
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CardNumber|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Kart No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|NameSurname|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Kart Sahibi
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|PhoneNumber|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Telefon
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Email|}_content-Email" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> E-Posta
+                                                    </a>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Üst Bilgi</label>
+                                            <div class="col-sm-10">
+                                                <textarea name="content-Header" id="content-Header" placeholder="Metin Giriniz.."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">İçerik</label>
+                                            <div class="col-sm-8" ondrop="drop(event)">
+                                                <textarea name="content-Content" id="content-Content" placeholder="Metin Giriniz.."></textarea>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button class="btn btn-warning btn-border btn-rounded-20 btn-ef btn-ef-4 btn-ef-4d mb-10" ng-click="setDefault(1)"><i class="fa fa-arrow-left"></i>Default Veriye Dön</button>
+                                                <div class="list-group no-radius no-border" style="max-height:310px;overflow:scroll">
+                                                    <a href="" class="list-group-item" value="{|PaymentId|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> İşlem No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|PaymentNumber|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Tahsilat No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CustomerCode|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Bayi Kodu
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CustomerName|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Bayi Adı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|UserCode|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i>Alt Bayi Kodu
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CustomerCode|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i>Alt Bayi Adı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|3DSecure|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Ödeme Şekli
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|BankName|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Banka Adı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Amount|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Çekilen Tutar
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Installment|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Taksit Sayısı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|InstallmentAmount|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Taksit Tutarı
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CreateDate|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> İşlem Tarihi
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|ExpendableBonus|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Kullanılan Bonus
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|AuthCode|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Provizyon No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Note|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Çekim Notu
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|CardNumber|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Kart No
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|NameSurname|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Kart Sahibi
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|PhoneNumber|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> Telefon
+                                                    </a>
+                                                    <a href="" class="list-group-item" value="{|Email|}_content-Content" ondragstart="dragStart(event)" draggable="true">
+                                                        <i class="fa fa-bookmark text-muted mr-5"></i> E-Posta
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Alt Bilgi</label>
+                                            <div class="col-sm-10">
+                                                <textarea name="content-Footer" id="content-Footer" placeholder="Metin Giriniz.."></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group text-right">
+                                            <div class="col-xs-12">
+                                                <button type="reset" class="btn btn-lightred" ng-click="clearValues()">Temizle</button>
+                                                <button type="button" class="btn btn-default"  ng-click="savePdf(true)">Kaydet</button>
+                                                <button type="button" class="btn btn-default" ng-click="savePdf(false)">Önizleme</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="mPdfShow" tabindex="-1" role="dialog" aria-labelledby="mPdfShowLabel" aria-hidden="true" class="modal fade" style="min-height:800px;width:100%">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <iframe style="min-height:600px;width:100%" src="{{frameUrl}}"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/summernote/summernote.min.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/filestyle/bootstrap-filestyle.min.js")
+}
+
+
+@section cScriptCode{
+    <script type="text/javascript">
+        var pageType = 0;
+
+        function dragStart(ev) {
+            ev.dataTransfer.setData("text", ev.target.getAttribute('value'));
+        }
+
+
+        function drop(event) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            //$('#content-Email').summernote('editor.insertText', res[0]);
+            var res = data.split("_");
+            //$('#' + res[1]).summernote('editor.pasteHTML', res[0]);
+            $('#' + res[1]).summernote('editor.insertText', res[0]);
+            //$('#content-Email').summernote('code', '<b>hello world</b>');
+
+            //event.target.appendChild(document.getElementById(data));
+            //document.getElementById("demo").innerHTML = "The p element was dropped";
+        }
+    </script>
+<script src="@Url.ContentVersioned("/Scripts/Admin/documentDraft.js", HttpContext.Current.Request)"></script>
+
+
+}

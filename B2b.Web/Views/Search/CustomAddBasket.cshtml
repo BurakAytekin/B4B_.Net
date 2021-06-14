@@ -1,0 +1,127 @@
+﻿<!--Güçsada bunun örneği var oradan bakabilirsiniz nasıl yerşleştirmen gerektiğine yada takıl kafana göre :)-->
+@*<script> 
+
+    $('.flexslider2').flexslider({
+        animation: "slide",
+        controlNav: "thumbnails"
+    });
+
+</script>*@
+<div class="row">
+    <div class="col-md-6">
+        <div id="slider" class="flexslider2">
+            <ul class="slides">
+                @foreach (var item in @ViewBag.PictureList)
+                {
+                <li data-thumb='@item.Path'>
+                    <img alt='@ViewBag.Product.Name' src='@item.Path' />
+                </li>
+
+                }
+
+               
+                @*<li data-thumb='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTpve85Kj1sAQnBQy0h2a1IRAHkbffauY0iNvjCdpjed4HE7WI3'>
+                    <img alt='Ürün Adı' src='https://www.w3schools.com/css/img_fjords.jpg' />
+                </li>*@
+                <!-- items mirrored twice, total of 12 -->
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Ürün Adı</span>
+                    <span class="input-group-text">@ViewBag.Product.Name</span>
+                    @*<input type="text" name="prodcutName" id="prodcutName" class="form-control" readonly="readonly" value="@ViewBag.Product.Name" tabindex="1">*@
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Ürün Kodu</span>
+                    <span class="input-group-text">@ViewBag.Product.Code</span>
+                    @*<input type="text" name="productCode" id="productCode" class="form-control" readonly="readonly" value="@ViewBag.Product.Code" tabindex="2">*@
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Üretici</span>
+                    <span class="input-group-text">@ViewBag.Product.Manufacturer</span>
+                    @*<input type="text" name="manufacturer" id="manufacturer" class="form-control" readonly="readonly" value="@ViewBag.Product.Manufacturer" tabindex="3">*@
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Liste Fiyatı</span>
+                    <span class="input-group-text text-right">@Html.Raw(@ViewBag.Product.PriceListCustomerStr.Split('&')[0])</span>
+                    @*<input type="text" name="pricellist" id="pricellist" class="form-control" readonly="readonly" value="@ViewBag.Product.PriceListCustomerStr" tabindex="3">*@
+                    <span class="input-group-addon no-minwidth-zero">@Html.Raw(@ViewBag.Product.PriceNetWithVatCustomerStr!="-"?@ViewBag.Product.PriceNetWithVatCustomerStr.Split(';')[1]: @ViewBag.Product.PriceNetWithVatCustomerStr)</span>
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Kdv Hariç Maliyet</span>
+                    <span class="input-group-text text-right">@Html.Raw(@ViewBag.Product.PriceNetCustomerStr != "-" ? @ViewBag.Product.PriceNetCustomerStr.Split('&')[0]: @ViewBag.Product.PriceNetCustomerStr)</span>
+                    @*<input type="text" name="pricewithExceptvat" id="pricewithExceptvat" class="form-control" readonly="readonly" value="@ViewBag.Product.PriceNetCustomerStr" tabindex="3">*@
+                    <span class="input-group-addon no-minwidth-zero">@Html.Raw(@ViewBag.Product.PriceNetWithVatCustomerStr != "-" ? @ViewBag.Product.PriceNetWithVatCustomerStr.Split(';')[1]: @ViewBag.Product.PriceNetWithVatCustomerStr)</span>
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Kdv Dahil Maliyet</span>
+                    <span class="input-group-text text-right">@Html.Raw(@ViewBag.Product.PriceNetWithVatCustomerStr != "-" ? @ViewBag.Product.PriceNetWithVatCustomerStr.Split('&')[0]: @ViewBag.Product.PriceNetWithVatCustomerStr)</span>
+                    @*<input type="text" name="pricewithVat" id="pricewithVat" class="form-control" readonly="readonly" value="@ViewBag.Product.PriceNetWithVatCustomerStr" tabindex="3">*@
+                    <span class="input-group-addon no-minwidth-zero">@Html.Raw(@ViewBag.Product.PriceNetWithVatCustomerStr != "-" ? @ViewBag.Product.PriceNetWithVatCustomerStr.Split(';')[1]: @ViewBag.Product.PriceNetWithVatCustomerStr)</span>
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Kampanya Bilgisi</span>
+                    <span class="input-group-text">@ViewBag.Product.Campaign.MinOrder</span>
+                    @*<input type="text" name="campaignText" id="campaignText" class="form-control input-lg" readonly="readonly" value="@ViewBag.Product.Campaign.MinOrder" tabindex="3">*@
+                </div>
+            </div>
+        </div>
+        <div class="xs-margin"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group input-criteria">
+                    <span class="input-group-addon no-minwidth">Depolar</span>
+                    <span class="input-group-text">@ViewBag.Product.TotalQuantity</span>
+                    @*<input type="text" name="procutQuantity" id="procutQuantity" class="form-control input-lg" readonly="readonly" value="@ViewBag.Product.TotalQuantity" tabindex="3">*@
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group input-group-sm input-criteria">
+                    <span class="input-group-addon no-minwidth-zero">Miktar</span>
+                    <input type="text" name="qtyM" id="qtyM" placeholder="@ViewBag.Product.MinOrder" class="form-control text-center">
+                    <span class="input-group-btn">
+                        <a href="javascript;:" id="btnAddBasket" onclick="angular.element(document.getElementById('divSearch')).scope().askAvailable(@ViewBag.Product.Id,3); return false;" class="btn btn-custom-2">
+                            <i class="fa fa-shopping-cart fa-lg"></i>
+                        </a>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

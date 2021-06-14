@@ -1,0 +1,638 @@
+﻿@Styles.Render("~/Content/Payment/smart_wizard.css")
+
+<link href="~/Content/Pages/Payment/InstallmentInformationView.css" rel="stylesheet" />
+
+@* Not: card.js dosyası customize edilmiştir. form tanıması "vpContent" id li div tanıması olarak değiştirilmiştir.  *@
+
+<section>
+
+    <div id="breadcrumb-container" ng-controller="paymentController">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Ödeme</a></li>
+                <li><a href="#">Online Ödeme</a></li>
+                <li><a href="#">Yeni Ödeme</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="col-md-12 box">
+
+            <div id="vpContent" class="vp-content hide">
+                <ul>
+                    <li class="shadowed">
+                        <a href="#vp-step-1">
+                            <label class="stepNumber">1</label>
+                            <span class="stepDesc">
+                                Tutar Bilgisi<br />
+                                <small>Tutar ve Taksit Bilgileri</small>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#vp-step-2">
+                            <label class="stepNumber">2</label>
+                            <span class="stepDesc">
+                                Kredi Kartı<br />
+                                <small>Kredi Kartı Bilgileri</small>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#vp-step-3">
+                            <label class="stepNumber">3</label>
+                            <span class="stepDesc">
+                                Taksit Seçimi<br />
+                                <small>Taksit Seçim Bilgileri</small>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#vp-step-4">
+                            <label class="stepNumber">4</label>
+                            <span class="stepDesc">
+                                Onay<br />
+                                <small>Puan Kullanımı ve Onay </small>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content shadowed">
+                    <div id="vp-step-1">
+                        <h2 class="StepTitle">Tutar ve Taksit Bilgileri</h2>
+                        <div class="form-container">
+                            <div class="form-content">
+                                <div class="form-row">
+                                    <div class="form-column form-column-left">
+                                        <div class="form-info-box">
+                                            <div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    Ödeme Tutarı:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <div class="form-input-column column-left">
+                                                            @if (@Session["PaymentFromCart"] != null)
+                                                            {
+                                                                <input id="txtPrice" name="pay-amount-price" type="text" value="@ViewBag.totalTl" readonly="readonly" autocomplete="on" pattern="[0-9]*" maxlength="10" placeholder="00" required="required" class="text-right" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input id="txtPrice" name="pay-amount-price" type="text" value="0" autocomplete="on" pattern="[0-9]*" maxlength="10" placeholder="00" required="required" class="text-right" />
+                                                            }
+                                                        </div>
+                                                        <div class="form-input-column column-seperator text-center">,</div>
+                                                        <div class="form-input-column column-right">
+                                                            @if (@Session["PaymentFromCart"] != null)
+                                                            {
+                                                                <input id="txtDecimal" name="pay-amount-decimal" type="text" value="@ViewBag.totalKurus" readonly="readonly" autocomplete="on" pattern="[0-9]*" maxlength="2" placeholder="00" required="required" class="text-right" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input id="txtDecimal" name="pay-amount-decimal" type="text" value="00" autocomplete="on" pattern="[0-9]*" maxlength="2" placeholder="00" required="required" class="text-right" />
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Taksit Görselleri-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="vp-step-2">
+                        <h2 class="StepTitle">Kredi Kartı Bilgileri</h2>
+
+                        <div class="form-container">
+                            <div class="form-content">
+                                <div class="form-row">
+                                    <div class="form-column form-column-right">
+                                        <div class="card-wrapper"></div>
+                                    </div>
+
+                                    <div class="form-column form-column-left">
+                                        <div class="form-info-box">
+                                            <div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    Kart Sahibi:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <input id="txtNameSurname" name="card-name-surname" type="text" placeholder="Ad Soyad" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    Kart Numarası:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <input id="txtCartNumber" name="card-number" type="tel" x-autocompletetype="cc-number" placeholder="Kart Numarası" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    Son Kullanma Tarihi:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <input id="txtExpiryDate" name="card-expiry-date" type="tel" x-autocompletetype="cc-exp" placeholder="AA / YY" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    CVC Kodu:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <input id="txtCvc" name="cvc-code" type="text" x-autocompletetype="cc-csc" placeholder="CVC" />
+
+                                                        <i title="<img src='Content/images/cvc.png' alt='cvcsimgesi' style='height:195px; width:auto; max-height:195px;' />" class="tooltip-box fa fa-question-circle fa-2x" aria-hidden="true"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    Gsm No:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <input id="txtPhone" name="phone" type="tel" pattern="[0-9]*" maxlength="14" placeholder="(5XX) XXX-XXXX" required="required" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-info-line">
+                                                <div class="form-info-column column-ver-top form-info-column-left">
+                                                    Açıklama:
+                                                </div>
+                                                <div class="form-info-column column-ver-top form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <textarea id="txtDescription" name="description" placeholder="Açıklama" required="required"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @*<div class="form-info-line">
+                                                <div class="form-info-column form-info-column-left">
+                                                    3D Desteği:
+                                                </div>
+                                                <div class="form-info-column form-info-column-right">
+                                                    <div class="form-input-line">
+                                                        <input id="txt3D" name="threeD" type="checkbox" />
+                                                        <label for="txt3D">3D kullanmak istiyorum.</label>
+                                                    </div>
+                                                </div>
+                                            </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="vp-step-3">
+                        <h2 class="StepTitle">Taksit Seçim Bilgileri</h2>
+
+                        <div class="form-container">
+                            <div class="form-content">
+                                <div class="form-info-box">
+                                    <div class="form-info-messages">
+                                        <div class="label label-warning" id="divInstallmentHeaderMessage">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-info-table">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <td class="text-center" rowspan="2">Seç</td>
+                                                    <td class="text-center" colspan="3">
+                                                        Taksit<br />
+                                                        Bilgileri
+                                                    </td>
+                                                    @*<td class="text-center" rowspan="2">
+                                                        Vade<br />
+                                                        Farkı
+                                                    </td>*@
+                                                    <td class="text-center" rowspan="2">
+                                                        Aylık Taksit<br />
+                                                        Tutarı
+                                                    </td>
+                                                    <td class="text-center" rowspan="2">
+                                                        Taksitli<br />
+                                                        Ödenecek<br />
+                                                        Toplam<br />
+                                                        Tutar
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center" title="Taksit Sayısı">Taksit</td>
+                                                    <td class="text-center" title="Artı Taksit Sayısı">Artı</td>
+                                                    <td class="text-center" title="Erteleme">Ert.</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbInstallmentbody"></tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="7" id="divInstallmentBottomMessage"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="vp-step-4">
+                        <h2 class="StepTitle">Puan Kullanımı ve Onay</h2>
+
+                        <div class="form-container">
+                            <div class="form-content">
+                                <div class="form-info-box">
+                                    <fieldset class="mb-5">
+                                        <div class="form-info-line">
+                                            <div class="form-info-column form-info-column-left">
+                                                Mevcut Puan:
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <div class="form-input-column column-left">
+                                                        <input id="txtResultCardPointPrice" type="text" value="0" autocomplete="on" pattern="[0-9]*" maxlength="10" placeholder="00" required="required" class="text-right" />
+                                                    </div>
+
+                                                    <div class="form-input-column column-seperator text-center">,</div>
+
+                                                    <div class="form-input-column column-right">
+                                                        <input id="txtResultCardPointDecimal" type="text" value="00" autocomplete="on" pattern="[0-9]*" maxlength="2" placeholder="00" required="required" class="text-right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+
+
+                                                    <div id="divPointCheckbox" class="form-info-column form-info-column-right hide">
+                                                        <div class="form-input-line">
+                                                            <input id="txtPointCheckBox" type="checkbox" />
+                                                            <label for="txtPointCheckBox">Bu işlemde puan kullanmak istiyorum.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </fieldset>
+
+                                    <fieldset disabled="disabled" class="mb-5">
+                                        <div class="form-info-line">
+                                            <div class="form-info-column form-info-column-left">
+                                                Ödeme Tutarı:
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <input id="txtResultPayAmount" name="result-pay-amount" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-info-line">
+                                            <div class="form-info-column form-info-column-left" title="Karttan Çekilecek Tutar">
+                                                Karttan Çek. Tutar:
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <input id="txtResultAmountFromCard" name="result-amount-from-card" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-info-line">
+                                            <div class="form-info-column form-info-column-left">
+                                                Kart Sahibi:
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <input id="txtResultNameSurname" name="result-name-surname" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-info-line">
+                                            <div class="form-info-column form-info-column-left">
+                                                Kart Numarası:
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <input id="txtResultCartNumber" name="result-card-number" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="form-info-line">
+                                        <div class="form-info-column form-info-column-left" title="Son Kullanma Tarihi">
+                                            Son Kul. Tarihi:
+                                        </div>
+                                        <div class="form-info-column form-info-column-right">
+                                            <div class="form-input-line">
+                                                <input id="txtResultExpiryDate" name="result-expiry-date" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-info-line">
+                                        <div class="form-info-column form-info-column-left">
+                                            CVC Kodu:
+                                        </div>
+                                        <div class="form-info-column form-info-column-right">
+                                            <div class="form-input-line">
+                                                <input id="txtResultCvc" name="result-cvc-code" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>-->
+
+                                        <div class="form-info-line">
+                                            <div class="form-info-column form-info-column-left">
+                                                Gsm No:
+                                            </div>
+                                            <div class="form-info-column form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <input id="txtResultPhone" name="result-phone" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-info-line">
+                                            <div class="form-info-column column-ver-top form-info-column-left">
+                                                Açıklama:
+                                            </div>
+                                            <div class="form-info-column column-ver-top form-info-column-right">
+                                                <div class="form-input-line">
+                                                    <textarea id="txtResultDescription" name="result-description"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+
+                                    <div class="form-info-line">
+                                        <div class="form-info-column form-info-column-left">
+                                            3D Desteği:
+                                        </div>
+                                        <div class="form-info-column form-info-column-right">
+                                            <div class="form-input-line">
+                                                <input id="txtResult3D" name="result-3d-support" readonly="readonly" type="checkbox" />
+                                                <label for="txtResult3D">3D kullanmak istiyorum.</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-info-contract">
+                                        <div id="contract-agreement" class="form-info-contract-agreement">
+                                            @Html.Raw(@ViewBag.FooterInformationItem.PaymentContract)
+                                        </div>
+                                    </div>
+
+                                    <div class="form-info-line">
+                                        <div class="form-input-line">
+                                            <input id="txtResultDistanceSalesContract" name="result-3d-support" type="checkbox" />
+                                            <label for="txtResultDistanceSalesContract">Mesafeli Satış Sözleşmesini okudum ve onaylıyorum.</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-info-line">
+                                        <div class="form-info-column form-info-column-left">
+                                            Onay:
+                                        </div>
+                                        <div class="form-info-column form-info-column-right">
+                                            <a id="btnConfirm" href="javascript:;" data-fancybox data-options='{"src": "Payment/PaymentControl/", "modal": true}' onclick="return false;" class="buttonConfirm disabled hide">Ödeme Yap</a>
+                                            <a id="btnConfirm1" href="javascript:;" class="buttonConfirm disabled">Ödeme Yap</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-10" style="margin-top:5px;">
+                @Html.Partial("~/Views/Partial/InstallmentInformationPaymentView.cshtml")
+            </div>
+        </div>
+
+    </div>
+
+</section>
+    
+
+    <div class="col-md-12 addBlocker" id="addBlocker" style="display:none">
+
+        <div class="payment-note">
+            <div class="payment-bg">
+                <ul>
+                    <li>
+                        <span>
+                            Farkında olarak veya olmayarak Adblocker (Reklam Engelleyici) kullanarak sitemizi ziyaret etmektesiniz. Bu eklentiler reklamları engellediği gibi reklam olmayan bir çok işlemi de engellemektedir.
+                        </span>
+                    </li>
+                    <li>
+                        <span>
+                            Ödeme işlemlerinize sorunsuz devam edebilmek için lütfen Adblocker eklentinize bu siteyi güvenli site olarak ekleyiniz.
+                        </span>
+                    </li>
+                    <li><span><a target="_blank" href="/Information">Güvenli site olarak nasıl ekleyeceğinizi bilmiyor iseniz tıklayınız. </a></span> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts{
+        @Scripts.Render("~/bundles/paymentjs")
+
+        <script type="text/javascript">
+            //#region Functions
+            function leaveAStepCallback(obj, context) {
+                // To check and enable finish button if needed
+                if (context.fromStep >= 2) {
+                    $('#wizard1').smartWizard('enableFinish', true);
+                }
+                return true;
+            }
+
+            function onFinishCallback() {
+                alert('Finish Called');
+            }
+            //#endregion
+
+            //#region Document Ready Functions
+            $(document).ready(function () {
+                checkAdblocker();
+                var contentpayment = '<div class="payment-note">';
+                contentpayment += '<div class="payment-bg">';
+                contentpayment += '<ul>';
+                contentpayment += '<li><span>Yapı Kredi sanal posunda :</span> Albaraka, Anadolu Bank, TEB ve Vakıfbank’ın WorldCard özellikli kartlarını kullanabilirsiniz.</li>';
+                contentpayment += '<li><span>Garanti Bankası sanal posunda:</span> Garanti bankasına ait Bonus , Shop&Miles, Miles&Smiles kartlarıyla taksit seçeneklerimizi kullanabilirsiniz. </li>';
+                contentpayment += '<li><span>Garanti Bankası sanal posunda:</span> Denizbank (Ticari kart) , TEB, ING ve Şekerbank \' ın sadece Bonus kartlarıyla taksit seçeneklerimizi kullanabilirsiniz.</li>';
+                contentpayment += '<li><span>QNB Finansbank sanal posunda :</span> HSBC banka kartlarıyla taksit seçeneklerimizi kullanabilirsiniz. (FİX KARTA + TAKSİT YAPILMIYOR.)</li>';
+                contentpayment += '</ul>';
+                contentpayment += '</div>';
+                contentpayment += '</div>';
+                //$("#PaymentWiewPage").append(contentpayment);
+                //#region Fire Virtual Pos Content Visible
+                $('#vpContent').removeClass('hide').addClass('show');
+                //#endregion
+
+                //#region Wizard 1
+                $('#wizard1').smartWizard({
+                    labelNext: 'İleri',
+                    labelPrevious: 'Geri',
+                    labelFinish: 'Onay',
+                    transitionEffect: 'fade',
+                    onFinish: onFinishCallback,
+                    onLeaveStep: leaveAStepCallback,
+                    onShowStep: onFinishCallback
+                });
+                //#endregion
+
+                //#region Fire Virtual Pos Content To SmartWizard
+                $('#vpContent').smartWizard({
+                    labelNext: 'İleri',
+                    labelPrevious: 'Geri',
+                    labelFinish: 'Onay',
+                    lodaingText: 'Yükleniyor',
+                    transitionEffect: 'slide',
+                    onFinish: onFinishCallback
+                });
+                //#endregion
+
+                //#region Fire Distance Sales Contract To Contract Agreement Content
+                //var baseHref = document.location.origin;
+                //var pageHref = baseHref + "/DistanceSalesContract.aspx";
+
+                //$.ajax({
+                //    url: pageHref,
+                //    type: "GET",
+                //    success: function (results) {
+                //        var content = '';
+                //        content += '<h2>Mesafeli Satış Sözleşmesi</h2>';
+                //        content += '' + $(results).find(".ArticleMain").html() + '';
+                //        $("#contract-agreement").html(content);
+                //    }
+                //});
+
+                //$("#contract-agreement").contract-agreementhtml("<h2>Sözleşme Metni Gelecek</h2>");
+
+                $('#txtResultDistanceSalesContract').change(function () {
+                    if ($(this).prop('checked') && $('#btnConfirm1').hasClass('disabled')) {
+                        $('#btnConfirm1').attr('onclick', 'firePointSetValue();');
+                        $('#btnConfirm1').removeClass('disabled');
+                    }
+                    else {
+                        $('#btnConfirm1').addClass('disabled');
+                        $('#btnConfirm1').attr('onclick', '');
+                    }
+                });
+
+                $('#txtPointCheckBox').change(function () {
+                    if ($(this).prop('checked')) {
+                        fireOpenPointTextBox();
+                    }
+                    else
+                        fireClosePointTextBox();
+                });
+                //#endregion
+
+                var screenWidth = screen.width;
+                //var screenHeight = screen.height;
+                $('.tooltip-box').tooltipster({
+                    position: (screenWidth <= 500) ? 'bottom' : 'right',
+                    speed: 100,
+                    arrow: false,
+                    maxWidth: (screenWidth <= 500) ? 300 : null,
+                    theme: 'tooltipster-light',
+                    animation: 'grow', // fade, grow, swing, slide, fall
+                    multiple: true,
+                    trigger: (screenWidth <= 500) ? 'click' : 'hover',
+                    contentAsHTML: true,
+                    contentCloning: false,
+                    positionTracker: true
+                });
+            });
+
+
+
+            function pageReload(paymentId) {
+                // parent.jQuery.fancybox.getInstance().close();
+                var url = window.location.href.replace('Index', '');
+                window.location.href = url + "/Result?paymentId=" + paymentId;
+            }
+
+
+            function checkAdblocker() {
+                var adBlockEnabled = false;
+                var testAd = document.createElement('div');
+                testAd.innerHTML = '&nbsp;';
+                testAd.className = 'adsbox';
+                document.body.appendChild(testAd);
+                window.setTimeout(function () {
+                    if (testAd.offsetHeight === 0) {
+                        adBlockEnabled = true;
+                    }
+                    //testAd.remove();
+                    if (adBlockEnabled) {
+                        // $('#addBlocker').fancybox({ closeBtn: false, 'showCloseButton': false });
+
+
+                        $.confirm({
+                            title: 'Dikkat',
+                            content: $('#addBlocker').html(),
+                            buttons: {
+                                formSubmit: {
+                                    text: 'Kapat',
+                                    btnClass: 'btn-blue',
+                                    keys: ['enter'],
+                                    action: function () {
+                                        window.location.reload();
+                                        //checkAdblocker();
+                                    }
+
+                                },
+                                //Vazgeç: function () {
+                                //    //close
+                                //}
+                            },
+                            scrollToPreviousElement: false,
+                            scrollToPreviousElementAnimate: false,
+                            onOpen: function () {
+
+                            }
+                        });
+
+
+
+                    }
+                }, 100);
+            }
+
+
+                //#endregion
+        </script>
+
+    }
+    <script src="~/Scripts/Pages/payment.js"></script>
+

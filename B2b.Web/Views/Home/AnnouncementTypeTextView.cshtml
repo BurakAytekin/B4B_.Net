@@ -1,0 +1,35 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@using System.Collections.Generic
+
+@model List<Announcements>
+
+<div class="widget testimonials">
+    <header class="content-title">
+        <div class="title-bg">
+            <h2 class="title font-size-25">Duyurular</h2>
+        </div>
+    </header>
+
+    <div class="testimonials-slider flexslider sidebarslider">
+        <ul class="testimonials-list clearfix">
+            @foreach (Announcements item in Model)
+            {
+                <li>
+                    <div class="testimonial-details">
+                        <header>@item.Header</header>
+                        @Html.Raw(@item.Content)
+                    </div>
+                    <figure class="clearfix">
+                        <img src="@item.Salesman.PicturePath" onerror="this.onerror = null; this.src = 'Content/images/error.png'" alt="@item.Salesman.Code">
+                        <figcaption>
+                            <a href="javascript:;">@item.Salesman.Name</a>
+                            <span>@item.CreateDate.ToString("dd.MM.yyyy") </span>
+                        </figcaption>
+                    </figure>
+                </li>
+            }
+
+
+        </ul>
+    </div>
+</div>

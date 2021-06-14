@@ -1,0 +1,163 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Koşullar";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-rule" ng-controller="ruleController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Rule">Koşullar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Koşullar</strong></h1>
+                        <ul class="controls">
+                            <li role="presentation"><a href="#" ng-click="exportToExcel()" aria-expanded="true"><i class="fa fa-file-excel-o"></i> <strong>Excel'e Kaydet</strong></a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div >
+                                    <div class="brn-group pull-right">
+                                        <button class="btn btn-default" ng-if="isEditing" ng-click="cancelChanges()">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+
+                                        <button class="btn btn-default" ng-click="add()">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </div>
+
+                                    <div loading-container="tableParams.settings().$loading">
+                                        <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                <td title="'Stok'" filter="{Product: 'text'}" sortable="'Product'" ng-switch="row.isEditing" ng-class="Product.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Product" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Product}}</span>
+
+                                                    <div class="controls" ng-class="Product.$invalid && Product.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="text" name="Product" ng-model="row.Product" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Cari'" filter="{Customer: 'text'}" sortable="'Customer'" ng-switch="row.isEditing" ng-class="Customer.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Customer" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Customer}}</span>
+
+                                                    <div class="controls" ng-class="Customer.$invalid && Customer.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="text" name="Customer" ng-model="row.Customer" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Ödeme Tipi'" filter="{PaymentType: 'number'}" sortable="'PaymentType'" ng-switch="row.isEditing" ng-class="PaymentType.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="PaymentType" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.PaymentType}}</span>
+
+                                                    <div class="controls" ng-class="PaymentType.$invalid && PaymentType.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="PaymentType" ng-model="row.PaymentType" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Isk1'" filter="{Disc1: 'number'}" sortable="'Disc1'" ng-switch="row.isEditing" ng-class="Disc1.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc1" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Disc1}}</span>
+
+                                                    <div class="controls" ng-class="Disc1.$invalid && Disc1.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="Disc1" ng-model="row.Disc1" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Isk2'" filter="{Disc2: 'number'}" sortable="'Disc2'" ng-switch="row.isEditing" ng-class="Disc2.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc2" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Disc2}}</span>
+
+                                                    <div class="controls" ng-class="Disc2.$invalid && Disc2.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="Disc2" ng-model="row.Disc2" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Isk3'" filter="{Disc3: 'number'}" sortable="'Disc3'" ng-switch="row.isEditing" ng-class="Disc3.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc3" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Disc3}}</span>
+
+                                                    <div class="controls" ng-class="Disc3.$invalid && Disc3.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="Disc3" ng-model="row.Disc3" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Isk4'" filter="{Disc4: 'number'}" sortable="'Disc4'" ng-switch="row.isEditing" ng-class="Disc4.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Disc4" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Disc4}}</span>
+
+                                                    <div class="controls" ng-class="Disc4.$invalid && Disc4.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="Disc4" ng-model="row.Disc4" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Stok Fiyatı'" filter="{PriceNumber: 'number'}" sortable="'PriceNumber'" ng-switch="row.isEditing" ng-class="PriceNumber.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="PriceNumber" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.PriceNumber}}</span>
+
+                                                    <div class="controls" ng-class="PriceNumber.$invalid && PriceNumber.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="PriceNumber" ng-model="row.PriceNumber" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td title="'Oran'" filter="{Rate: 'number'}" sortable="'Rate'" ng-switch="row.isEditing" ng-class="Rate.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Rate" demo-tracked-table-cell>
+                                                    <span ng-switch-default class="editable-text">{{row.Rate}}</span>
+
+                                                    <div class="controls" ng-class="Rate.$invalid && Rate.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                        <input type="number" name="Rate" ng-model="row.Rate" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                    </div>
+                                                </td>
+
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary btn-xs" ng-click="save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                    <button class="btn btn-default btn-xs" ng-click="cancel(row, rowForm)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+
+                                                    <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="row.isEditing = true" ng-if="!row.isEditing"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+
+                                                    <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="askForDelete(row)" ng-if="!row.isEditing"><i class="fa fa-trash"></i> <span>Sil</span></button>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+<script src="@Url.ContentVersioned("/Scripts/Admin/rule.js", HttpContext.Current.Request)"></script>
+
+}
+<script src="~/Scripts/Js/FileSaver.js" type="text/javascript"></script>
+<script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>

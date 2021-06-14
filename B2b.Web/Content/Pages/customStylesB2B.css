@@ -1,0 +1,225 @@
+﻿
+body {
+    font-family: Helvetica,Roboto,Arial,sans-serif;
+    background-color: #eeeeee !important;
+}
+
+#wrapper {
+    background-color: #eeeeee !important;
+}
+
+.custom-meterial-design {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    padding: 20px;
+    background-color: white;
+}
+
+.table-responsive {
+    overflow: scroll;
+    max-height: 500px;
+}
+
+.table-responsive-sm:hover {
+    cursor: pointer;
+}
+
+@media (max-width: 1199.98px) {
+    .table-responsive-sm {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+}
+
+.table tr td, .table tr th {
+    word-wrap: normal;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table tr th {
+   
+    word-wrap: normal;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #444645;
+    color: white;
+}
+
+.box, .visa-banner.page-payment {
+    margin: 0 0 1em;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    padding: 20px;
+}
+
+.box-empty-cart {
+    position: relative;
+}
+
+.box-content, .box-header-content {
+    padding: 20px;
+}
+
+.empty-cart {
+    margin: 50px;
+    text-align: center;
+    color: #7B7B7B;
+}
+
+.empty-cart-icon-container {
+    width: 95px;
+    height: 95px;
+    border-radius: 100%;
+    margin: auto;
+    color: #1f3d7c;
+    line-height: 95px;
+    font-size: 90px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+
+/*Custom Bread Crump Styles*/
+.breadcrumb ul li {
+    color: red;
+}
+
+#breadcrumb-container {
+    background-color: transparent !important;
+}
+
+    #breadcrumb-container a {
+        color: #000000 !important;
+        font-size: 14px;
+        padding: 0 5px;
+        color: #646464 !important;
+        font-weight: 500;
+    }
+
+.breadcrumb > .active {
+    color: #000000 !important;
+}
+
+.breadcrumb > .active, #breadcrumb-container .breadcrumb > li + li:before, #breadcrumb-container.dark .breadcrumb > .active, #breadcrumb-container.dark .breadcrumb > li + li:before {
+    color: #000000 !important;
+}
+
+
+.fileBox {
+    padding: 12px;
+    -webkit-transition: all .2s ease-in;
+    -moz-transition: all .2s ease-in;
+    transition: all .2s ease-in;
+}
+
+    .fileBox:hover {
+        -webkit-transition: all .2s ease-in;
+        -moz-transition: all .2s ease-in;
+        transition: all .2s ease-in;
+        opacity: .9;
+    }
+
+    .fileBox .fileBoxinner {
+        height: 110px;
+        display: block;
+        padding: 16px;
+        background-color: #f4f4f4;
+        border: solid 1px #e5e5e5;
+        position: relative;
+    }
+
+        .fileBox .fileBoxinner a {
+            right: 10px;
+            top: 10px;
+            position: absolute;
+        }
+
+.alert {
+    margin-bottom: 0px !important;
+}
+
+.shadowed {
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(168,168,168,1);
+    -moz-box-shadow: 0px 0px 1px 0px rgba(168,168,168,1);
+    box-shadow: 0px 0px 1px 0px rgba(168,168,168,1);
+}
+
+.shadowedV2 {
+    -webkit-box-shadow: 0px 0px 1px 0px rgba(28,28,28,0.26);
+    -moz-box-shadow: 0px 0px 1px 0px rgba(28,28,28,0.26);
+    box-shadow: 0px 0px 1px 0px rgba(28,28,28,0.26);
+}
+
+.box-header {
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.2);
+    background-color: #fff;
+    height: 40px;
+    /*padding: 0px 0px 0px 20px;*/
+    padding: 26px 0 20px 0 !important;
+    text-align: left;
+    color: #444645;
+    /*border-bottom: 1px solid #e5e5e5;*/
+}
+
+
+.boxNote {
+    color: #1f3d7c;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+#mobile-header {
+    background-color: white;
+    padding: 10px;
+    -webkit-box-shadow: 0px 3px 2px 0px rgb(182, 182, 182);
+    -moz-box-shadow: 0px 3px 2px 0px rgb(182, 182, 182);
+    box-shadow: 0px 3px 2px 0px rgb(182, 182, 182);
+}
+
+
+
+#mobile-generalSearchDiv {
+    background-color: #1f3d7c;
+    padding: 2px;
+    /*border-radius: 8px;*/
+}
+
+    #mobile-generalSearchDiv input {
+        /*border-radius: 8px 0px 0px 8px*/
+    }
+
+    #mobile-generalSearchDiv label {
+        color: white;
+        margin-top: 10px;
+    }
+
+#mobile-opptDiv {
+    padding: 15px;
+    background-color: #1f3d7c;
+}
+
+    #mobile-opptDiv button {
+        background-color: #e5b719;
+        color: #00529b;
+        font-weight: bold;
+        border: none;
+    }
+
+#slider-rev-container {
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+.input-group {
+    margin-bottom: 0PX !important;
+}
+
+
+input {
+    background-color: white !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+    border: none !important;
+}

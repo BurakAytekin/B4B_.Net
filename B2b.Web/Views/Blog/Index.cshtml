@@ -1,0 +1,109 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+<section ng-controller="BlogController">
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Blog</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container" id="blogArea">
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-12 sidebar">
+                <div class="box">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="widget category-accordion">
+                                <h3>KATEGORİLER</h3>
+                                <div class="panel-group" id="accordion">
+
+
+                                    @foreach (var item in ViewBag.BlogCategory)
+                                    {<div class="panel panel-custom">
+                                            <div class="panel-heading">
+                                                <a href="javscript:;" ng-click='setCategory("@item.Category")'>
+                                                    <h4 class="panel-title">
+                                                        @item.Category
+                                                        @*<a data-toggle="collapse" href="#collapseOne">
+                                                                <span class="icon-box">&plus;</span>
+                                                            </a>*@
+                                                    </h4>
+                                                </a>
+                                            </div>
+                                        </div><!-- End .panel -->
+                                    }
+                                </div><!-- End .panel-group -->
+                            </div><!-- End .widget -->
+
+                            @{
+                                Html.RenderAction("BlogLastView", "Partial");
+                                <!--   Yeni Ürünler-->
+                                Html.RenderAction("NewProductView", "Partial");
+                                Html.RenderAction("BlogCommentView", "Partial");
+                                Html.RenderAction("BlogTagView", "Partial");
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-12 articles-container">
+                <div class="col-md-12" ng-repeat="blogItem in blogResult" on-finish-render="ngRepeatblogResultFinished">
+                    <div id="tbResult">
+                        <div class="box">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="article-meta-date">
+                                        <span>{{blogItem.DateDay}}</span>
+                                        {{blogItem.DateMonth}}
+                                    </div><!-- End .article-meta-date -->
+
+                                    <figure class="article-media-container" ng-if="blogItem.Type == 0">
+                                        <img src="{{blogItem.Path}}" alt="">
+                                    </figure>
+                                    <figure class="article-media-container" ng-if="blogItem.Type == 1">
+                                        <div ng-bind-html="trustDangerousSnippet(blogItem.Path)"></div>
+                                    </figure>
+
+                                    <h4><a href="/Blog/BlogDetail?detail={{blogItem.Id}}">{{blogItem.Header}}</a></h4>
+
+                                    <div class="article-meta-container clearfix">
+                                        <div class="article-meta-more">
+                                            <a href="/Blog/BlogDetail?detail={{blogItem.Id}}"><span class="separator"><i class="fa fa-user"></i></span>{{blogItem.Salesman.Name}}</a>
+                                            <a href="/Blog/BlogDetail?detail={{blogItem.Id}}"><span class="separator"><i class="fa fa-comments "></i></span>{{blogItem.CommentCount}} Yorum</a>
+                                            <a href="/Blog/BlogDetail?detail={{blogItem.Id}}" ng-if="blogItem.Category != ''"><span class="separator"><i class="fa fa-tag"></i></span>{{blogItem.Category}}</a>
+                                        </div><!-- End. pull-left -->
+
+                                        <div class="article-meta-view">
+                                            <a href="/Blog/BlogDetail?detail={{blogItem.Id}}"><span class="separator"><i class="fa fa-eye "></i></span>{{blogItem.SeeCount}}</a>
+                                            <a href="/Blog/BlogDetail?detail={{blogItem.Id}}"><span class="separator"><i class="fa fa-heart"></i></span>{{blogItem.LikeCount}}</a>
+                                        </div><!-- End. pull-right -->
+                                    </div><!-- End .article-meta-container -->
+
+                                    <div class="article-content-container">
+                                        <p><div ng-bind-html="blogItem.ShortContent"></div> <a href="/Blog/BlogDetail?detail={{blogItem.Id}}">Devamını Oku... </a></p>
+                                    </div><!-- End .article-content-container -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/blog.js", HttpContext.Current.Request)"></script>
+
+<script src="@Url.Content("~/Scripts/jquery.infinite-scroll-helper.js")"></script>

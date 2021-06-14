@@ -1,0 +1,231 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@using B2b.Web.v4.Models.EntityLayer
+
+@model Tuple<List<Announcements>>
+
+@{
+    List<Announcements> sliderList = Model.Item1;
+
+}
+<section id="homecontent" ng-controller="HomeController">
+    <div id="slider-rev-container">
+        <div id="slider-rev">
+            <ul>
+                @foreach (var item in sliderList)
+                {
+                    <li data-transition="random-premium" data-slotamount="15" data-masterspeed="400" data-saveperformance="on" data-title="@item.Header">
+                        <img src="/Content/images/revslider/dummy.png" alt="@item.Header" data-lazyload="@item.PicturePathShow" data-bgposition="center center" data-bgfit="cover" data-bgrepeat="no-repeat" onerror="this.onerror = null; this.src = 'Content/images/error.png';" />
+
+                        @if (@item.Header != "")
+                        {
+                            <div class="tp-caption rev-title lfr ltr" data-x="695" data-y="68" data-speed="1600" data-start="300" data-endspeed="300">
+                                <label style="color: white; text-shadow: 0px 0px 4px black;">@item.Header</label>
+                            </div>
+                        }
+
+                        @if (@item.Content != "")
+                        {
+                            <div class="tp-caption rev-text lfr ltr" data-x="695" data-y="122" data-speed="1600" data-start="600" data-endspeed="550">@item.Content</div>
+                        }
+
+                        @if (@item.PriceStr != "#" && @item.PriceStr != "")
+                        {
+                            <div class="tp-caption rev-price randomrotate randomrotateout" data-x="360" data-y="25" data-speed="1200" data-start="2000" data-endspeed="400">@item.PriceStr</div>
+                        }
+
+                        @if (@item.Query != "#" && @item.Query != "")
+                        {
+                            <div class="tp-caption lfr ltr" data-x="695" data-y="232" data-speed="1600" data-start="900" data-endspeed="800">
+                                <a href="Search?@item.Query" class="btn btn-custom-2">Detaylı İncele</a>
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="md-margin"></div>
+        <div class="row box">
+            <div class="col-md-12">
+                <div class="col-md-9 col-sm-8 col-xs-12 main-content">
+                    <ul id="products-tabs-list" class="tab-style-1 clearfix">
+                        <li class="active"><a href="#campaign" data-toggle="tab" ng-click="getCampaignList();">KAMPANYALAR</a></li>
+                        <li><a href="#banner" data-toggle="tab" ng-click="getBannerList();">ÖNE ÇIKANLAR</a></li>
+                        @*<li><a href="#newStock" data-toggle="tab" ng-click="getNewArrivalList();">YENİ GELENLER</a></li>*@
+                    </ul>
+                    <div id="products-tabs-content" class="row tab-content">
+                        <div class="tab-pane active" id="campaign">
+                            <div class="col-md-4 col-sm-6 col-xs-12" ng-repeat="campaigItem in campaignList" on-finish-render="ngRepeatCampaignResultFinished">
+                                <div class="item item-hover">
+                                    <div class="item-image-wrapper">
+                                        <figure class="item-image-container">
+                                            <a href="/Search?searchText={{campaigItem.Code}}">
+                                                @*<img src="{{campaigItem.PicturePath}}" onerror="this.onerror = null; this.src = 'Content/images/error.png';" alt="{{campaigItem.Code}}" class="item-image">
+                                                    <img src="{{campaigItem.PicturePath}}" onerror="this.onerror = null; this.src = 'Content/images/error.png';" alt="{{campaigItem.Code}}" class="item-image-hover">*@
+                                                <img src="{{campaigItem.PicturePath}}" alt="{{campaigItem.Code}}" class="item-image">
+                                                <img src="{{campaigItem.PicturePath}}" alt="{{campaigItem.Code}}" class="item-image-hover">
+                                            </a>
+                                        </figure>
+                                        <div class="item-price-container">
+                                            <span class="old-price" ng-bind-html="campaigItem.PriceListCustomerStr"></span>
+                                            <span class="item-price" ng-bind-html="campaigItem.CampaignPriceCustomerStr"></span>
+                                        </div>
+                                        <span class="new-rect">KMP</span>
+                                        <span class="discount-rect">{{campaigItem.DiscountStr}}</span>
+                                    </div>
+                                    <div class="item-meta-container">
+                                        <h3 class="item-name">
+                                            <a href="javascript:;"><span>{{campaigItem.Name}}</span></a>
+                                        </h3>
+                                        <hr />
+                                        <div class="item-detail-part"><span>Üretici</span><span>{{campaigItem.Manufacturer}}</span></div>
+                                        <div class="item-detail-part"><span>Kodu</span><span>{{campaigItem.Code}}</span></div>
+                                        <hr />
+                                        <div class="item-action">
+                                            <div class="item-action-inner">
+                                                <input type="number" id="qtyIk{{campaigItem.Id}}" placeholder="{{campaigItem.MinOrder}}" class="form-control" />
+                                            </div>
+                                            <a class="btn btn-custom-3" href="javascript:;" ng-click="askAvailable(campaigItem.Id,3);">
+                                                <i class="fa fa-shopping-cart fa-lg"></i> Sepete Ekle
+                                            </a>
+                                            @*<div class="item-action-inner">
+                                                    <a href="#" class="btn btn-primary"><i class="fa fa-flag fa-lg"></i></a>
+                                                    <a href="#" class="btn btn-warning"><i class="fa fa-compress fa-lg"></i></a>
+                                                </div>*@
+                                            <!-- End .item-action-inner -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="banner">
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 col-xs-12" ng-repeat="productItem in bannerList" on-finish-render="ngRepeatBannerListResultFinished">
+                                    <div class="item item-hover">
+                                        <div class="item-image-wrapper">
+                                            <figure class="item-image-container">
+                                                <a href="/Search?searchText={{productItem.Code}}">
+                                                    <img src="{{productItem.PicturePath}}" onerror="this.onerror = null; this.src = 'Content/images/error.png';" alt="{{productItem.Code}}" class="item-image">
+                                                    <img src="{{productItem.PicturePath}}" onerror="this.onerror = null; this.src = 'Content/images/error.png';" alt="{{productItem.Code}}" class="item-image-hover">
+                                                </a>
+                                            </figure>
+                                            <div class="item-price-container">
+                                                <span class="old-price" ng-bind-html="productItem.PriceListCustomerStr"></span>
+                                                <span class="item-price" ng-bind-html="productItem.PriceNetCustomerStr"></span>
+                                            </div>
+                                            <span class="new-rect">BNR</span>
+                                            <span class="discount-rect">{{productItem.DiscountStr}}</span>
+                                        </div>
+                                        <div class="item-meta-container">
+                                            <h3 class="item-name">
+                                                <a href="javascript:;"><span>{{productItem.Name}}</span></a>
+                                            </h3>
+                                            <hr />
+                                            <div class="item-detail-part"><span>Üretici</span><span>{{productItem.Manufacturer}}</span></div>
+                                            <div class="item-detail-part"><span>Kodu</span><span>{{productItem.Code}}</span></div>
+                                            <hr />
+                                            <div class="item-action">
+                                                <div class="item-action-inner">
+                                                    <input type="number" id="qtyIo{{productItem.Id}}" placeholder="{{productItem.MinOrder}}" class="form-control" />
+                                                </div>
+                                                <a class="btn btn-custom-3" href="javascript:;" ng-click="askAvailable(productItem.Id,4);">
+                                                    <i class="fa fa-shopping-cart fa-lg"></i> Sepete Ekle
+                                                </a>
+                                                <div class="item-action-inner">
+                                                    <a href="#" class="btn btn-primary"><i class="fa fa-flag fa-lg"></i></a>
+                                                    <a href="#" class="btn btn-warning"><i class="fa fa-compress fa-lg"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="newStock">
+                            <div class="col-md-4 col-sm-6 col-xs-12" ng-repeat="productItem in newArrivalList" on-finish-render="ngRepeatNewArrivalResultFinished">
+                                <div class="item item-hover">
+                                    <div class="item-image-wrapper">
+                                        <figure class="item-image-container">
+                                            <a href="/Search?searchText={{productItem.Code}}">
+                                                <img src="{{productItem.PicturePath}}" onerror="this.onerror = null; this.src = 'Content/images/error.png';" alt="{{productItem.Code}}" class="item-image">
+                                                <img src="{{productItem.PicturePath}}" onerror="this.onerror = null; this.src = 'Content/images/error.png';" alt="{{productItem.Code}}" class="item-image-hover">
+                                            </a>
+                                        </figure>
+                                        <div class="item-price-container">
+                                            <span class="old-price" ng-bind-html="productItem.PriceListCustomerStr"></span>
+                                            <span class="item-price" ng-bind-html="productItem.PriceNetCustomerStr"></span>
+                                        </div><!-- End .item-price-container -->
+                                        <span class="new-rect">YENİ</span>
+                                        <span class="discount-rect">{{productItem.DiscountStr}}</span>
+                                    </div><!-- End .item-image-wrapper -->
+                                    <div class="item-meta-container">
+                                        <h3 class="item-name">
+                                            <a href="javascript:;"><span>{{productItem.Name}}</span></a>
+                                        </h3>
+                                        <hr />
+                                        <div class="item-detail-part"><span>Üretici</span><span>{{productItem.Manufacturer}}</span></div>
+                                        <div class="item-detail-part"><span>Kodu</span><span>{{productItem.Code}}</span></div>
+                                        <hr />
+                                        <div class="item-action">
+                                            <div class="item-action-inner">
+                                                <input type="number" id="qtyIy{{productItem.Id}}" placeholder="{{productItem.MinOrder}}" class="form-control" />
+                                            </div>
+                                            <a class="btn btn-custom-3" href="javascript:;" ng-click="askAvailable(productItem.Id,5);">
+                                                <i class="fa fa-shopping-cart fa-lg"></i> Sepete Ekle
+                                            </a>
+                                            <div class="item-action-inner">
+                                                <a href="#" class="btn btn-primary"><i class="fa fa-flag fa-lg"></i></a>
+                                                <a href="#" class="btn btn-warning"><i class="fa fa-compress fa-lg"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sm-margin"></div>
+
+                    <!-- Banka Bilgileri -->
+                    @{Html.RenderAction("BankAccountView", "Partial"); }
+
+                </div>
+                <div class="col-md-3 col-sm-4 col-xs-12 sidebar">
+                    <!-- Email -->
+                    @Html.Partial("~/Views/Partial/EmailNotFoundView.cshtml")
+                    @{
+                    <!-- Duyurular -->
+                        Html.RenderAction("AnnouncementTypeTextView", "Home");
+
+                    <!-- Yeni Ürünler-->
+                        Html.RenderAction("NewProductView", "Partial");
+                    }
+
+                    <!-- Taksit Bilgilendirmesi -->
+                    @Html.Partial("~/Views/Partial/InstallmentInformationView.cshtml")
+
+                    @{
+                        Html.RenderAction("ScrollingTextView", "Partial");
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="md-margin"></div>
+        <div class="row box">
+            <div class="col-md-12">
+                @{
+                    Html.RenderAction("ManufacturerView", "Partial");
+                }
+            </div>
+        </div>
+        <div class="md-margin"></div>
+        <div class="row box hidden">
+            <div class="col-md-12">
+                <div id="hidden-announcement-content"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/home.js", HttpContext.Current.Request)"></script>

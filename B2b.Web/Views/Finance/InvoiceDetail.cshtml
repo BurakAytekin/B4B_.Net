@@ -1,0 +1,133 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "InvoiceDetail";
+}
+
+<section ng-controller="financeDetailController">
+
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Fatura Detay</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12 box">
+
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <table class="table total-table">
+                            <tbody>
+                                <tr>
+                                    <td class="total-table-title">@ViewBag.CurrentCustomer.Code</td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">@ViewBag.CurrentCustomer.Name</td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">@ViewBag.CurrentCustomer.Address</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 col-md-offset-0">
+                        <table class="table total-table">
+                            <tbody>
+                                <tr>
+                                    <td class="total-table-title">Tarih</td>
+                                    <td class="text-right">@ViewBag.CustomerInvoice.Date</td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">Vade</td>
+                                    <td class="text-right">@ViewBag.CustomerInvoice.DueDate</td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">Evrak No</td>
+                                    <td class="text-right">@ViewBag.CustomerInvoice.DocumentNo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table id="pDataTable" class="table table-striped table-hover table-custom">
+                            <!---table-condensed table-striped table-hover-->
+                            <thead>
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Miktar</th>
+                                    <th>Birim</th>
+                                    <th>Fiyat</th>
+                                    <th>İsk1</th>
+                                    <th>İsk2</th>
+                                    <th>İsk3</th>
+                                    <th class="text-right">Tutar</th>
+                                    <th class="text-right">Kdv</th>
+                                </tr>
+                            </thead>
+                            <tbody class="context" ng-repeat="row in financeDetailList">
+                                <tr>
+                                    <td>{{row.ProductCode}}</td>
+                                    <td>{{row.ProductName}}</td>
+                                    <td>{{row.Quantity}}</td>
+                                    <td>{{row.Unit}}</td>
+                                    <td class="text-right">{{row.Price.toFixed(2)}}</td>
+                                    <td class="text-center">{{row.Discount1}}</td>
+                                    <td class="text-center">{{row.Discount2}}</td>
+                                    <td class="text-center">{{row.Discount3}}</td>
+                                    <td class="text-right">{{row.Total}}</td>
+                                    <td class="text-right">{{row.Vat}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="sm-margin"></div>
+                    <div class="col-md-4 col-md-offset-8">
+                        <table class="table total-table">
+                            <tbody>
+                                <tr>
+                                    <td class="total-table-title">Tutar:</td>
+                                    <td class="text-right" ng-bind-html="subTotalItem.TotalStr"></td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">İskonto:</td>
+                                    <td class="text-right" ng-bind-html="subTotalItem.DiscTotalStr"></td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">Ara Toplam:</td>
+                                    <td class="text-right" ng-bind-html="subTotalItem.SubTotalStr"></td>
+                                </tr>
+                                <tr>
+                                    <td class="total-table-title">Kdv:</td>
+                                    <td class="text-right" ng-bind-html="subTotalItem.VatTotalStr"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>Genel Toplam:</td>
+                                    <td class="text-right" ng-bind-html="subTotalItem.GeneralTotalStr"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/financeDetail.js", HttpContext.Current.Request)"></script>
+

@@ -1,0 +1,59 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+<div class="md-margin"></div><!-- Space -->
+<div class="container">
+    <div class="row" ng-controller="returnProductDetailController">
+        <div class="col-md-12">
+            <header class="content-title">
+                <h2 class="title">İade Takip</h2>
+            </header>
+        </div>
+        <div class="col-md-12">
+            <table id="pDataTable" class="table table-striped table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Fatura No</th>
+                        <th>Fatura Tarihi</th>
+                        <th>Ürün Kodu</th>
+                        <th>Ürün Adı</th>
+                        <th>Miktar</th>
+                        <th>Fiyat</th>
+                        <th>Durumu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in returnProductList">
+                        <td>{{row.CreateDate | dateFilterB2B  | date:'dd.MM.yyyy' }}</td>
+                        <td>{{row.InvoiceNumber}}</td>
+                        <td>{{row.InvoiceDate | dateFilterB2B  | date:'dd.MM.yyyy'}}</td>
+                        <td>{{row.ProductCode}}</td>
+                        <td>{{row.ProductName}}</td>
+                        <td>{{row.Quantity}}</td>
+                        <td>{{row.PriceStr}}</td>
+                        <td>{{row.StatusStr}}</td>
+                        <td class="text-right hidden">
+                            <a class="btn btn-custom btn-sm"><i class="fa fa-external-link fa-lg" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row hidden">
+        <div class="col-md-12">
+            <div class="jumbotron btn-md text-center" style="margin-top: 10px;">
+                <i class="fa fa-plus-circle text-primary"></i> Talep Oluşturuldu
+                <i class="fa fa-pause-circle text-info"></i> Ürün Bekleniyor
+                <i class="fa fa-info-circle text-warning"></i> İnceleniyor
+                <i class="fa fa-check-circle text-success"></i> Onaylandı
+                <i class="fa fa-times-circle text-danger"></i> Red edildi
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="@Url.ContentVersioned("/Scripts/Pages/returnProductDetail.js", HttpContext.Current.Request)"></script>

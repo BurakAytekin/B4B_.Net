@@ -1,0 +1,244 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .ng-table-pager {
+        display: none;
+    }
+</style>
+
+<div class="page page-announcements">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/ReportSettings">Rapor Ayarları</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="pagecontent" ng-controller="reportSettingsController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Rapor </strong>Ayarları</h1>
+                    </div>
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-4">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Rapor Listesi</h3>
+                                            </div>
+
+                                            <div class="panel-body p-5">
+                                                <div id="ulAnnouncementsSearchResult" class="list-group-wrapper">
+                                                    <ul class="list-group m-0">
+                                                        <li data-id="{{row.Id}}" ng-click="selectItem(row)" class="col-xs-12 list-group-item p-0" ng-repeat="row in reportDetailList">
+                                                            <div class="col-sm-10 p-0 m-0">
+                                                                <div class="row">
+                                                                    <div class="col-sm-2 p-5 m-0 text-center item-handle">
+                                                                        <span class="fa fa-arrows fa-lg"></span>
+                                                                    </div>
+                                                                    <div data-id="{{row.Id}}" class="col-xs-10 col-sm-10 p-5">{{row.Header}}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-2 p-5 m-0 text-center item-handle">
+                                                                <a href="javascript:;" ng-click="askForDelete(row,'deleteReport')"> <span class="fa fa-trash fa-lg"></span></a>
+                                                            </div>
+                                                        </li>
+
+                                                    </ul>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-8">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Rapor Detayları</h3>
+                                            </div>
+
+
+                                            <div class="panel-body p-10">
+
+
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Başlık</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.Header" ng-disabled="lockText" placeholder="Başlık Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Rapor Açıklaması</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.Name" ng-disabled="lockText" placeholder="Sayfa Açıklaması Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Firma</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group">
+                                                            <select ng-model="selectedItem.CompanySettings.Id" ng-disabled="lockTextCompany" style="width: 100%;" class="form-control" ng-options="item.Id as item.CompanyName for item in companySettingsList"></select>
+                                                            <span class="input-group-btn">
+                                                                <label class="btn btn-default toggle-class" ng-disabled="lockText" ng-class="{'active': selectedItem.Type == 1}" ng-click="selectedItem.Type = 1; lockTextCompany=false;" data-toggle="active" data-type="radio">Servis</label>
+                                                                <label class="btn btn-default toggle-class" ng-disabled="lockText" ng-class="{'active': selectedItem.Type == 0}" data-toggle="active" ng-click="selectedItem.Type = 0; lockTextCompany=true;" data-type="radio">Local</label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Fonsksiyon / Sorgu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group">
+                                                            <input type="text" replace="[^a-zA-Z]" ng-model="selectedItem.Function" ng-disabled="lockText" placeholder="Fonsksiyon / Sorgu Giriniz..." class="form-control">
+                                                            <span class="input-group-btn">
+                                                                <label class="btn btn-default toggle-class" ng-disabled="lockText" ng-class="{'active': selectedItem.FunctionType == 2}" ng-click="selectedItem.FunctionType = 2" data-toggle="active" data-type="radio">Query</label>
+                                                                <label class="btn btn-default toggle-class" ng-disabled="lockText" ng-class="{'active': selectedItem.FunctionType == 0}" ng-click="selectedItem.FunctionType = 0" data-toggle="active" data-type="radio">Procedure</label>
+                                                                <label class="btn btn-default toggle-class" ng-disabled="lockText" ng-class="{'active': selectedItem.FunctionType == 1}" data-toggle="active" ng-click="selectedItem.FunctionType = 1" data-type="radio">View</label>
+                                                            </span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Parametre Bilgileri</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="tile-header bg-blue dvd dvd-btm">
+                                                            <h1 class="custom-font"><strong>Parametre </strong>Bilgileri</h1>
+                                                            <ul class="controls">
+                                                                <li role="presentation"><a ng-if="isEditing" ng-click="cancelChanges()" aria-expanded="true"><span class="glyphicon glyphicon-remove mr-5"></span> İptal</a></li>
+                                                                <li role="presentation"><a ng-click="lockText ? null : addParameters()" aria-expanded="true"><span class="glyphicon glyphicon-plus mr-5"></span> Yeni</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                                <td title="'Değişken Tipi'" ng-switch="row.isEditing" ng-class="Type.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Type" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Type}}</span>
+                                                                    <div class="controls" ng-class="Type.$invalid && Type.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <select id="type-select{{row.Id}}" name="type-select" ng-model="row.Type" style="width: 100%;" class="form-control" ng-options="item as item for item in parametersTypeList"></select>
+                                                                    </div>
+                                                                </td>
+                                                                <td title="'Değişken Adı'" ng-switch="row.isEditing" ng-class="paramName.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="paramName" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.paramName}}</span>
+
+                                                                    <div class="controls" ng-class="paramName.$invalid && paramName.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <input type="text" name="Branch" ng-model="row.paramName" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                                                    </div>
+                                                                </td>
+                                                                <td title="'Değişken Başlık'" ng-switch="row.isEditing" ng-class="Header.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Header" demo-tracked-table-cell>
+                                                                    <span ng-switch-default class="editable-text">{{row.Header}}</span>
+
+                                                                    <div class="controls" ng-class="Header.$invalid && Header.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                                        <input type="text" name="AccountNumber" ng-model="row.Header" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-success btn-xs" ng-click="save(row, rowForm)" ng-if="row.isEditing">
+                                                                        <i class="fa fa-check"></i>
+
+                                                                    </button>
+
+                                                                    <button class="btn btn-default btn-xs" ng-click="cancel(row, rowForm)" ng-if="row.isEditing">
+                                                                        <i class="fa fa-remove"></i>
+                                                                    </button>
+
+                                                                    <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="row.isEditing = true" ng-if="!row.isEditing"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+
+                                                                    <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="askForDelete(row,'deleteReportParams')" ng-if="!row.isEditing"><i class="fa fa-trash"></i> <span>Sil</span></button>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaign-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Aktif</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="isActive-check" type="checkbox" ng-disabled="lockText" ng-model="selectedItem.IsActive"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaign-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">B2b Durumu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <select ng-model="selectedItem.IsB2bShow" style="width: 100%;" class="form-control" ng-options="item.Value as item.Text for item in b2bShowStatus"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Oluşturan</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.ReportCreateName" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Oluşturma Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.ReportCreateDate" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Güncelleyen</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.ReportEditName" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Güncelleme Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.ReportEditDate" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-footer text-right">
+                                                <div class="btn-group btn-group-rounded">
+                                                    <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="newRecord()"><i class="fa fa-edit"></i> <span>Yeni</span></button>
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="saveItem()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+
+    </div>
+
+</div>
+
+@section cScriptCode{
+    <script src="@Url.ContentVersioned("/Scripts/Admin/reportSettings.js", HttpContext.Current.Request)"></script>
+
+}

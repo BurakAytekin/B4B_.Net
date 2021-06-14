@@ -1,0 +1,188 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Döviz Bilgileri";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-currency" ng-controller="currencyController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="#"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="#">Tanımlamalar</a>
+                </li>
+                <li>
+                    <a href="#">Döviz Bilgileri</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" >
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12 col-md-8">
+                <!-- tile -->
+                <div class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Döviz </strong>Bilgileri</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a ng-click="updateCurrency()" aria-expanded="true"><i class="fa fa-refresh"></i> <strong>Şimdi Güncelle</strong></a></li>
+                            <li role="presentation"><a ng-click="openModal('Add',null)" aria-expanded="true"><i class="fa fa-plus"></i> <strong>Yeni</strong></a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Döviz</th>
+                                            <th class="text-center">Oran</th>
+                                            <th class="text-center">İkon</th>
+                                            <th class="text-center">Merkez Bankası Senkronizasyon</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr ng-repeat="row in currencyList ">
+                                            <td class="text-center">{{row.Type}}</td>
+                                            <td class="text-center">{{row.Rate}}</td>
+                                            <td class="text-center"><i class="{{row.Icon}}"></i></td>
+                                            <td class="text-center">
+                                                <label class="checkbox checkbox-custom-alt">
+                                                    <input type="checkbox" disabled ng-checked="row.CheckBist"><i></i>
+                                                </label>
+                                            <td>
+                                                <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b " ng-click="openModal('Edit', row)"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                                <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b" ng-click="openModal('Delete', row)"><i class="fa fa-trash"></i> <span>Sil</span></button>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <!-- /tile body -->
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+
+    <!--MODAL CURRENCY-->
+    <div id="modal-currency" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title custom-font"><strong>Döviz Bilgisi - {{addMode === true ? 'Yeni Ekle' : 'Düzenle'}}</strong></h3>
+                </div>
+                <div class="modal-body">
+
+                    <form class="form-horizontal" role="form">
+
+
+                        <div class="form-group">
+                            <label  class="col-sm-3"><strong>Döviz</strong></label>
+                            <div class="col-sm-9">
+                                <input class="form-control" ng-model="currency.Type" id="message" placeholder="Döviz Cinsini Yazınız..."  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="5"  />
+                            </div>
+                        </div>
+
+                        <hr class="line-dashed line-full">
+                        <div class="form-group">
+                            <label class="col-sm-3"><strong>Oran</strong></label>
+                            <div class="col-sm-9">
+                                <input class="form-control" ng-model="currency.Rate"  placeholder="Oran Yazınız..." />
+                            </div>
+                        </div>
+                        
+
+                        <hr class="line-dashed line-full">
+                        <div class="form-group">
+                            <label  class="col-sm-3"><strong>İkon</strong></label>
+                            <div class="col-sm-7">
+                                <input class="form-control" ng-model="currency.Icon" placeholder="Oran Yazınız..." data-parsley-id="7974" />
+
+                            </div>
+                            <div class="col-sm-2">
+                                <i class="{{currency.Icon}}"></i>
+                            </div>
+                        </div>
+
+
+                        <hr class="line-dashed line-full">
+                        <div class="form-group">
+                            <label  class="col-sm-3"><strong>Merkez Bankası Senkronizasyon</strong></label>
+                            <div class="col-sm-9">
+                                <label class="checkbox checkbox-custom-alt">
+                                    <input type="checkbox" checked="" ng-model="currency.CheckBist"><i></i> Evet
+                                </label>
+
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="addOrUpdate()">
+                        {{addMode === true ? 'Kaydet' : 'Güncelle'}}<i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!--MODAL DELETE-->
+        <div id="modal-currency-delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title custom-font"><strong>Döviz - Sil</strong></h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <p><b>{{tempRow.Type}}</b> <i class="{{tempRow.Icon}}"></i> isimli dövizi silmek istediğinize emin misiniz ?</p>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">Hayır<i class="fa fa-arrow-right"></i> </button>
+                        <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="delete(tempRow.Id)"> Evet<i class="fa fa-arrow-right"></i> </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+</div>
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/currency.js", HttpContext.Current.Request)"></script>
+ 
+}

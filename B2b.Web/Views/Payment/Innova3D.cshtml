@@ -1,0 +1,157 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.IO
+@using System.Net
+@using System.Web
+@using System.Xml
+@using B2b.Web.v4.Models.EntityLayer
+@Styles.Render("~/bundles/css")
+
+@{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+@{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+
+@{
+
+
+    System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+
+
+
+    DateTime dt = DateTime.Now;
+    string RecurringEndDate = dt.ToString("yyyy/MM/dd").Replace("/", "").Replace(".", "");
+    string XID = Guid.NewGuid().ToString().Substring(0, 25);
+    string installment = PosPaymentValue.Installment == 1 ? "" : PosPaymentValue.Installment.ToString();
+    string SuccessURL = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Innova3DP";
+    string FailureURL = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/Error?paymentId=" + PosPaymentValue.PaymentId;
+    String mpiServiceUrl = PosBankDetails.PosBank.PostUrl;
+    string MerchantId = PosBankDetails.StoreNumber;
+    string MerchantPassword = PosBankDetails.Password;
+    String post = "pan=" + PosPaymentValue.CardNumber + "&ExpiryDate=" + (PosPaymentValue.ExpYear + PosPaymentValue.ExpMounth).Trim() + "&PurchaseAmount=" + PosPaymentValue.TotalPrice.ToString("0.00").Replace(",", ".")
+        + "&Currency=" + "949" + "&BrandName=" + "100"
+        + "&device_category=0&VerifyEnrollmentRequestId=" + PosPaymentValue.PaymentId
+        + "&SessionInfo=" + PosPaymentValue.Cvc + "&MerchantId=" + MerchantId
+        + "&MerchantPassword=" + MerchantPassword + "&SuccessURL=" + SuccessURL
+        + "&FailureURL=" + FailureURL
+        + "&InstallmentCount=" + installment;
+
+
+
+    string responseText = String.Empty;
+
+    try
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(mpiServiceUrl);
+        request.Method = "POST";
+        request.Timeout = 59000;
+        request.Credentials = CredentialCache.DefaultCredentials;
+        request.ContentType = "application/x-www-form-urlencoded";
+        request.ContentLength = post.Length;
+        using (StreamWriter sw = new StreamWriter(request.GetRequestStream()))
+        {
+            sw.Write(post);
+        }
+        HttpWebResponse response2 = (HttpWebResponse)request.GetResponse();
+        using (StreamReader sr = new StreamReader(response2.GetResponseStream()))
+        {
+            responseText = sr.ReadToEnd();
+            sr.Close();
+        }
+        response2.Close();
+    }
+    catch (Exception ex)
+    {
+        Response.Write(ex.Message.ToString());
+    }
+
+
+    String response = responseText;
+
+
+    XmlDocument doc = new XmlDocument();
+    doc.Load(new StringReader(response));
+
+
+    //Status Bilgisi okunuyor
+    XmlNode StatusNode = doc.GetElementsByTagName("Status").Item(0);
+    String Status = "";
+    if (StatusNode != null)
+    { Status = StatusNode.InnerText; }
+
+    //PAReq Bilgisi okunuyor
+    XmlNode PAReqNode = doc.GetElementsByTagName("PAReq").Item(0);
+    String PaReq = "";
+    if (PAReqNode != null)
+    { PaReq = PAReqNode.InnerText; }
+
+    //ACSUrl Bilgisi okunuyor
+    XmlNode ACSUrlNode = doc.GetElementsByTagName("ACSUrl").Item(0);
+    String ACSUrl = "";
+    if (ACSUrlNode != null)
+    { ACSUrl = ACSUrlNode.InnerText; }
+
+    //Term Url Bilgisi okunuyor
+    XmlNode TermUrlNode = doc.GetElementsByTagName("TermUrl").Item(0);
+    String TermUrl = "";
+    if (TermUrlNode != null)
+    { TermUrl = TermUrlNode.InnerText; }
+
+    //MD Bilgisi okunuyor
+    XmlNode MDNode = doc.GetElementsByTagName("MD").Item(0);
+    String MD = "";
+    if (MDNode != null)
+    { MD = MDNode.InnerText; }
+
+    // Sonuç dizisi olusturuluyor
+    Dictionary<String, String> dic = new Dictionary<string, string>();
+    dic.Add("Status", Status);
+    dic.Add("PaReq", PaReq);
+    dic.Add("ACSUrl", ACSUrl);
+    dic.Add("TermUrl", TermUrl);
+    dic.Add("MerchantData", MD);
+
+
+    Dictionary<String, String> d = dic;
+
+
+
+}
+
+@if (d["Status"] == "Y")
+{
+
+    <form name="downloadForm" id="downloadForm" action="@d["ACSUrl"]" method="POST">
+
+
+        <input type="hidden" name="PaReq" value="@d["PaReq"]">
+        <input type="hidden" name="TermUrl" value="@d["TermUrl"]">
+        <input type="hidden" name="MD" value="@d["MerchantData"]">
+    </form>
+    <script type="text/javascript">
+            function hideformfunc() {
+                var frm = document.getElementById("downloadForm");
+
+                frm.submit();
+            }
+            window.onload = hideformfunc;
+    </script>
+}
+else
+{
+    <html>
+    <head>
+        <title>3D Hatası</title>
+    </head>
+    <body>
+        <h1>Kartınızın İnternetten Alışveriş yapmaya veya 3D işlem yapmaya yetkisi olup olmadıgını kontrol ediniz.!</h1><br />
+        <a href="../Home"> </a>
+    </body>
+</html>
+}
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <div class="loader" style="margin: 5px;"></div>
+    <h2>İşleminiz Yapılıyor Lütfen Bekleyiniz.</h2>
+
+</div>

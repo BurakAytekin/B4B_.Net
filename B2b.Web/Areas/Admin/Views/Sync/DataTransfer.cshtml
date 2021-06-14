@@ -1,0 +1,314 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "DataTransfer";
+}
+<style type="text/css">
+    /* The container */
+    .container {
+        display: block;
+        position: relative;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 22px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+        /* Hide the browser's default checkbox */
+        .container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    /* Create a custom checkbox */
+    .checkmark {
+        position: absolute;
+        top: -7px;
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: #eee;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .container:hover input ~ .checkmark {
+        background-color: #ccc;
+    }
+
+    /* When the checkbox is checked, add a blue background */
+    .container input:checked ~ .checkmark {
+        background-color: #2196F3;
+    }
+
+    /* Create the checkmark/indicator (hidden when not checked) */
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Show the checkmark when checked */
+    .container input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the checkmark/indicator */
+    .container .checkmark:after {
+        left: 9px;
+        top: 5px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .prettyprintBg {
+        background: url(../../../../Content/images/background_map.png) #483758;
+        background-repeat: no-repeat;
+        background-position: center;
+        color: #ffffff !important;
+    }
+
+    .cntSeparator {
+        font-size: 14px;
+        margin: 10px 7px;
+        color: #000;
+    }
+
+    .DataTransferMain {
+        display: table;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+        .DataTransferMain .DataTransferMains {
+            display: table;
+            width: 100%;
+            padding: 5px 0;
+        }
+
+            .DataTransferMain .DataTransferMains .DataTransferColumn {
+                display: table-cell;
+                vertical-align: middle;
+                padding: 0 10px;
+            }
+
+                .DataTransferMain .DataTransferMains .DataTransferColumn:nth-child(1) {
+                    width: 11%;
+                }
+
+                .DataTransferMain .DataTransferMains .DataTransferColumn:nth-child(2) {
+                    width: 17%;
+                    min-width: 230px;
+                }
+
+                .DataTransferMain .DataTransferMains .DataTransferColumn .ProcessMain {
+                    display: block;
+                }
+
+                    .DataTransferMain .DataTransferMains .DataTransferColumn .ProcessMain .progress {
+                        margin: 0;
+                    }
+</style>
+
+
+
+<div class="page page-campaign"  ng-controller="syncTransferController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">Sync</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <div class="col-md-12">
+                <section class="tile">
+                    <div class="tile-header dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Data</strong> Transfer</h1>
+                        <ul class="controls">
+                            <li class="dropdown">
+
+                                <a role="button" tabindex="0" class="dropdown-toggle settings" data-toggle="dropdown">
+                                    <i class="fa fa-cog"></i>
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                </a>
+
+                                <ul class="dropdown-menu pull-right with-arrow animated littleFadeInUp">
+
+                                    <li>
+                                        <a role="button" tabindex="0" class="tile-refresh" ng-click="setValues(true)">
+                                            <i class="fa fa-refresh"></i> Ayarlar Set Et
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a role="button" tabindex="0" class="tile-stop" ng-click="setValues(false)">
+                                            <i class="fa fa-refresh"></i> Sync Programını Durdur
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a role="button" tabindex="0" class="tile-refresh" ng-click="showTransferLogModal()">
+                                            <i class="fa fa-refresh"></i> Logları Göster
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a role="button" tabindex="0" class="tile-stop" ng-click="fireRefresh()">
+                                            <i class="fa fa-refresh"></i> Logları Tazele
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </li>
+                            <li class="dropdown">
+                                <a role="button" data-toggle="dropdown" tabindex="0" class="dropdown-toggle">
+                                    <i ng-show="isRunning" class="fa fa-wifi" style="font-size:24px;color:green"></i>
+                                    <i ng-show="!isRunning" class="fa fa-wifi" style="font-size:24px;color:#e41111"></i>
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div class="DataTransferMain">
+                        <div class="DataTransferMains" ng-repeat="row in trasnferTypeList" on-finish-render="ngRepeatTransferTypeFinished">
+                            <div class="DataTransferColumn">
+                                <button class="btn btn-ef btn-ef-1 btn-ef-1f" style="min-width:150px" id="btn{{row.TransferTypeId}}" ng-click="fireResponse(row)">
+                                    {{row.SyncTransferType.Name}}
+                                </button>
+                            </div>
+                            <div class="DataTransferColumn">
+                                <span>{{row.LastStartTime | dateFilter  | date:'dd.MM.yyyy  HH:mm'}}</span>
+                                @*<div class="countdownMain">
+                                        <div id="getting-started{{row.TransferTypeId}}"></div>
+                                    </div>*@
+                            </div>
+                            <div class="DataTransferColumn">
+                                @*<div class="ProcessMain">
+                                        <div class="progress progress-striped active">
+                                            <div class="progress-bar progress-bar-orange" id="pr{{row.TransferTypeId}}" role="progressbar" aria-valuenow="{{value}}" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="sr-only"></span>
+                                            </div>
+                                        </div>
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <pre class="prettyprint lang-js prettyprintBg" id="logShow" style="max-height:600px;min-height:600px;"></pre>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--TRANSFER DETAIL MODAL STARTS-->
+
+    <div id="modal-transferLog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-body">
+            
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <h4 class="custom-font"><strong>Veri Transfer </strong> Logu</h4>
+                                <hr />
+                                <div class="row">
+
+                                    <div class="form-group  col-md-4">
+                                        <label for="exampleInputPassword1"><strong>Başlangıç Tarihi</strong></label>
+                                        <input id="iTransferStartDate" type="datetime"  class="form-control"/>
+
+                                    </div>
+
+                                    <div class="form-group  col-md-4">
+                                        <label for="exampleInputPassword1"><strong>Bitiş Tarihi</strong></label>
+                                        <input id="iTransferEndDate" type="datetime" class="form-control" />
+
+                                    </div>
+
+
+                                    <div class="form-group  col-md-3">
+                                        <button class="btn btn-sm btn-rounded btn-success" ng-click="getTransferLog()" style="margin-top:25px;" on >
+                                            <i class="fa fa-search"></i>
+                                            Listele
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                                <hr />
+
+
+                                <ul class="list-group slim-scroll"  style="max-height: 320px; overflow: hidden; width: auto; height: 100%;">
+                                    <li class="list-group-item" ng-repeat="row in transferLog">
+                                        {{row.Message}}
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                  
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--TRANSFER DETAIL MODAL ENDS-->
+</div>
+
+<script src="/Scripts/Admin/vendor/daterangepicker/moment.min.js"></script>
+@*<script src="/Scripts/Admin/vendor/daterangepicker/daterangepicker.js"></script>*@
+<script src="/Scripts/Admin/vendor/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+
+
+
+@section cScriptCode{
+    <script src="~/Scripts/jquery.countdown.js"></script>
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/syncTransfer.js", HttpContext.Current.Request)"></script>
+   
+
+}
+
+
+
+
+
+
+

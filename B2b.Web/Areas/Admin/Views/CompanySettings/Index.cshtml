@@ -1,0 +1,244 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="page page-blog">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Blog">Haberler</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="companySettingsController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Firma Ayarları</strong></h1>
+                        <ul role="tablist" class="controls">
+                            <li role="presentation" class="active"><a href="#tList" aria-controls="tList" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-list mr-5"></i> Liste</a></li>
+                            <li role="presentation"><a href="#tNewItem" aria-controls="tNewItem" role="tab" data-toggle="tab" aria-expanded="false" ng-click="editItem(null)"><i class="fa fa-plus mr-5"></i> Yeni Kayıt</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="tab-content">
+                                    <div id="tList" role="tabpanel" class="tab-pane active">
+                                        <div loading-container="tableParams.settings().$loading" id="divTable">
+                                            <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                                <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                                    <td title="'Firma Adı'" filter="{CompanyName: 'text'}" sortable="'CompanyName'" class="text-left">
+                                                        {{row.CompanyName}}
+                                                    </td>
+                                                    <td title="'Erp Tipi'" filter="{ErpName: 'text'}" sortable="'ErpName'" class="text-left">
+                                                        {{row.ErpName}}
+                                                    </td>
+                                                    <td title="'Aktif Şirket'" filter="{SalesmanName: 'text'}" sortable="'SalesmanName'" class="text-left">
+                                                        {{row.IsActiveCompany}}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-default btn-xs" ng-click="editItem(row)"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                        <button class="btn btn-danger btn-xs" ng-click="deleteSettings(row,false)"><span class="glyphicon glyphicon-trash"></span></button>
+                                                        <button class="btn btn-info btn-xs" ng-click="duplicateSettings(row)"><span class="fa fa-copy fa-lg"></span></button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div id="tNewItem" role="tabpanel" class="tab-pane">
+                                        <div class="form-horizontal">
+                                            <div class="form-group" id="divCategory">
+                                                <label for="input01" class="col-sm-2 control-label">Erp Tipi</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ErpName" placeholder="Örn: NETSIS,LOGO,MIKRO"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Firma Adı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.CompanyName" placeholder="Örn: ERYAZ_2048"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Firma No</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedSettings.Company" placeholder="ÖRN: 1">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Db Tipi</label>
+                                                <div class="col-sm-10" >
+                                                  <select id="cbDatabaseType" ng-model="selectedSettings.DatabaseType"  class="form-control">
+                                                      <option  value="1">MsSql</option>
+                                                      <option value="2">MySql</option>
+                                                      <option value="3">Oracle</option>
+                                                      <option value="4" >FireBird</option>
+                                                  </select>
+                                                    @*<input type="text" class="form-control" ng-model="selectedSettings.DatabaseType" placeholder="ÖRN: SQL,MYSQL,ORACLE">*@
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Server Adı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ServerName" placeholder="ÖRN: localhost,192.168.1.1"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Server Ip</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ServerIp" placeholder="ÖRN: 192.168.1.1"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Db. Adı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.Database" placeholder="ÖRN: ERYAZ2018"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Db. Kullanıcı Adı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.DbUser" placeholder="ÖRN: sa"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Db. Kullanıcı Şifresi</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.DbPassword" placeholder="ÖRN: sapas"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Db.  Port</label>
+                                                <div class="col-sm-10">
+                                                    <input type="number" class="form-control " ng-model="selectedSettings.Port" placeholder="ÖRN: 1433">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Erp  Kullanıcı Adı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ErpUserName" placeholder="ÖRN: LOGO">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Erp  Kullanıcı Şifresi</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ErpPassword" placeholder="ÖRN: LOGO1234">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Servis Adresi</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ServiceAddress" placeholder="ÖRN: http://">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Servis Adresi Local</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ServiceAddressLocal" placeholder="ÖRN: http://">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="iCampaign-IsLocalCompany" class="col-sm-2 control-label">Local Servis</label>
+                                                <div class="col-sm-10">
+                                                    <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                        <input id="iOneToday-IsLocalCompany" type="checkbox" ng-model="selectedSettings.IsLocalCompany"><i class="ml-5"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="iCampaign-IsLocalCompany" class="col-sm-2 control-label">Local B2b</label>
+                                                <div class="col-sm-10">
+                                                    <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                        <input id="iOneToday-IsLocalCompany" type="checkbox" ng-model="selectedSettings.IsLocalB2b"><i class="ml-5"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Serivs  Kullanıcı Adı</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control"  ng-model="selectedSettings.ServiceUserName" placeholder="ÖRN: LOGO">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Serivs  Kullanıcı Şifresi</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" ng-model="selectedSettings.ServicePassword" placeholder="ÖRN: LOGO1234">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">Dönem</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedSettings.Donem" placeholder="ÖRN: 1">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="input01" class="col-sm-2 control-label">BranchCode</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control eryaz-numeric-input-onlynumber" ng-model="selectedSettings.BranchCode" placeholder="ÖRN: ?">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Aktif Firma</label>
+                                                <div class="col-sm-10">
+                                                    <div class="onoffswitch greensea inline-block">
+                                                        <input type="checkbox" name="isActiveCompany" class="onoffswitch-checkbox" id="isActiveCompany">
+                                                        <label class="onoffswitch-label" for="isActiveCompany">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group text-right">
+                                                <div class="col-xs-12">
+                                                    <button type="reset" class="btn btn-lightred" ng-click="clearValues()" >Temizle</button>
+                                                    <button type="button" class="btn btn-default" ng-click="saveValues(true)">Kaydet</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/companySettings.js", HttpContext.Current.Request)"></script>
+  
+}

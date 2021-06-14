@@ -1,0 +1,234 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "B2B Koşulları";
+}
+<div ng-controller="b2bRuleController">
+    <div class="page page-salesman">
+        <div class="pageheader">
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/RuleDefinition">Genel Rol Tanımlamarı</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- page content -->
+        <div class="pagecontent">
+            <div class="row">
+                <!-- col -->
+                <div class="col-sm-12">
+                    <!-- tile -->
+                    <section class="tile">
+                        <!-- tile header -->
+                        <div class="tile-header bg-blue dvd dvd-btm">
+                            <h1 class="custom-font"><strong>Genel Rol Tanımlamarı </strong></h1>
+                        </div>
+                        <!-- /tile header -->
+                        <!-- tile widget -->
+                        <div class="tile-widget">
+
+                        </div>
+                        <!-- /tile widget -->
+
+                        <hr class="m-0" />
+
+                        <!-- tile body -->
+                        <div class="tile-body p-10">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <!-- #region Nav Tabs -->
+                                    <ul role="tablist" class="nav nav-tabs tabs-dark">
+                                        <li role="presentation" class="active"><a href="#tMinOrderBasketTotal" id="aMinOrderBasketTotal" aria-controls="tMinOrderBasketTotal" role="tab" data-toggle="tab"><span class="hidden-sm">Minumum Sepet Tutarı</span> <i class="fa fa-book visible-sm"></i></a></li>
+                                        <li role="presentation"><a href="#tWebLoginProcess" aria-controls="tWebLoginProcess" role="tab" data-toggle="tab"><span class="hidden-sm">Genel Parametreler</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                        <li role="presentation"><a href="#tMaintenance" aria-controls="tMaintenance" role="tab" ng-click="gettMaintenanceStatus()" data-toggle="tab"><span class="hidden-sm">Bakım Modu</span> <i class="fa fa-cubes visible-sm"></i></a></li>
+                                     </ul>
+                                    <!-- #endregion -->
+                                    <!-- #region Tab Panes -->
+                                    <div class="tab-content">
+                                        <div id="tMinOrderBasketTotal" role="tabpanel" class="tab-pane active">
+
+
+                                            <div class="row form-horizontal form-group-sm">
+                                                <div class="col-sm-12">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Tutar Bilgisi</h3>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="alert alert-blue">
+                                                                <h5><b>Bilgilendirme:</b> Tutar alanına "0" değeri girildiği zaman minumum sepet tutarı kontrolü devre dışı kalır.</h5>
+                                                            </div>
+                                                            <div class="form-group mb-5">
+                                                                <label for="iminbasketTotal" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Minumum Sipariş Göderim Tutarı </label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                                    <input id="iminbasketTotal" type="text" ng-model="basketMinOrderTotal" placeholder="Lütfen Tutar Giriniz..." class="form-control" />
+                                                                </div>
+
+                                                            </div>
+                                                            <input type="button" class="btn btn-success btn-block mb-10" ng-click="minOrderTotalUpdate();" value="Güncelle" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div id="tWebLoginProcess" role="tabpanel" class="tab-pane">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Web Giriş İşlemleri</h3>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5 col-md-12">
+                                                                <label for="iCustomerWebLogin" class="col-xs-12 col-sm-5 col-md-3 control-label text-left hidden-xs hidden-sm">Müşteri Web Giriş Yetkisi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-9">
+                                                                    <div class="col-md-12">
+
+                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                            <input id="iCustomerWebLogin" type="checkbox" ng-model="CustomerWebLoginProcess" ng-click="updateCustomerWebLogin()" class="ng-pristine ng-untouched ng-valid ng-empty"><i></i>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-5 col-md-12">
+                                                                <label for="iSalesmanWebLogin" class="col-xs-12 col-sm-5 col-md-3 control-label text-left hidden-xs hidden-sm">Temsilci Web Giriş Yetkisi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-9">
+                                                                    <div class="col-md-12">
+
+                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                            <input id="iSalesmanWebLogin" type="checkbox" ng-model="SalesmanWebLoginProcess" ng-click="updateSalesmanWebLogin()" class="ng-pristine ng-untouched ng-valid ng-empty"><i></i>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Otomatik Sipariş Aktarımı </h3>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="form-group mb-5">
+                                                                <label for="iOrderAutomaticTransfer" class="col-xs-12 col-sm-5 col-md-3 control-label text-left hidden-xs hidden-sm">Otomatik Sipariş Aktarım Yetkisi</label>
+                                                                <div class="col-xs-12 col-sm-12 col-md-9">
+                                                                    <div class="col-md-12">
+
+                                                                        <label class="checkbox checkbox-custom-alt">
+                                                                            <input id="iOrderAutomaticTransfer" type="checkbox" ng-model="OrderAutomaticTransfer" ng-click="updateOrderAutomaticTransfer()" class="ng-pristine ng-untouched ng-valid ng-empty"><i></i>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Açılış Ekranı Seçimi </h3>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <select id="bankName-select" ng-model="StartScreen" style="width: 100%;" class="form-control" ng-change="startScreenChange(StartScreen)">
+                                                                <option value="Home">Ana Sayfa</option>
+                                                                <option value="Search">Ürün Arama Sayfası</option>
+                                                                <option value="Dashboard">Dashboard Ekranı</option>
+                                                                <option value="Cart">Sepet Sayfası</option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tMaintenance" role="tabpanel" class="tab-pane">
+
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="panel panel-default panel-filled">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Bakım Modu Ayarları</h3>
+                                                        </div>
+                                                        <div class="panel-body p-10">
+                                                            <div class="onoffswitch labeled blue inline-block">
+                                                                <input type="checkbox" ng-click="showMaintenanceWarningModal()" ng-model="maintenanceStatus" name="onoffswitch" class="onoffswitch-checkbox" id="switch10" ng-checked="maintenanceStatus">
+                                                                <label class="onoffswitch-label" for="switch10">
+                                                                    <span class="onoffswitch-inner"></span>
+                                                                    <span class="onoffswitch-switch"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+
+                                            </div>
+                                            <!-- #endregion -->
+                                        </div>
+                                    </div>
+                                    <!-- #endregion -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+
+                    </section>
+                    <!-- /tile -->
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+
+    <!-- Modals-->
+
+    <div id="modal-announcement-preview" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title custom-font">Dikkat!</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-big alert-lightred alert-dismissable fade in">
+                        <strong>Dikkat!</strong> Bu İşlemi Yapmak İstediğinize Emin Misiniz?
+                        <p>{{maintenancMessage}}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning" ng-click="cancelMaintenanceStatusChange()" data-dismiss="modal">Vazgeç</button>
+                    <button class="btn btn-danger" ng-click="updateMaintenanceStatus()">Onayla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</div>
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/b2bRule.js", HttpContext.Current.Request)"></script>
+}

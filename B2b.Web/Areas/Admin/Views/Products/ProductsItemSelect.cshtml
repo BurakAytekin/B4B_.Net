@@ -1,0 +1,93 @@
+﻿<div id="mProductItemSearch" tabindex="-1" role="dialog" aria-labelledby="mProductItemSearchLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ürün Ara</h3>
+            </div>
+            <div class="modal-body">
+                <form id="mProductItemSearchForm" role="form" method="post" class="form-horizontal form-modal">
+                    <div class="row row-fixed">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="iProductCode" class="col-xs-4 col-sm-3 control-label">Kod</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductCode" type="text" ng-model="searchItemCriteria.Code" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Ürün Kodu Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductManufacturer" class="col-xs-4 col-sm-3 control-label">Üretici</label>
+
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductManufacturer" type="text" ng-model="searchItemCriteria.Manufacturer" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Üretici Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductManufacturerCode" class="col-xs-4 col-sm-3 control-label">Üretici Kodu</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductManufacturerCode" type="text" ng-model="searchItemCriteria.ManufacturerCode" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Üretici Kodu Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="iProductName" class="col-xs-4 col-sm-3 control-label">Ürün Adı</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductName" type="text" ng-model="searchItemCriteria.Name" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Ürün Adı Giriniz..." class="form-control"   onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductShelfAddress" class="col-xs-4 col-sm-3 control-label">Raf Adresi</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <div class="input-group">
+                                        <input id="iProductShelfAddress" type="text" ng-model="searchItemCriteria.ShelfAdress" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Raf Adresi Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                        <span class="input-group-btn">
+                                            <button ng-click="productRuleOpen(2);" class="btn btn-block btn-primary btn-rounded">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="iProductRuleCode" class="col-xs-4 col-sm-3 control-label">Koşul Kodu</label>
+                                <div class="col-xs-8 col-sm-9">
+                                    <input id="iProductRuleCode" type="text" ng-model="searchItemCriteria.RuleCode" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Koşul Kodu Giriniz..." class="form-control"   onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="20"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-fixed">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                <label for="iProductGeneralText" class="col-xs-3 col-sm-2 control-label">Genel</label>
+                                <div class="col-xs-9 col-sm-10">
+                                    <input id="iProductGeneralText" type="text" ng-model="searchItemCriteria.T9Text" ng-keypress="keypressItemEventSearch($event,searchItemCriteria)" placeholder="Lütfen, Bir Kriter Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6">
+                                    @*<button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal"><i class="fa fa-arrow-left"></i> İptal</button>*@
+                                    <button type="button" ng-click="clearItemProdcut()" class="btn btn-danger btn-block">Temizle</button>
+                                </div>
+                                <div class="col-xs-6 col-sm-6">
+                                    @*<button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c"><i class="fa fa-arrow-right"></i> Gönder</button>*@
+                                    <button type="button" ng-click="generalItemSearch(searchItemCriteria)" class="btn btn-success btn-block">Ara</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="" />
+                    <div class="row row-overflow">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table id="mProductItemSearchTable" class="display compact row-border cell-border order-column stripe hover nowrap w-100"></table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

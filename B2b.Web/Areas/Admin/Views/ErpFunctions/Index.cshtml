@@ -1,0 +1,218 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="page page-announcements">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Announcements">Tanımlamalar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="pagecontent" ng-controller="erpFunctionsController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Web Servis </strong>Ayarları</h1>
+                    </div>
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="iProductCampaignType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Servis Tipi</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="comboTransferType" style="width: 100%;" class="form-control" ng-model="selectedType" ng-change="loadErpFunctionDetail(selectedType)">
+                                                <option value disabled>Seçiniz</option>
+                                                <option value="{{row.Id}}" ng-repeat="row in erpFunctionTypeList">{{row.Name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-6">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-4">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Servis Listesi</h3>
+                                            </div>
+
+                                            <div class="panel-body p-5">
+                                                <div id="ulAnnouncementsSearchResult" class="list-group-wrapper">
+                                                    <ul class="list-group m-0">
+                                                        <li data-id="{{row.Id}}" ng-click="selectItem(row)" class="col-xs-12 list-group-item p-0" ng-repeat="row in erpFunctionDetailList">
+                                                            <div class="col-sm-10 p-0 m-0">
+                                                                <div class="row">
+                                                                    <div class="col-sm-2 p-5 m-0 text-center item-handle">
+                                                                        <span class="fa fa-arrows fa-lg"></span>
+                                                                    </div>
+                                                                    <div data-id="{{row.Id}}" class="col-xs-10 col-sm-10 p-5">{{row.Header}}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-2 p-5 m-0 text-center item-handle">
+                                                                <a href="javascript:;" ng-click="deleteErpFunctionDetail(false,row)"> <span class="fa fa-trash fa-lg"></span></a>
+                                                                <a href="javascript:;" ng-click="duplicateErpFunctionDetail(row)"> <span class="fa fa-copy"></span></a>
+                                                            </div>
+                                                        </li>
+                                                      
+                                                    </ul>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-8">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Servis Detayları</h3>
+                                            </div>
+
+
+                                            <div class="panel-body p-10">
+
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Firma</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <select ng-model="selectedItem.SettingsId" style="width: 100%;" class="form-control" ng-options="item.Id as item.CompanyName for item in companySettingsList"></select>
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Başlık</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.Header" placeholder="Başlık Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Sayfa Açıklaması</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.Name" placeholder="Sayfa Açıklaması Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Fonsksiyon / Sorgu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group">
+                                                            <input type="text" ng-model="selectedItem.FunctionName" placeholder="Fonsksiyon / Sorgu Giriniz..." class="form-control">
+                                                            <span class="input-group-btn">
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.FunctionType == 0}" ng-click="selectedItem.FunctionType = 0" data-toggle="active" data-type="radio">Procedure</label>
+                                                                <label class="btn btn-default toggle-class" ng-class="{'active': selectedItem.FunctionType == 1}" data-toggle="active" ng-click="selectedItem.FunctionType = 1" data-type="radio">Query</label>
+                                                            </span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Fatura Detay</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.FunctionDetailInvoice" placeholder="Sayfa Açıklaması Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Çek Detay</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.FunctionDetailChceck" placeholder="Sayfa Açıklaması Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaign-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Aktif</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="isActive-check" type="checkbox" ng-model="selectedItem.IsActive"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div id="pnlCampaignDescription" class="form-group mb-5">
+                                                    <label for="iCampaignDescription" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Açıklama</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <textarea id="iCampaignDescription" ng-model="selectedItem.Notes" rows="5" cols="0" placeholder="Açıklama Giriniz..." class="form-control"></textarea>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Oluşturan</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.CreateName" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Oluşturma Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.CreateDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Güncelleyen</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.LastUpdateName" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-5">
+                                                    <label for="iCampaignDiscount" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Güncelleme Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="text" ng-model="selectedItem.EditDate | dateFilter  | date:'dd.MM.yyyy  hh:mm'" disabled class="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-footer text-right">
+                                                <div class="btn-group btn-group-rounded">
+                                                    <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="newRecord()"><i class="fa fa-edit"></i> <span>Yeni</span></button>
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-click="saveItem()"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+
+    </div>
+
+</div>
+
+@section cScriptCode{
+<script src="@Url.ContentVersioned("/Scripts/Admin/erpFunctions.js", HttpContext.Current.Request)"></script>
+
+}

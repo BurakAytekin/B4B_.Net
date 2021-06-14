@@ -1,0 +1,94 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Katalog Bağlantıları";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-catalog-link">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/CatalogLink">Katalog Bağlantıları</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="catalogLinkController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Katalog </strong>Bağlantıları</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a ng-if="isEditing" ng-click="cancelChanges()" aria-expanded="true"><span class="glyphicon glyphicon-remove mr-5"></span> İptal</a></li>
+                            <li role="presentation"><a ng-click="add()" aria-expanded="true"><span class="glyphicon glyphicon-plus mr-5"></span> Yeni</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div loading-container="tableParams.settings().$loading">
+                                    <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                            <td title="'Başlık'" filter="{Header: 'text'}" sortable="'Header'" ng-switch="row.isEditing" ng-class="Header.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Header" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Header}}</span>
+                                                <div class="controls" ng-class="Header.$invalid && Header.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Header" ng-model="row.Header" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" />
+                                                </div>
+                                            </td>
+                                            <td title="'Link'" filter="{Link: 'text'}" sortable="'Link'" ng-switch="row.isEditing" ng-class="Link.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Link" demo-tracked-table-cell>
+                                                <a href="{{row.Link}}" target="_blank"> <span ng-switch-default class="editable-text">{{row.Link}}</span></a>
+                                                <div class="controls" ng-class="Link.$invalid && Link.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Link" ng-model="row.Link" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                </div>
+                                            </td>
+                                            <td title="'Aktiflik'" filter="{IsActive: 'boolean'}" sortable="'IsActive'" ng-switch="row.isEditing" ng-class="IsActive.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="IsActive" demo-tracked-table-cell>
+                                                <input ng-switch-default type="checkbox" class="editable-text" name="IsActive" disabled ng-checked="row.IsActive" />
+                                                <div class="controls" ng-class="IsActive.$invalid && IsActive.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="checkbox" name="IsActive" ng-model="row.IsActive" class="" required />
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-primary btn-xs" ng-click="save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                <button class="btn btn-default btn-xs" ng-click="cancel(row, rowForm)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+                                                <button class="btn btn-default btn-xs" ng-click="row.isEditing = true" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                <button class="btn btn-danger btn-xs" ng-click="askForDelete(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/catalogLink.js", HttpContext.Current.Request)"></script>
+
+}

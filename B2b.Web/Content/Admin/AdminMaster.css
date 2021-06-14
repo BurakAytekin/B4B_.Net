@@ -1,0 +1,23 @@
+﻿.scrolling {
+    height: 600px;
+    overflow-y: scroll;
+}
+
+.fa-reports:before {
+    content: "\f201";
+}
+
+.fa.fa-reports {
+    margin-right: 3px;
+}
+
+.report-header-main {
+    display: table;
+    width: 100%;
+}
+
+    .report-header-main .report-cols {
+        display: table-cell;
+        width: 50%;
+        vertical-align: middle;
+    }

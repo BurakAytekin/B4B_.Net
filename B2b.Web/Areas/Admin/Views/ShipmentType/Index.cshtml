@@ -1,0 +1,90 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Gönderi Şekilleri";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-shipment-type">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/ShipmentType">Gönderi Şekilleri</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="shipmentTypeController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Gönderi </strong>Şekilleri</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a ng-if="isEditing" ng-click="cancelChanges()" aria-expanded="true"><span class="glyphicon glyphicon-remove mr-5"></span> İptal</a></li>
+                            <li role="presentation"><a ng-click="add()" aria-expanded="true"><span class="glyphicon glyphicon-plus mr-5"></span> Yeni</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div loading-container="tableParams.settings().$loading">
+                                    <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                            <td title="'İsim'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Name" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Name}}</span>
+
+                                                <div class="controls" ng-class="Name.$invalid && Name.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Name" ng-model="row.Name" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                </div>
+                                            </td>
+                                            <td title="'Öncelik'" filter="{Priority: 'number'}" sortable="'Priority'" ng-switch="row.isEditing" ng-class="Priority.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Priority" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Priority}}</span>
+
+                                                <div class="controls" ng-class="Priority.$invalid && Priority.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="number" name="Name" ng-model="row.Priority" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="5" />
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-primary btn-xs" ng-click="save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                <button class="btn btn-default btn-xs" ng-click="cancel(row, rowForm)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+                                                <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="row.isEditing = true" ng-if="!row.isEditing"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+
+                                                <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b btn-sm" ng-click="askForDelete(row)" ng-if="!row.isEditing"><i class="fa fa-trash"></i> <span>Sil</span></button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+<script src="@Url.ContentVersioned("/Scripts/Admin/shipmenType.js", HttpContext.Current.Request)"></script>
+
+}

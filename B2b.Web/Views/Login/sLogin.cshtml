@@ -1,0 +1,68 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head >
+    <title>Hoşgeldiniz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- Classic Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon/classic/favicon.ico" />
+    <link rel="icon" type="image/png" href="images/favicon/classic/favicon.png" />
+
+    <!-- Css Reset Style -->
+    <link rel="stylesheet" type="text/css" href="css/plugin/normalize.css" />
+
+    <!-- Plugins Style Library -->
+    <link rel="stylesheet" type="text/css" href="css/common/jquery-ui.min.css" />
+
+    <!-- General All Style -->
+    <link rel="stylesheet" type="text/css" href="css/common/general-all.css" />
+
+    <!-- Style Codes -->
+    <link rel="stylesheet" type="text/css" href="css/pages/login-pages.css" />
+    <link rel="stylesheet" type="text/css" href="css/pages/slogin.css" />
+</head>
+<body class="slogin">
+    <form id="formSlogin" >
+        <asp:ScriptManager ID="smSlogin"/>
+
+        <div class="slogin-full">
+            <div class="slogin-box">
+                <div class="slogin-logo">
+                    <div class="img-wrapper">
+                        <asp:Image ID="imgLogo" AlternateText="Logo" ImageUrl="~/images/logo.png"  />
+                    </div>
+                </div>
+
+                <div class="slogin-content">
+                    <div class="slogin-rows">
+                        <asp:Literal ID="ltrlClosed"  />
+
+                        <div class="slogin-row warning">
+                            Lütfen masaüstü uygulamamızdan giriş yapınız...
+                        </div>
+
+                        <div class="slogin-row warning">
+                            <a href="http://eryazsoftware.com.tr/projeler">Programımız yüklü değilse indirmek için tıklayınız...</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Script Library -->
+        <script type="text/javascript" src="js/common/jquery-1.12.4.min.js"></script>
+        <!--<script type="text/javascript" src="js/common/jquery-ui.min.js"></script>-->
+        <!-- Plugin Script Library -->
+        <script type="text/javascript" src="js/plugin/browserdetect.js"></script>
+
+        <!-- Script Codes -->
+        <script type="text/javascript" language="javascript" src="js/pages/slogin.js"></script>
+    </form>
+</body>
+</html>

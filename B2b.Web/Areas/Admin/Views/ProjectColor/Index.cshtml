@@ -1,0 +1,202 @@
+﻿
+@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Renk Tanımı";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-currency" ng-controller="colorController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="javascript:;"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Tanımlamalar</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Tema Tanımı</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12 col-md-8">
+                <!-- tile -->
+                <div class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Tema </strong>Bilgileri</h1>
+                        <ul class="controls">
+                            @*<li role="presentation"><a ng-click="updateCurrency()" aria-expanded="true"><i class="fa fa-refresh"></i> <strong>Şimdi Güncelle</strong></a></li>*@
+                            <li role="presentation"><a ng-click="openModal('Add',null)" aria-expanded="true"><i class="fa fa-plus"></i> <strong>Yeni</strong></a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Adı</th>
+                                            <th class="text-center">Renk 1</th>
+                                            <th class="text-center">Renk 2</th>
+                                            <th class="text-center">Menü Rengi</th>
+                                            <th class="text-center">Varsayılan</th>
+                                            <th class="text-center">İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr ng-repeat="row in colorList ">
+                                            <td class="text-center">{{row.Header}}</td>
+                                            <td class="text-center"><i style="color:{{row.Color1}}" class="fa fa-stop"></i>{{row.Color1}}</td>
+                                            <td class="text-center"><i style="color:{{row.Color2}}" class="fa fa-stop"></i>{{row.Color2}}</td>
+                                            <td class="text-center"><i style="color:{{row.Color3}}" class="fa fa-stop"></i>{{row.Color3}}</td>
+                                            <td class="text-center">
+                                                <label class="checkbox checkbox-custom-alt">
+                                                    <input type="checkbox" disabled ng-checked="row.IsActive"><i></i>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-default btn-rounded btn-ef btn-ef-5 btn-ef-5b " ng-click="openModal('Edit', row)"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+                                                <button class="btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b" ng-click="openModal('Delete', row)"><i class="fa fa-trash"></i> <span>Sil</span></button>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- /tile body -->
+                    <!-- /tile -->
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+            </div>
+        </div>
+
+        <!--MODAL CURRENCY-->
+        <div id="modal-currency" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title custom-font"><strong>Tema Bilgisi - {{addMode === true ? 'Yeni Ekle' : 'Düzenle'}}</strong></h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <form class="form-horizontal" role="form">
+
+
+                            <div class="form-group">
+                                <label class="col-sm-3"><strong>Başlık</strong></label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" ng-model="selectedColor.Header" id="message" placeholder="Tema Adı" onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="100" />
+                                </div>
+                            </div>
+
+                            <hr class="line-dashed line-full">
+                            <div class="form-group">
+                                <label class="col-sm-3"><strong>Renk 1</strong></label>
+                                <div class="col-sm-9">
+                                    <input type="color" ng-model="selectedColor.Color1" name="color" />
+                                    <input type="text" ng-model="selectedColor.Color1" class="form-control" />
+                                </div>
+                            </div>
+                            <hr class="line-dashed line-full">
+                            <div class="form-group">
+                                <label class="col-sm-3"><strong>Renk 2</strong></label>
+                                <div class="col-sm-9">
+                                    <input type="color"
+                                           ng-model="selectedColor.Color2" />
+                                    <input type="text" ng-model="selectedColor.Color2" class="form-control" />
+                                </div>
+                            </div>
+                            <hr class="line-dashed line-full">
+                            <div class="form-group">
+                                <label class="col-sm-3"><strong>Renk 3</strong></label>
+                                <div class="col-sm-9">
+                                    <input type="color"
+                                           ng-model="selectedColor.Color3" />
+                                    <input type="text" ng-model="selectedColor.Color3" class="form-control" />
+                                </div>
+                            </div>
+
+
+                            <hr class="line-dashed line-full">
+
+
+                            <hr class="line-dashed line-full">
+                            <div class="form-group">
+                                <label class="col-sm-3"><strong>Varsayılan Yap</strong></label>
+                                <div class="col-sm-9">
+                                    <label class="checkbox checkbox-custom-alt">
+                                        <input type="checkbox" checked="" ng-model="selectedColor.IsActive"><i></i> Evet
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="addOrUpdate()">
+                            {{addMode === true ? 'Kaydet' : 'Güncelle'}}<i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL DELETE-->
+        <div id="modal-currency-delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title custom-font"><strong>Tema - Sil</strong></h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <p><b>{{selectedColor.Header}}</b>  isimli rengi silmek istediğinize emin misiniz ?</p>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-lightred btn-ef btn-ef-4 btn-ef-4c" data-dismiss="modal">Hayır<i class="fa fa-arrow-right"></i> </button>
+                        <button class="btn btn-success btn-ef btn-ef-3 btn-ef-3c" ng-click="delete()"> Evet<i class="fa fa-arrow-right"></i> </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+
+    <script src="@Url.ContentVersioned("/Scripts/Admin/b2bColor.js", HttpContext.Current.Request)"></script>
+
+}

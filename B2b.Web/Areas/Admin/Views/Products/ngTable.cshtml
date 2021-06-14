@@ -1,0 +1,224 @@
+﻿<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ngTable2</title>
+    <style>
+        .demoTable td:last-child {
+            min-width: 90px;
+        }
+
+        /** Editable table
+        ------------------------- */
+
+        .editable-table > tbody > tr > td {
+            padding: 4px;
+        }
+
+        .editable-text {
+            padding-left: 4px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            display: inline-block;
+        }
+
+        .editable-table tbody > tr > td > .controls {
+        }
+
+        .editable-input {
+            padding-left: 3px;
+        }
+
+            .editable-input.input-sm {
+                height: 30px;
+                font-size: 14px;
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+    </style>
+</head>
+<div ng-controller="demoController as demo">
+    <div loading-container="demo.tableParams.settings().$loading">
+        <table ng-table="demo.tableParams" class="table table-condensed table-bordered table-striped" ng-form="demo.tableForm" disable-filter="demo.isAdding" demo-tracked-table="demo.tableTracker">
+            <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                <td title="'Name'" filter="{name: 'text'}" sortable="'name'" ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name" demo-tracked-table-cell>
+                    <span ng-switch-default class="editable-text">{{row.name}}</span>
+                    <div class="controls" ng-class="name.$invalid && name.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                        <input type="text" name="name" ng-model="row.name" class="editable-input form-control input-sm" required />
+                    </div>
+                </td>
+                <td title="'Age'" filter="{age: 'number'}" sortable="'age'" ng-switch="row.isEditing" ng-class="age.$dirty ? 'bg-warning' : ''" ng-form="age" demo-tracked-table-cell>
+                    <span ng-switch-default class="editable-text">{{row.age}}</span>
+                    <div class="controls" ng-class="age.$invalid && age.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                        <input type="number" name="age" ng-model="row.age" class="editable-input form-control input-sm" required />
+                    </div>
+                </td>
+                <td title="'Money'" filter="{money: 'number'}" sortable="'money'" ng-switch="row.isEditing" ng-class="money.$dirty ? 'bg-warning' : ''" ng-form="money" demo-tracked-table-cell>
+                    <span ng-switch-default class="editable-text">{{row.money}}</span>
+                    <div class="controls" ng-class="money.$invalid && money.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                        <input type="number" name="money" ng-model="row.money" class="editable-input form-control input-sm" required />
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-xs" ng-click="demo.save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                    <button class="btn btn-default btn-xs" ng-click="demo.cancel(row, rowForm)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+                    <button class="btn btn-default btn-xs" ng-click="row.isEditing = true" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span></button>
+                    <button class="btn btn-danger btn-xs" ng-click="demo.del(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        "use strict";
+
+        adminApp.controller("demoController", demoController);
+        demoController.$inject = ["NgTableParams", "$scope"];
+        var simpleList = [
+            { name: "a", age: 50, money: 100, id: 11, hidden: "w" },
+            { name: "b", age: 50, money: 100, id: 12, hidden: "y" },
+            { name: "s", age: 50, money: 100, id: 13, hidden: "ğ" },
+            { name: "h", age: 50, money: 100, id: 14, hidden: "i" },
+            { name: "f", age: 50, money: 100, id: 15, hidden: "t" },
+            { name: "t", age: 50, money: 100, id: 16, hidden: "rr" },
+            { name: "j", age: 50, money: 100, id: 17, hidden: "whfg" },
+            { name: "y", age: 50, money: 100, id: 18, hidden: "wfghfgh" },
+            { name: "6", age: 50, money: 100, id: 19, hidden: "dfdgw" },
+            { name: "h", age: 50, money: 100, id: 20, hidden: "wfhgf" }
+        ];
+
+        function demoController(NgTableParams, $scope) {
+            this.cols = [{
+                field: "name",
+                title: "Name",
+                filter: {
+                    name: "text"
+                },
+                sortable: "name",
+                dataType: "text"
+            },
+            {
+                field: "age",
+                title: "Age",
+                filter: {
+                    age: "number"
+                },
+                sortable: "age",
+                dataType: "number"
+            },
+            {
+                field: "money",
+                title: "Money",
+                filter: {
+                    money: "number"
+                },
+                sortable: "money",
+                dataType: "number"
+            },
+            {
+                field: "action",
+                title: "",
+                dataType: "command"
+            }];
+
+            this.tableParams = new NgTableParams({}, {
+                filterDelay: 0,
+                dataset: angular.copy(simpleList)
+                //getData: function (params) {
+                //    return IssueService.query({
+                //        page: params.page(),
+                //        per_page: params.count(),
+
+                //        state: 'all',
+                //        username: 'esvit',
+                //        repo: 'ng-table'
+                //    }, function (data, headersGetter) {
+                //        var headers = headersGetter(),
+                //          pages = headers['link'].split(', '),
+                //          totalPages = 1;
+
+                //        // get total pages count
+                //        angular.forEach(pages, function (page) {
+                //            var parts = page.split(' rel=');
+                //            if (parts[1] == '"last"') {
+                //                totalPages = parseInt(parts[0].match(/page=(\d+)/)[1], 10);
+                //            }
+                //            if (totalPages == 1 && parts[1] == '"prev"') { // if last page
+                //                totalPages = parseInt(parts[0].match(/page=(\d+)/)[1], 10) + 1;
+                //            }
+                //        });
+                //        params.total(totalPages * params.count());
+                //        return data;
+                //    }).$promise;
+                //}
+            });
+
+            var originalData = angular.copy(simpleList);
+
+            this.cancel = cancel;
+            this.del = del;
+            this.save = save;
+
+            //////////
+
+            function cancel(row, rowForm) {
+                var originalRow = resetRow(row, rowForm);
+                angular.extend(row, originalRow);
+            }
+
+            function del(row) {
+                //_.remove(this.tableParams.settings().dataset, function (item) {
+                //    return row === item;
+                //});
+                //  return row;
+                //    var data = this.tableParams.data;
+                var index = this.tableParams.data.indexOf(row);
+                this.tableParams.data.splice(index, 1);
+                // this.tableParams.reload();
+                this.tableParams = new NgTableParams({}, {
+                    filterDelay: 0,
+                    dataset: angular.copy(this.tableParams.data)
+                });
+                /*   this.tableParams.reload().then(function (data) {
+                       if (data.length === 0 && this.tableParams.total() > 0) {
+                           this.tableParams.page(this.tableParams.page() - 1);
+                           this.tableParams.reload();
+                       }
+                   });*/
+            }
+
+            function resetRow(row, rowForm) {
+                row.isEditing = false;
+                //$scope.rowForm.$setPristine(true);
+                // self.tableTracker.untrack(row);
+                for (let i in originalData) {
+                    if (originalData[i].id === row.id) {
+                        return originalData[i]
+                    }
+                }
+            }
+
+            function save(row, rowForm) {
+                alert(row.age);
+
+                var originalRow = resetRow(row, rowForm);
+                angular.extend(originalRow, row);
+            }
+        }
+    })();
+
+        //(function () {
+        //    "use strict";
+
+        //    angular.module("myApp").factory("IssueService", ["$resource", function ($resource) {
+        //        return $resource("https://api.github.com/repos/:username/:repo/issues", {
+        //            state: "open"
+        //        }, {
+        //            query: {
+        //                method: "GET",
+        //                isArray: true
+        //            }
+        //        });
+        //    }]);
+        //})();
+</script>

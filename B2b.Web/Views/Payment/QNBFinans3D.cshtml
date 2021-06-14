@@ -1,0 +1,64 @@
+﻿@Styles.Render("~/bundles/css")
+@using B2b.Web.v4.Models.EntityLayer
+@using B2b.Web.v4.Models.Helper
+@{ PosBankDetail PosBankDetails = (PosBankDetail)HttpContext.Current.Session["PosBankDetails"]; }
+@{ PosPaymentValue PosPaymentValue = (PosPaymentValue)HttpContext.Current.Session["PosPaymentValue"]; }
+@{
+    String _MbrId = "5";
+    String _MerchantID = PosBankDetails.StoreNumber;
+    String _MerchantPass = PosBankDetails._3dSecureKey;
+    String _UserCode = PosBankDetails.ApiUser;
+    String _UserPass = PosBankDetails.Password;
+    String _SecureType = "3DModel";    //3D Pay Hosting Modeli için bu alan "3DPay" olarak gönderilmelidir.
+    String _TxnType = "Auth";
+    String _InstallmentCount = PosPaymentValue.Installment.ToString();
+    String _Currency = "949";
+    String _OkUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/QNBFinans3DP";
+    String _FailUrl = Request.Url.Scheme + "://" + Request.Url.Authority + "/Payment/QNBFinans3DP";
+    String _OrderId = PosPaymentValue.PaymentId;
+    String _PurchAmount = PosPaymentValue.TotalPrice.ToString().Replace(".", ",");
+    String _Lang = "TR";
+    String _Pan = PosPaymentValue.CardNumber.Replace(" ", "").Trim();
+    String _Expiry = PosPaymentValue.ExpMounth.Trim() + PosPaymentValue.ExpYear.Trim();
+    String _Cvv2 = PosPaymentValue.Cvc;
+    String _MOTO = "0";
+    String _Rnd = DateTime.Now.ToString();
+
+    String _Str = _MbrId + _OrderId + _PurchAmount + _OkUrl + _FailUrl + _TxnType + _InstallmentCount + _Rnd + _MerchantPass;
+    System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(_Str);
+    byte[] hashingbytes = sha.ComputeHash(bytes);
+    String _Hash = Convert.ToBase64String(hashingbytes);
+}
+
+<form id="virtualposform" method="post" action="@PosBankDetails.PosBank.XmlUrl">
+    <input type="hidden" id="MbrId" name="MbrId" runat="server" value="@_MbrId" />
+    <input type="hidden" id="MerchantID" name="MerchantID" value="@_MerchantID" />
+    <input type="hidden" id="MerchantPass" name="MerchantPass" value="@_MerchantPass" />
+    <input type="hidden" id="UserCode" name="UserCode" value="@_UserCode" />
+    <input type="hidden" id="UserPass" name="UserPass" value="@_UserPass" />
+    <input type="hidden" id="SecureType" name="SecureType" value="@_SecureType" />
+    <input type="hidden" id="TxnType" name="TxnType" value="@_TxnType" />
+    <input type="hidden" id="InstallmentCount" name="InstallmentCount" value="@_InstallmentCount" />
+    <input type="hidden" id="Currency" name="Currency" value="@_Currency" />
+    <input type="hidden" id="OkUrl" name="OkUrl" value="@_OkUrl" />
+    <input type="hidden" id="FailUrl" name="FailUrl" value="@_FailUrl" />
+    <input type="hidden" id="OrderId" name="OrderId" value="@_OrderId" />
+    <input type="hidden" id="PurchAmount" name="PurchAmount" value="@_PurchAmount" />
+    <input type="hidden" id="Lang" name="Lang" value="@_Lang" />
+    <input type="hidden" id="Pan" name="Pan" value="@_Pan" />
+    <input type="hidden" id="Expiry" name="Expiry" value="@_Expiry" />
+    <input type="hidden" id="Cvv2" name="Cvv2" value="@_Cvv2" />
+    <input type="hidden" id="MOTO" name="MOTO" value="@_MOTO" />
+    <input type="hidden" id="Rnd" name="Rnd" value="@_Rnd" />
+    <input type="hidden" id="Hash" name="Hash" value="@_Hash" />
+</form>
+
+<script type="text/javascript">
+    function hideformfunc() {
+        var frm = document.getElementById("virtualposform");
+        frm.submit();
+    }
+    window.onload = hideformfunc;
+</script>
+

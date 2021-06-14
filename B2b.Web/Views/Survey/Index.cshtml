@@ -1,0 +1,41 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@model List<SurveyCs>
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<section>
+    <div id="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="#">Anketler</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-md-12 box">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-3">
+
+                        <div class="card text-center">
+                            <div class="card-header">
+                                Anket
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Header</h5>
+                                @Html.ActionLink("Cevapla", "Detail", "Survey", new { Id = item.Id }, new { @class = "btn btn-success" })
+                            </div>
+                            <div class="card-footer text-muted">
+                                @item.CreateDate
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</section>

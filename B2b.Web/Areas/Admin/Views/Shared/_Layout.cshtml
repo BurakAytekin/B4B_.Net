@@ -1,0 +1,624 @@
+﻿@using B2b.Web.v4.Models.EntityLayer
+@{ Salesman AdminCurrentSalesman = (Salesman)HttpContext.Current.Session["AdminSalesman"]; }
+@{ CompanyInformation CompanyInformationItem = (CompanyInformation)HttpContext.Current.Session["CompanyInformationItem"]; }
+@{ List<AuthorityGroup> AuthoritySalesman = (List<AuthorityGroup>)HttpContext.Current.Session["AuthoritySalesman"]; }
+
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>
+        @CompanyInformationItem.Title - @ViewBag.Title
+    </title>
+    @* Eryaz Bilgi Teknolojileri - Yönetim Paneli *@
+    <link rel="icon" type="image/ico" href="@Url.Content("~/Content/Admin/images/favicon.ico")" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @RenderSection("cMetas", required: false)
+    @Styles.Render("~/bundles/Admin/cssPlugins")
+    @RenderSection("cStyleLibrary", required: false)
+    @Styles.Render("~/bundles/Admin/cssMain")
+    @*@Styles.Render("~/bundles/cssKendo")*@
+    @RenderSection("cStyleCode", required: false)
+
+
+    @Scripts.Render("~/bundles/Admin/jQuery")
+
+    @Scripts.Render("~/bundles/Admin/jsModernizr")
+
+    @Scripts.Render("~/bundles/angular")
+
+    @Scripts.Render("~/bundles/jsAdminApp")
+
+
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/AdminMaster.css" />
+</head>
+<body id="minovate" ng-app="adminApp" class="appWrapper" ng-cloak>
+
+    <!--HIDDEN VALUES -->
+    <div hidden="hidden">
+        <input type="text" ng-init="Salesman.Id = '@AdminCurrentSalesman.Id'" />
+    </div>
+
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">Tarayıcı sürümünüz çok eski olduğu için web sitesini görüntüleyemiyorsunuz. Lütfen <a href="http://browsehappy.com/">buraya tıklayarak</a> tarayıcınızı yükseltin.</p>
+    <![endif]-->
+
+    <div id="wrap" class="animsition">
+        <!-- #region Header -->
+        <section id="header">
+            <header class="clearfix">
+                <!-- #region Branding -->
+                <div class="branding">
+                    <a class="brand" href="/Admin">
+                        <span>@CompanyInformationItem.Title</span>
+                    </a>
+                    <a role="button" tabindex="0" class="offcanvas-toggle visible-xs-inline"><i class="fa fa-bars"></i></a>
+                </div>
+                <!-- #endregion -->
+                <!-- #region Search -->
+                <div class="search" id="main-search">
+                    <input type="text" class="form-control underline-input" placeholder="Ara...">
+                </div>
+                <!-- #endregion -->
+                <!-- #region Right-Side Navigation -->
+                <ul class="nav-right pull-right list-inline">
+                    <li class="dropdown notifications">
+                        @if (AuthoritySalesman.Where(x => x.Id == 81).Count() == 0)
+                        {
+                            <a href="/Report">
+                                <i class="fa fa-reports"></i><span>Raporlar</span>
+                            </a>
+                        }
+                    </li>
+
+                    <li class="dropdown nav-profile">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="@Url.Content(@AdminCurrentSalesman.PicturePath)" alt="" class="img-circle size-30x30">
+                            <span> @AdminCurrentSalesman.Code<i class="fa fa-angle-down"></i></span>
+                        </a>
+                        <ul role="menu" class="dropdown-menu dropdown-menu-customer animated littleFadeInRight">
+                            <li class="dropdown-menu-customer-row">
+                                <div class="dropdown-menu-customer-img-wrapper">
+                                    <img src="@Url.Content(@AdminCurrentSalesman.PicturePath)" class="dropdown-menu-customer-img" />
+                                </div>
+                                <div class="dropdown-menu-customer-text">@AdminCurrentSalesman.Name</div>
+                            </li>
+                            @*<li>
+                                <a role="button" tabindex="0">
+                                    <i class="fa fa-user"></i>Profil
+                                </a>
+                            </li>
+                            <li>
+                                <a role="button" tabindex="0">
+                                    <i class="fa fa-check"></i>Görevler
+                                </a>
+                            </li>
+                            <li>
+                                <a role="button" tabindex="0">
+                                    <i class="fa fa-cog"></i>Ayarlar
+                                </a>
+                            </li>*@
+                            <li class="divider m-0"></li>
+                            <li>
+                                <a href="@Url.Action("Locked","Login")" role="button" tabindex="0">
+                                    <i class="fa fa-lock"></i>Kilitle
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Logout","Login")" role="button" tabindex="0">
+                                    <i class="fa fa-sign-out"></i>Çıkış
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="toggle-right-sidebar" onclick="angular.element(document.getElementById('divActiveUser')).scope().showUser()">
+                        <a role="button" tabindex="0">
+                            <i class="fa fa-comments"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!-- End .pull-right -->
+                <!-- #endregion -->
+            </header>
+        </section>
+        <!-- #endregion -->
+        <!-- #region Controls -->
+        <div id="controls" ng-controller="activeUserController">
+            <!-- #region Sidebar Content -->
+            <aside id="sidebar">
+                <div id="sidebar-wrap">
+                    <div role="tablist" class="panel-group slim-scroll">
+                        <div class="panel panel-default">
+                            <div role="tab" class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#sidebarNav">
+                                        Navigasyon <i class="fa fa-angle-up"></i>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="sidebarNav" class="panel-collapse collapse in" role="tabpanel">
+                                <div class="panel-body">
+                                    <!-- #region Navigation Content -->
+                                    <ul id="navigation">
+                                        <li><a href="/Admin"><i class="fa fa-dashboard"></i> <span>Gösterge Paneli</span></a></li>
+                                        @if (AuthoritySalesman.Where(x => x.Id == 2).Count() == 0)
+                                        {
+                                            <li><a href="/Admin/Products"><i class="fa fa-th"></i> <span>Ürünler</span></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 3).Count() == 0)
+                                        {
+                                            <li>
+                                                <a href="#"><i class="fa fa-users"></i> <span>Müşteriler</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 4).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Customers"><i class="fa fa-caret-right"></i> Müşteri Listesi</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 5).Count() == 0)
+                                                    {
+                                                        @*<li><a href="/Admin/Customers"><i class="fa fa-caret-right"></i> Müşteri Notları</a></li>*@
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 6).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Contact/SuggestionRequest"><i class="fa fa-caret-right"></i> İstek Öneri Şikayet</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 7).Count() == 0)
+                                        {
+                                            <li><a href="/Admin/Salesmans"><i class="fa fa-user-secret"></i> <span>Temsilciler</span></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 8).Count() == 0)
+                                        {
+                                            <li><a href="/Admin/Rule"><i class="fa fa-briefcase"></i> <span>Koşullar</span></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 9).Count() == 0)
+                                        {
+
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-certificate"></i> <span>Siparişler</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 10).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Orders"><i class="fa fa-certificate"></i> <span>Sipariş Listesi</span></a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 11).Count() == 0)
+                                                    {
+                                                        @*<li><a href="/Admin/Orders/BackOrders"><i class="fa fa-caret-right"></i> Bakiye Siparişler</a></li>*@
+                                                    }
+                                                </ul>
+                                            </li>
+
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 12).Count() == 0)
+                                        {
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-certificate"></i> <span>Kampanyalar</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 13).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Campaign"><i class="fa fa-certificate"></i> <span>Ürün Kampanyalar</span></a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 14).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Coupon"><i class="fa fa-caret-right"></i> Kupon Tanımlamaları</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 85).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Campaign/ProductOfDay"><i class="fa fa-caret-right"></i> Günün Ürünü</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 15).Count() == 0)
+                                        {
+                                            @*<li><a href="/Admin/Messages"><i class="fa fa-envelope-o"></i> <span>Mesajlar</span></a></li>*@
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-gears"></i> <span>İşlemler</span> @*<span class="badge bg-lightred">9</span>*@</a>
+                                                <ul>
+
+                                                    <li>
+                                                        <a role="button" tabindex="0"><i class="fa fa-caret-right"></i> Sanal Pos</a>
+                                                        <ul>
+                                                            @if (AuthoritySalesman.Where(x => x.Id == 16).Count() == 0)
+                                                            {
+                                                                <li><a href="/Admin/Payment/PaymentList"><i class="fa fa-caret-right"></i> Sanalpos Listesi</a></li>
+                                                            }
+                                                            @if (AuthoritySalesman.Where(x => x.Id == 17).Count() == 0)
+                                                            {
+                                                                <li><a href="/Admin/Payment"><i class="fa fa-caret-right"></i> Sanalpos Tanımlama</a></li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 18).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Collecting"><i class="fa fa-caret-right"></i> Tahsilat Listesi</a></li>
+                                                    }
+                                                    <li>
+                                                        <a role="button" tabindex="0"><i class="fa fa-caret-right"></i> T9</a>
+                                                        <ul>
+                                                            @if (AuthoritySalesman.Where(x => x.Id == 19).Count() == 0)
+                                                            {
+                                                                <li><a role="button" href="/Admin/T9" tabindex="0"><i class="fa fa-caret-right"></i> Veriler</a></li>
+                                                            }
+                                                            @if (AuthoritySalesman.Where(x => x.Id == 20).Count() == 0)
+                                                            {
+                                                                <li><a role="button" tabindex="0"><i class="fa fa-caret-right"></i> Oluştur</a></li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 21).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/ReturnProcess"><i class="fa fa-caret-right"></i> İade İşlemleri</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 22).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/ApproveComments"><i class="fa fa-caret-right"></i> Onaylamalar</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 23).Count() == 0)
+                                        {
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-list-ul"></i> <span>Tanımlamalar</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 24).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Announcements"><i class="fa fa-caret-right"></i> Duyurular</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 25).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Currency"><i class="fa fa-caret-right"></i> Döviz Bilgileri</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 26).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/ShipmentType"><i class="fa fa-caret-right"></i> Gönderi Şekilleri</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 27).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/BankAccount"><i class="fa fa-caret-right"></i> Banka Bilgileri</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 28).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/FileList"><i class="fa fa-caret-right"></i> Dosyalar</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 29).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/CatalogLink"><i class="fa fa-caret-right"></i> Katalog Bağlantıları</a></li>
+                                                    }
+                                                    @*<li><a href="/Admin/Contact"><i class="fa fa-caret-right"></i> İletişim Bilgileri</a></li>*@
+                                                    <li>
+                                                        <a role="button" tabindex="0" href="/Admin/Contact"><i class="fa fa-caret-right"></i> İletişim ve Sözleşmeler</a>
+                                                        <ul>
+                                                            @if (AuthoritySalesman.Where(x => x.Id == 30).Count() == 0)
+                                                            {
+                                                                <li><a role="button" tabindex="0" href="/Admin/Contact"><i class="fa fa-caret-right"></i> İletişim Bilgileri</a></li>
+                                                            }
+                                                            @if (AuthoritySalesman.Where(x => x.Id == 31).Count() == 0)
+                                                            {
+                                                                <li><a role="button" tabindex="0" href="/Admin/Footer"><i class="fa fa-caret-right"></i> Sözleşmeler ve Koşullar</a></li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 32).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/FAQ/List"><i class="fa fa-caret-right"></i> Sık Sorulan Sorular</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 83).Count() == 0)
+                                                    {
+                                                        <li>
+                                                            <a role="button" tabindex="0" href="/Admin/DocumentDraft"><i class="fa fa-caret-right"></i> Sanalpos Şablonu</a>
+                                                            @*<ul>
+                                                                    <li><a role="button" tabindex="0" href="/Admin/DocumentDraft"><i class="fa fa-caret-right"></i> Sanalpos Şablonu</a></li>
+                                                                    <li><a role="button" tabindex="0" href="/Admin/DocumentDraft/Collecting"><i class="fa fa-caret-right"></i> Tahsilat Şablonu</a></li>
+                                                                    <li><a role="button" tabindex="0" href="/Admin/DocumentDraft/Order"><i class="fa fa-caret-right"></i> Sipariş Şablonu</a></li>
+                                                                    <li><a role="button" tabindex="0" href="/Admin/DocumentDraft/Finance"><i class="fa fa-caret-right"></i> Cari Hareket Şablonu</a></li>
+                                                                </ul>*@
+
+                                                        </li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 33).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Blog"><i class="fa fa-caret-right"></i> Blog</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 34).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Warehouse"><i class="fa fa-caret-right"></i> Depo Tanımlamaları</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 35).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/RuleDefinition"><i class="fa fa-caret-right"></i> Rol Tanımlamaları</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 36).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/TaskList"><i class="fa fa-caret-right"></i> Görev Listesi</a></li>
+                                                    }
+
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 82).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/ProjectColor"><i class="fa fa-caret-right"></i> B2b Tema Ayarı</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 83).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/EmailSettings"><i class="fa fa-caret-right"></i> Mail Tanımlamaları</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 37).Count() == 0)
+                                        {
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-ellipsis-h"></i> <span>Toplu İşlemler</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 38).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/BatchProcessing"><i class="fa fa-caret-right"></i> Görsel Girişi</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 39).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Campaign/ImportExcelCampaign"><i class="fa fa-caret-right"></i> Kampanya Giriş</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 40).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/BatchProcessing/Rule"><i class="fa fa-caret-right"></i> Koşul Girişi</a></li>
+                                                    }
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 41).Count() == 0)
+                                                    {
+
+                                                        <li><a href="/Admin/BatchOperations"><i class="fa fa-caret-right"></i> Toplu Değişiklikler</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 42).Count() == 0)
+                                        {
+                                            <li><a href="/Admin/Sync/DataTransfer"><i class="fa fa-th"></i> <span>Sync</span></a></li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 43).Count() == 0)
+                                        {
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-ellipsis-h"></i> <span>Yetkilendirme</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 44).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Authority"><i class="fa fa-caret-right"></i> Yetki Tipleri</a></li>
+                                                    } @if (AuthoritySalesman.Where(x => x.Id == 45).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Authority/Definition"><i class="fa fa-caret-right"></i> Yetki Tanımı</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (AuthoritySalesman.Where(x => x.Id == 46).Count() == 0)
+                                        {
+                                            <li>
+                                                <a role="button" tabindex="0"><i class="fa fa-reports"></i> <span>Raporlar</span></a>
+                                                <ul>
+                                                    @if (AuthoritySalesman.Where(x => x.Id == 47).Count() == 0)
+                                                    {
+                                                        <li><a href="/Admin/Report/Seritakip"><i class="fa fa-caret-right"></i> Mars Entegrasyon Seri Listesi</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <!-- #endregion -->
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (AdminCurrentSalesman.IsSystemUser == true)
+                        {
+                            <div class="panel panel-default">
+                                <div role="tab" class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" href="#systemSettings">
+                                            Sistem Ayarları <i class="fa fa-angle-up"></i>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="systemSettings" class="panel-collapse collapse in" role="tabpanel">
+                                    <div class="panel-body">
+                                        <!-- #region Navigation Content -->
+                                        <ul id="navigation">
+                                            <li><a href="/Admin/CompanySettings"><i class="fa fa-th"></i> <span>Firma Ayarları</span></a></li>
+                                            <li><a href="/Admin/ReportSettings"><i class="fa fa-th"></i> <span>Rapor Ayarları</span></a></li>
+                                            <li><a href="/Admin/Sync"><i class="fa fa-dashboard"></i> <span>Sync Tanımları</span></a></li>
+                                            <li><a href="/Admin/ErpFunctions"><i class="fa fa-th"></i> <span>Web Servis Ayarları</span></a></li>
+                                            <li><a href="/Admin/Integration"><i class="fa fa-th"></i> <span>Data Paylaşım</span></a></li>
+                                            <li><a href="/Admin/SystemAnalysis"><i class="fa fa-th"></i> <span>Sistem Analiz</span></a></li>
+                                            <li><a href="/Admin/CheckList"><i class="fa fa-th"></i> <span>Sistem CheckList</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+            </aside>
+            <!-- #endregion -->
+            <!-- #region Rightbar Content -->
+            <aside id="rightbar">
+                <div role="tabpanel" id="divActiveUser">
+                    <!-- #region Nav Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#history" aria-controls="history" role="tab" data-toggle="tab"><i class="fa fa-user"></i></a></li>
+                        <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+                        @*<li role="presentation"><a href="#friends" aria-controls="friends" role="tab" data-toggle="tab"><i class="fa fa-heart"></i></a></li>
+                            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab"><i class="fa fa-cog"></i></a></li>*@
+                    </ul>
+                    <!-- #endregion -->
+                    <!-- #region Tab Panes -->
+                    <div class="tab-content">
+
+                        <div role="tabpanel" class="tab-pane hidden" id="settings">
+                            <h6><strong>Sohbet</strong> Ayarları</h6>
+                            <ul class="settings">
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Çevrimdışı Kul. Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-offline" checked="">
+                                                <label class="onoffswitch-label" for="show-offline">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Tam Adı Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-fullname">
+                                                <label class="onoffswitch-label" for="show-fullname">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Geçmiş Aktif</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-history" checked="">
+                                                <label class="onoffswitch-label" for="show-history">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Lokasyonları Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-location" checked="">
+                                                <label class="onoffswitch-label" for="show-location">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Bildirimler</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-notifications">
+                                                <label class="onoffswitch-label" for="show-notifications">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-group">
+                                        <label class="col-xs-8 control-label">Okunmamış Sayısını Göster</label>
+                                        <div class="col-xs-4 control-label">
+                                            <div class="onoffswitch greensea">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="show-unread" checked="">
+                                                <label class="onoffswitch-label" for="show-unread">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="history">
+                            <h6><strong>Çevrimiçi</strong> Temsilciler<span class="badge badge-info" id="activeSalesmanLengt"></span></h6>
+                            <ul id="salesmanActiveList"></ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="users">
+                            <h6><strong>Çevrimiçi</strong> Müşteriler <span class="badge badge-info" id="activeCustomerLengt"></span></h6>
+                            <ul id="customerActiveList"></ul>
+                        </div>
+
+                    </div>
+                    <!-- #endregion -->
+                </div>
+            </aside>
+            <!-- #endregion -->
+        </div>
+        <!-- #endregion -->
+        <!-- #region Content -->
+        <section id="content">
+            @RenderBody()
+        </section>
+        <!-- #endregion -->
+    </div>
+
+    <div class="custom-loading-wrapper">
+        <div class="custom-loading">
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/Admin/jsBootstrap")
+    @Scripts.Render("~/bundles/Admin/jsPlugins")
+    @RenderSection("cScriptLibrary", required: false)
+    @Scripts.Render("~/bundles/Admin/jsMain")
+
+    @*@Scripts.Render("~/bundles/jsKendo")*@
+    @RenderSection("cScriptCode", required: false)
+    @RenderSection("cModals", required: false)
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script type="text/javascript">
+        (function (b, o, i, l, e, r) {
+            b.GoogleAnalyticsObject = l; b[l] || (b[l] =
+                function () { (b[l].q = b[l].q || []).push(arguments) }); b[l].l = +new Date;
+            e = o.createElement(i); r = o.getElementsByTagName(i)[0];
+            e.src = 'https://www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e, r)
+        }(window, document, 'script', 'ga'));
+        ga('create', 'UA-XXXXX-X', 'auto'); ga('send', 'pageview');
+
+
+        //  setTimeout(function () { checkConnectTime(); }, 5000)
+
+        $("#minovate").mouseover(function () {
+            resetConnectionTime();
+            checkConnectTime();
+        });
+
+
+    </script>
+
+    <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script type="text/javascript" src="~/signalr/hubs"></script>
+    @Scripts.Render("~/Scripts/Admin/activeUser.js")
+</body>
+</html>

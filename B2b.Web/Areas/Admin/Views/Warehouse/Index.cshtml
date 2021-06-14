@@ -1,0 +1,93 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Depo Tanımlamaları";
+}
+
+@section cStyleLibrary{}
+
+@section cStyleCode{}
+
+<div class="page page-warehouse">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouse">Depo Tanımlamaları</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="warehouseController">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Depo </strong>Tanımlamaları</h1>
+                        <ul class="controls">
+                            <li role="presentation"><a ng-if="isEditing" ng-click="cancelChanges()" aria-expanded="true"><span class="glyphicon glyphicon-remove mr-5"></span> İptal</a></li>
+                            <li role="presentation"><a ng-click="add()" aria-expanded="true"><span class="glyphicon glyphicon-plus mr-5"></span> Yeni</a></li>
+                        </ul>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div loading-container="tableParams.settings().$loading">
+                                    <table ng-table="tableParams" class="table table-condensed table-bordered table-striped" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+                                        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                                            <td title="'Depo Kodu'" filter="{Code: 'text'}" sortable="'Code'" ng-switch="row.isEditing" ng-class="Code.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Code" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Code}}</span>
+                                                <div class="controls" ng-class="Type.$invalid && Code.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Code" ng-model="row.Code" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="10" />
+                                                </div>
+                                            </td>
+                                            <td title="'Depo Adı'" filter="{Name: 'text'}" sortable="'Name'" ng-switch="row.isEditing" ng-class="Name.$dirty ? 'bg-warning text-left' : 'text-left'" ng-form="Name" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Name}}</span>
+                                                <div class="controls" ng-class="Name.$invalid && Name.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="text" name="Name" ng-model="row.Name" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" />
+                                                </div>
+                                            </td>
+                                            <td title="'Öncelik'" filter="{Priority: 'text'}" sortable="'Priority'" ng-switch="row.isEditing" ng-class="Priority.$dirty ? 'bg-warning text-center' : 'text-center'" ng-form="Priority" demo-tracked-table-cell>
+                                                <span ng-switch-default class="editable-text">{{row.Priority}}</span>
+                                                <div class="controls" ng-class="Priority.$invalid && Priority.$dirty ? 'has-error' : ''" ng-switch-when="true">
+                                                    <input type="number" name="Priority" ng-model="row.Priority" class="editable-input form-control input-sm" required ng-keypress="keypressEvent($event,row)" />
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-primary btn-xs" ng-click="save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+                                                <button class="btn btn-default btn-xs" ng-click="cancel(row, rowForm)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+                                                <button class="btn btn-default btn-xs" ng-click="row.isEditing = true" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                <button class="btn btn-danger btn-xs" ng-click="askForDelete(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+</div>
+
+@section cScriptLibrary{}
+
+@section cScriptCode{
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/warehouse.js", HttpContext.Current.Request)"></script>
+}

@@ -1,0 +1,150 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+<div class="page page-campaign">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">Toplu Koşul Girişi</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="importExcelRule">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Koşul </strong>Listesi</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal p-0">
+                            <div class="row">
+
+
+
+
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <div class="row">
+                                                <div class="col-sm-9">
+                                                    <div class="form-group">
+                                                        <div class="col-xs-12">
+                                                            <div class="col-md-7">
+                                                                <label class="btn btn-default btn-block">
+                                                                    <input id="rule-excel-selector" type="file" style="display: none;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                                                    <i class="fa fa-folder-open-o fa-fw"></i> Gözat
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-md-5">
+                                                                <button class="btn btn-block btn-warning btn-rounded" ng-click="uploadExcelFile()">
+                                                                    <span class="hidden-sm">Yükle</span> <i class="fa fa-search visible-sm"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <button class="btn btn-block btn-success btn-rounded" ng-click="saveRuleExcel()">
+                                                        <span class="hidden-sm">Kaydet</span> <i class="fa fa-search visible-sm"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-block btn-primary btn-rounded" ng-click="dowlandFile()">
+                                                <span class="hidden-sm">Örnek Dosya indir</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Excelden Okunan Satırlar</h3>
+                                            </div>
+
+                                            <div class="panel-body p-5">
+                                                <div id="pnlCampaignsSearchResult" class="table-responsive">
+                                                    <table class="table table-condensed table-bordered table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">Stok</th>
+                                                                <th class="text-center">Cari</th>
+                                                                <th class="text-center">Ödeme Tipi</th>
+                                                                <th class="text-center">Isk 1</th>
+                                                                <th class="text-center">Isk 2</th>
+                                                                <th class="text-center">Isk 3</th>
+                                                                <th class="text-center">Isk 4</th>
+                                                                <th class="text-center">Stok Fiyat Num</th>
+                                                                <th class="text-center">Zam Oranı</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="row in uploadlist">
+
+                                                                <td class="text-left">{{row.Product}}</td>
+                                                                <td class="text-center">{{row.Customer}}</td>
+                                                                <td class="text-right">{{row.PaymentType}}</td>
+                                                                <td class="text-left">{{row.Disc1}}</td>
+                                                                <td class="text-left">{{row.Disc2}}</td>
+                                                                <td class="text-left">{{row.Disc3}}</td>
+                                                                <td class="text-left">{{row.Disc4}}</td>
+                                                                <td class="text-center">{{row.PriceNumber}}</td>
+                                                                <td class="text-center">{{row.Rate}}</td>
+
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+
+</div>
+@section cScriptCode{
+
+    <script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>
+    <script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/importExcelRule.js", HttpContext.Current.Request)"></script>
+   
+}

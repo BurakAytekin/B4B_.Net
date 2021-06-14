@@ -1,0 +1,273 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+
+<div class="page page-campaign">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Campaign">Toplu Kampanya Listesi</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent" ng-controller="importExcelCampaign">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Kampanya </strong>Listesi</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal p-0">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="iCampaignType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Tipi</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="iCampaignType" class="form-control mb-0" ng-model="campaignSearchCriteria.Type" convert-to-number>
+                                                <option value="1">Net Fiyat Kampanyası</option>
+                                                <option value="2">Brüt Fiyat Kampanyası</option>
+                                                <option value="3">İskonto Kampanyası</option>
+                                                <option value="4">Kademeli Net Fiyat Kampanyası</option>
+                                                <option value="5">Kademeli İskonto Kampanyası</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <label for="txtStartDate" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Baş. Tar.</label>
+                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                    <input id="txtStartDate" name="txtStartDate" class="form-control custom-datetime" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <label for="txtEndDate" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bit. Tar.</label>
+                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                    <input id="txtEndDate" class="form-control custom-datetime" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-primary btn-rounded" ng-click="dowlandFile()">
+                                                <span class="hidden-sm">Örnek Dosya indir</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="col-md-6">
+                                                <label class="btn btn-default">
+                                                    <input id="campaing-excel-selector" type="file" style="display:none;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                                    <i class="fa fa-folder-open-o fa-fw"></i> Gözat
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button class="btn btn-block btn-warning btn-rounded" ng-click="uploadCartExcelFile()">
+                                                    <span class="hidden-sm">Yükle</span> <i class="fa fa-search visible-sm"></i>
+                                                </button>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-success btn-rounded" ng-click="saveCampaignExcel()">
+                                                <span class="hidden-sm">Kaydet</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <ul id="campaignUploadDetails" role="tablist" class="nav nav-tabs tabs-dark">
+                                    <li role="presentation" class="active">
+                                        <a id="link-campaignUploadDetails-successTab" href="#tCampaignSuccessList" aria-controls="tCampaignSuccessList" role="tab" data-toggle="tab">
+                                            <span class="hidden-sm">Başarılı Kayıtlar</span>
+                                            <i class="fa fa-book visible-sm"></i>
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a id="link-campaignUploadDetails-errorTab" href="#tCampaigneErrorList" aria-controls="tCampaigneErrorList" role="tab" data-toggle="tab">
+                                            <span class="hidden-sm">Başarısız Kayıtlar</span>
+                                            <i class="fa fa-book visible-sm"></i>
+                                        </a>
+                                    </li>
+
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div id="tCampaignSuccessList" role="tabpanel" class="tab-pane active">
+
+                                        <div class="row form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="panel panel-blue panel-filled1">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Excelden Okunan Başarılı Satırlar</h3>
+                                                    </div>
+
+                                                    <div class="panel-body p-5">
+                                                        <div id="pnlCampaignsSearchResult" class="table-responsive">
+                                                            <table class="table table-condensed table-bordered table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-center">Ürün Kodu</th>
+                                                                        <th class="text-center">Ürün Adı</th>
+                                                                        <th class="text-center" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">Fiyat Peşin</th>
+                                                                        <th class="text-center" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">Fiyat Vadeli</th>
+                                                                        <th class="text-center" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">Döviz Peşin</th>
+                                                                        <th class="text-center" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">Döviz Vadeli</th>
+                                                                        <th class="text-center">Min. Adet</th>
+                                                                        <th class="text-center" ng-show="campaignSearchCriteria.Type === 3 || campaignSearchCriteria.Type === 5">İskonto</th>
+                                                                        <th class="text-center">Kampanya Kodu</th>
+                                                                        <th class="text-center">Kampanya Kodu 2</th>
+                                                                        <th class="text-center">Kampanya Miktarı</th>
+                                                                        <th class="text-center">Kampanya Son Miktar</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr ng-repeat="row in uploadlist.SuccessList">
+
+                                                                        <td class="text-left">{{row.ProductCode}}</td>
+                                                                        <td class="text-center">{{row.ProductName}}</td>
+                                                                        <td class="text-right" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">{{row.PriceP}}</td>
+                                                                        <td class="text-right" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">{{row.PriceV}}</td>
+                                                                        <td class="text-left" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">{{row.CurrencyP}}</td>
+                                                                        <td class="text-left" ng-show="campaignSearchCriteria.Type === 1 || campaignSearchCriteria.Type === 4">{{row.CurrencyV}}</td>
+                                                                        <td class="text-center">{{row.MinOrder}}</td>
+                                                                        <td class="text-center" ng-show="campaignSearchCriteria.Type === 3 || campaignSearchCriteria.Type === 5">{{row.Discount}}</td>
+                                                                        <td class="text-center">{{row.Code}}</td>
+                                                                        <td class="text-center">{{row.Code2}}</td>
+                                                                        <td class="text-center">{{row.TotalQuantity}}</td>
+                                                                        <td class="text-center">{{row.EndQuantity}}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div id="tCampaigneErrorList" role="tabpanel" class="tab-pane">
+
+                                        <div class="row form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="panel panel-blue panel-filled1">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Excelden Okunan Hatalı Satırlar</h3>
+                                                    </div>
+
+                                                    <div class="panel-body p-5">
+                                                        <div id="pnlCampaignsSearchResult" class="table-responsive">
+                                                            <table class="table table-condensed table-bordered table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-center">Ürün Kodu</th>
+                                                                        <th class="text-center">Fiyat Peşin</th>
+                                                                        <th class="text-center">Fiyat Vadeli</th>
+                                                                        <th class="text-center">Döviz Peşin</th>
+                                                                        <th class="text-center">Döviz Vadeli</th>
+                                                                        <th class="text-center">Min. Adet</th>
+                                                                        <th class="text-center">İskonto</th>
+                                                                        <th class="text-center">Kampanya Kodu</th>
+                                                                        <th class="text-center">Kampanya Kodu 2</th>
+                                                                        <th class="text-center">Kampanya Miktarı</th>
+                                                                        <th class="text-center">Kampanya Son Miktar</th>
+                                                                        <th class="text-center">Hata</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr ng-repeat="row in uploadlist.ErrorList">
+
+                                                                        <td class="text-left">{{row.ProductCode}}</td>
+                                                                        <td class="text-right">{{row.PriceP}}</td>
+                                                                        <td class="text-right">{{row.PriceV}}</td>
+                                                                        <td class="text-left">{{row.CurrencyP}}</td>
+                                                                        <td class="text-left">{{row.CurrencyV}}</td>
+                                                                        <td class="text-center">{{row.MinOrder}}</td>
+                                                                        <td class="text-center">{{row.Discount}}</td>
+                                                                        <td class="text-center">{{row.Code}}</td>
+                                                                        <td class="text-center">{{row.Code2}}</td>
+                                                                        <td class="text-center">{{row.TotalQuantity}}</td>
+                                                                        <td class="text-center">{{row.EndQuantity}}</td>
+                                                                        <td class="text-center alert-danger">{{row.Message}}</td>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+
+</div>
+@section cScriptCode{
+
+    <script src="~/Scripts/Js/jszip.js" type="text/javascript"></script>
+    <script src="~/Scripts/Js/xlsx.full.min.js" type="text/javascript"></script>
+
+<script src="@Url.ContentVersioned("/Scripts/Admin/importExcelCampaign.js", HttpContext.Current.Request)"></script>
+
+}

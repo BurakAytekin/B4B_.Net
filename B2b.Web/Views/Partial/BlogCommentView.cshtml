@@ -1,0 +1,26 @@
+﻿<div class="widget testimonials">
+    <h3>Yorumlar</h3>
+
+    <div class="testimonials-slider flexslider sidebarslider">
+        <ul class="testimonials-list clearfix">
+            @foreach (var item in ViewBag.BlogCommentList)
+            {
+                <li>
+                    <div class="testimonial-details">
+                        <header>@item.Header</header>
+                        @item.Content
+                    </div><!-- End .testimonial-details -->
+                    <figure class="clearfix">
+                        <img src="@item.Customer.Users.AvatarPath" style="width:55px" alt="Computer Ceo">
+                        <figcaption>
+                            <span>@(((DateTime)item.CreateDate).ToString("dd.MM.yyyy"))</span>
+                        </figcaption>
+                    </figure>
+                </li>
+            }
+
+           
+        </ul>
+    </div><!-- End .testimonials-slider -->
+
+</div><!-- End .widget -->

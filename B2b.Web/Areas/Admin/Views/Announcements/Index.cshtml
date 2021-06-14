@@ -1,0 +1,472 @@
+﻿@using System.Web
+@using B2b.Web.v4.Models.Helper
+@{
+    ViewBag.Title = "Duyurular";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section cStyleLibrary{
+    @Styles.Render("~/Scripts/Admin/vendor/summernote/summernote.css")
+}
+
+@section cStyleCode{
+    <style type="text/css">
+        .list-group-wrapper,
+        .list-group-wrapper * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .list-group-wrapper {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+            list-style: none;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .list-group {
+            display: table;
+            position: relative;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            clear: both;
+        }
+
+            .list-group .list-group-item {
+                border-bottom: none;
+            }
+
+                .list-group .list-group-item:last-child {
+                    border-bottom: 1px solid #ddd;
+                }
+
+            .list-group .dd-placeholder:first-child {
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder:last-child {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+
+            .list-group .dd-placeholder + .list-group-item {
+                border-top: none;
+            }
+
+        .list-group-item,
+        .dd-empty,
+        .dd-placeholder {
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 20px;
+            clear: both;
+        }
+
+        .dd-placeholder,
+        .dd-empty {
+            padding: 0;
+            min-height: 30px;
+            background: #f2fbff;
+            border: 1px dashed #b6bcbf;
+        }
+
+        .dd-empty {
+            min-height: 100px;
+            background-color: #e5e5e5;
+            background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 1px dashed #bbbbbb;
+        }
+
+        .dd-dragel {
+            position: absolute;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .list-group.dd-dragel {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+            .list-group.dd-dragel .list-group-item {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+        .dd-dragel > .list-group-item {
+            margin: 0;
+            padding: 0 !important;
+        }
+
+            .dd-dragel > .list-group-item .checkbox.checkbox-custom {
+                margin: 0;
+            }
+    </style>
+}
+
+<div class="page page-announcements"  ng-controller="announcementsController">
+    <div class="pageheader">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="/Admin"><i class="fa fa-home"></i> Eryaz</a>
+                </li>
+                <li>
+                    <a href="/Admin/Announcements">Duyurular</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- page content -->
+    <div class="pagecontent">
+        <div class="row">
+            <!-- col -->
+            <div class="col-sm-12">
+                <!-- tile -->
+                <section class="tile">
+                    <!-- tile header -->
+                    <div class="tile-header bg-blue dvd dvd-btm">
+                        <h1 class="custom-font"><strong>Duyuru </strong>Ayarları</h1>
+                    </div>
+                    <!-- /tile header -->
+                    <!-- tile widget -->
+                    <div class="tile-widget">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="iProductAnnouncementType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Duyuru Tipi</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="iProductAnnouncementType" class="form-control mb-0" ng-model="announcementType.id" convert-to-number>
+                                                <option value="-1">Seçiniz</option>
+                                                <option value="0">Anasayfa - Duyurular</option>
+                                                <option value="4">Anasayfa - Genel Açılış Mesajı</option>
+                                                <option value="3">Anasayfa - Görsel Açılış Mesajı</option>
+                                                <option value="5">Anasayfa - Plasiyer Açılış Mesajı</option>
+                                                <option value="1">Anasayfa - Slider Görselleri</option>
+                                                <option value="11">Anasayfa - Gönderi Şekilleri</option>
+                                                <option value="10">Arama - Slider Görselleri</option>
+                                                <option value="7">Online Ödeme - Duyuru Mesajı</option>
+                                                <option value="6">Tüm Sayfalar - Haberler (Kayan Metinler)</option>
+                                                <option value="9">Tüm Sayfalar - Markalar (Kayan Görseller)</option>
+                                                <option value="12">Giriş Sayfası - Slider Görselleri</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="iProductAnnouncementListingType" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Listeleme Türü</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="iProductAnnouncementListingType" ng-model="announcementListingType.id" class="form-control mb-0" convert-to-number>
+                                                <option value="0">Tümü</option>
+                                                <option value="1">Aktif Olanlar</option>
+                                                <option value="2">Pasif Olanlar</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-warning btn-rounded" ng-click="clearValues()">
+                                                <span class="hidden-sm">Temizle</span> <i class="fa fa-trash-o visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-block btn-primary btn-rounded" ng-click="getAnnouncementList();">
+                                                <span class="hidden-sm">Listele</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    @*<div class="form-group">
+                                            <div class="col-xs-12">
+                                                <button class="btn btn-block btn-success btn-rounded">
+                                                    <span class="hidden-sm">Yeni</span> <i class="fa fa-search visible-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>*@
+
+                                    <div class="form-group">
+                                        @*<div class="col-xs-12">
+                                            <button class="btn btn-block btn-danger btn-rounded" ng-click="deleteAnnouncement()">
+                                                <span class="hidden-sm">Sil</span> <i class="fa fa-search visible-sm"></i>
+                                            </button>
+                                        </div>*@
+                                        <button class="btn btn-block btn-danger btn-rounded" ng-click="showDeleteModal()">
+                                            <span class="hidden-sm">
+                                                <i class="fa fa-trash"></i>
+                                                <label ng-show="deleteIds !== ''"> Seçilenleri </label> Sil
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile widget -->
+
+                    <hr class="m-0" />
+
+                    <!-- tile body -->
+                    <div class="tile-body p-10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row form-horizontal">
+                                    <div class="col-sm-4">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Arama Sonuçları</h3>
+                                            </div>
+
+                                            <div class="panel-body p-5">
+                                                <div id="ulAnnouncementsSearchResult" class="list-group-wrapper">
+                                                    <ul class="list-group m-0">
+                                                        <li data-id="{{announcementsHeader.Id}}" class="col-xs-12 list-group-item p-0" ng-repeat="announcementsHeader in announcementsHeaderList">
+                                                            <div class="col-sm-10 p-0 m-0">
+                                                                <div class="row">
+                                                                    <div class="col-xs-3 col-sm-2">
+                                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                                            <input id="iAnnouncement-0" type="checkbox" ng-click="setDeleteIds(announcementsHeader.Id)"  ng-model="announcementsHeader.Checked"><i class="ml-5"></i>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div data-id="{{announcementsHeader.Id}}" ng-click="setAnnouncement(announcementsHeader);" class="col-xs-9 col-sm-10 p-5">{{announcementsHeader.Header}}</div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-sm-2 p-5 m-0 text-center item-handle">
+                                                                <span class="fa fa-arrows fa-lg"></span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+
+                                                    <br />
+
+                                                    <textarea id="nestable-output" class="form-control hide"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-8">
+                                        <div class="panel panel-blue panel-filled1">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Duyuru Detayları</h3>
+                                            </div>
+
+                                            <div class="panel-body p-10">
+                                                <div id="pnlAnnouncementTitle" class="form-group mb-5">
+                                                    <label for="iAnnouncementTitle" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Başlık </label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iAnnouncementTitle" type="text" ng-model="selectedAnnouncement.Header" placeholder="Lütfen, Duyuru Başlığı Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="50" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementContent" class="form-group mb-5">
+                                                    <label for="iAnnouncementContent" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">İçerik</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <textarea id="iAnnouncementContent" ng-bind-html="trustDangerousSnippet(selectedAnnouncement.Content)" rows="5" cols="0" placeholder="Lütfen, Duyuru İçeriği Giriniz..." class="form-control"  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="1000"></textarea>
+                                                        @*trustDangerousSnippet(selectedAnnouncement.Content)*@
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementPicture" class="form-group mb-5">
+                                                    <label for="iAnnouncementPicture" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Resim</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <img ng-if="image_sourceIcon == null" class="addImage" ng-src="{{selectedAnnouncement.PicturePathShow}}" style="width:100%;" />
+                                                        <img ng-if="image_sourceIcon != null" class="addImage" ng-src="{{image_sourceIcon}}" style="width:100%;" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementPicturePath" class="form-group mb-5">
+                                                    <label for="iAnnouncementPicturePath" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Resim Yolu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input type="file" id="iAnnouncementPicturePath" ng-model="selectedAnnouncement.PicturePathShow" placeholder="Lütfen, Duyuru Resim Yolu Giriniz..." base-sixty-four-input onchange="angular.element(this).scope().setFileImage(this)" accept="image/*" data-buttonText="Görsel Yükle" data-iconName="fa fa-image" class="filestyle" />
+
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementStartDate" class="form-group mb-5">
+                                                    <label for="iAnnouncementStartDate" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Baş. Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iAnnouncementStartDate" ng-model="selectedAnnouncement.StartDate" type="text" placeholder="Lütfen, Duyuru Başlangıç Tarihi Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementEndDate" class="form-group mb-5">
+                                                    <label for="iAnnouncementEndDate" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Bitiş Tarihi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iAnnouncementEndDate" type="text" ng-model="selectedAnnouncement.EndDate" placeholder="Lütfen, Duyuru Bitiş Tarihi Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementStatu" class="form-group mb-5">
+                                                    <label for="iAnnouncement-check" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Aktif</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                            <input id="iAnnouncement-check" type="checkbox" ng-model="selectedAnnouncement.IsActive"><i class="ml-5"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div id="pnlAnnouncementQuery" class="form-group mb-0">
+                                                    <label for="iAnnouncementQuery" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Sorgu</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <div class="input-group input-group-sm">
+                                                            <input id="iAnnouncementQuery" type="text" ng-model="selectedAnnouncement.Query" placeholder="Lütfen, Duyuru Sorgu Giriniz..." class="form-control" disabled  onkeypress="return fireMaxLenghtControl(this)" data-max-lenght="255" />
+                                                            <span class="input-group-btn">
+                                                                <button ng-click="announcementQueryOpen();" ng-disabled="selectedAnnouncement ==null" class="btn btn-block btn-primary btn-rounded">
+                                                                    <i class="fa fa-search"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="pnlAnnouncementPrice" class="form-group mb-0">
+                                                    <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Fiyat Bilgisi</label>
+                                                    <div class="col-xs-12 col-sm-12 col-md-8">
+                                                        <input id="iAnnouncementPrice" type="text" ng-model="selectedAnnouncement.PriceStr" placeholder="Lütfen, Fiyat Bilgisi Giriniz..." class="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="panel-footer text-right">
+                                                <div class="btn-group btn-group-rounded">
+                                                    <button class="btn btn-warning btn-rounded btn-ef btn-ef-5 btn-ef-5a"><i class="fa fa-edit"></i> <span>Düzenle</span></button>
+
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-if="selectedAnnouncement.Id == 0" ng-click="saveAnnouncement(selectedAnnouncement)"><i class="fa fa-floppy-o"></i> <span>Kaydet</span></button>
+                                                    <button class="btn btn-primary btn-rounded btn-ef btn-ef-5 btn-ef-5a" ng-if="selectedAnnouncement.Id > 0" ng-click="updateAnnouncementsActive(selectedAnnouncement)"><i class="fa fa-floppy-o"></i> <span>Güncelle</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /tile body -->
+                </section>
+                <!-- /tile -->
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+        </div>
+
+        <div id="mQuerySelect" tabindex="-1" role="dialog" aria-labelledby="mQuerySelectLabel" aria-hidden="true" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title custom-font">Sorgu</h3>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" method="post" class="form-horizontal form-modal">
+                            <div class="row row-fixed">
+                                <div class="col-sm-6">
+
+                                    <div class="form-group mb-0">
+                                        <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Üretici</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <select id="bankName-select" ng-model="setQuery.Manufacturer" style="width: 100%;" class="form-control mb-10" ng-options="item.Name as item.Name for item in productManufacturerList"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Kampanya</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                <input type="checkbox" ng-model="setQuery.Campaign"><i class="ml-5"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Yeni Ürün </label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                <input type="checkbox" ng-model="setQuery.NewProduct"><i class="ml-5"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Stokta Olanlar</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                <input type="checkbox" ng-model="setQuery.OnQty"><i class="ml-5"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Resmi Olanlar</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <label class="checkbox checkbox-custom-alt m-0 p-5">
+                                                <input type="checkbox" ng-model="setQuery.HavePicture"><i class="ml-5"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="iAnnouncementPrice" class="col-xs-12 col-sm-5 col-md-4 control-label text-left hidden-xs hidden-sm">Genel Arama</label>
+                                        <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <input type="text" placeholder="Lütfen, Arama Text Giriniz..." class="form-control" ng-model="setQuery.Text" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="tile-footer">
+                                <div class="form-group text-right">
+                                    <div class="col-sm-12">
+                                        <button type="button" ng-click="SaveQuery(setQuery)" class="btn btn-primary">Kaydet</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("~/Areas/Admin/Views/Partial/DeleteModal.cshtml")
+
+
+
+
+</div>
+
+
+@section cScriptLibrary{
+    @Scripts.Render("~/Scripts/Admin/vendor/summernote/summernote.min.js")
+    @Scripts.Render("~/Scripts/Admin/vendor/nestable/jquery.nestable.js")
+@Scripts.Render("~/Scripts/Admin/vendor/filestyle/bootstrap-filestyle.min.js")
+}
+
+@section cScriptCode{
+<script src="@Url.ContentVersioned("/Scripts/Admin/announcements.js", HttpContext.Current.Request)"></script>
+
+}
